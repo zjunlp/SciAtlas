@@ -1766,6 +1766,189 @@ def strip_plan_control_lines(text: str) -> str:
 
 
 
+
+# ============================================================
+# Optional frontend LLM keyword extraction
+# ============================================================
+
+def _env_first(*names: str) -> str:
+    for name in names:
+        value = os.environ.get(name)
+        if value and value.strip():
+            return value.strip()
+    return ""
+
+
+def _missing_or_placeholder(value: str | None) -> bool:
+    normalized = (value or "").strip().lower()
+    placeholder_tokens = (
+        "your-openai-compatible-endpoint",
+        "your-chat-completions-endpoint",
+        "your-llm-provider.example",
+        "your-provider-or-gateway.example",
+    )
+    return (not normalized) or normalized in {
+        "replace-me",
+        "your-token",
+        "your-api-key",
+        "your-personal-scinet-token",
+        "your-model-name",
+    } or any(token in normalized for token in placeholder_tokens)
+
+
+def _chat_completions_url(base_url: str, full_url: str = "") -> str:
+    url = (full_url or "").strip()
+    if url:
+        return url
+
+    base = (base_url or "").strip().rstrip("/")
+    if not base:
+        return ""
+
+    path_without_query = base.split("?", 1)[0].rstrip("/")
+    if path_without_query.endswith("/chat/completions"):
+        return base
+    return base + "/chat/completions"
+
+
+def _parse_llm_auth_header(value: str) -> tuple[str, str] | None:
+    text = (value or "").strip()
+    if _missing_or_placeholder(text):
+        return None
+
+    name, separator, header_value = text.partition(":")
+    if separator and name.strip() and header_value.strip():
+        return name.strip(), header_value.strip()
+    return "Authorization", text
+
+
+def _parse_llm_extra_headers(value: str) -> dict[str, str]:
+    text = (value or "").strip()
+    if not text:
+        return {}
+    try:
+        parsed = json.loads(text)
+    except Exception:
+        return {}
+    if not isinstance(parsed, dict):
+        return {}
+    return {str(key): str(val) for key, val in parsed.items() if str(key).strip() and str(val).strip()}
+
+
+def _optional_llm_config() -> dict[str, Any] | None:
+    provider = (_env_first("LLM_PROVIDER", "SCINET_LLM_PROVIDER") or "chat_completions").lower()
+    if provider in {"0", "false", "none", "off", "disabled"}:
+        return None
+    api_key = _env_first("LLM_API_KEY", "SCINET_LLM_API_KEY", "OPENAI_API_KEY")
+    base_url = _env_first("LLM_BASE_URL", "SCINET_LLM_BASE_URL", "OPENAI_BASE_URL")
+    full_url = _env_first("LLM_CHAT_COMPLETIONS_URL", "SCINET_LLM_CHAT_COMPLETIONS_URL", "OPENAI_CHAT_COMPLETIONS_URL")
+    auth_header = _env_first("LLM_AUTH_HEADER", "SCINET_LLM_AUTH_HEADER")
+    extra_headers = _env_first("LLM_HTTP_HEADERS", "SCINET_LLM_HTTP_HEADERS")
+    model = _env_first("LLM_MODEL", "SCINET_LLM_MODEL", "OPENAI_MODEL")
+    endpoint = _chat_completions_url(base_url, full_url)
+    if _missing_or_placeholder(endpoint) or _missing_or_placeholder(model):
+        return None
+    headers = _parse_llm_extra_headers(extra_headers)
+    parsed_auth_header = _parse_llm_auth_header(auth_header)
+    if parsed_auth_header:
+        headers[parsed_auth_header[0]] = parsed_auth_header[1]
+    elif not _missing_or_placeholder(api_key):
+        headers["Authorization"] = "Bearer " + api_key
+    return {
+        "provider": provider,
+        "chat_completions_url": endpoint,
+        "headers": headers,
+        "model": model,
+        "timeout": int(os.environ.get("SCINET_LLM_TIMEOUT") or os.environ.get("LLM_TIMEOUT") or 30),
+        "temperature": float(os.environ.get("SCINET_LLM_TEMPERATURE") or os.environ.get("LLM_TEMPERATURE") or 0),
+        "max_tokens": int(os.environ.get("SCINET_LLM_MAX_TOKENS") or os.environ.get("LLM_MAX_TOKENS") or 512),
+    }
+
+
+def _parse_json_object_from_text(text: str) -> dict[str, Any] | None:
+    try:
+        return json.loads(text)
+    except Exception:
+        pass
+    match = re.search(r"\{.*\}", text, flags=re.S)
+    if not match:
+        return None
+    try:
+        return json.loads(match.group(0))
+    except Exception:
+        return None
+
+
+def extract_keywords_with_optional_llm(text: str, *, top_keywords: int = 8) -> list[dict[str, Any]]:
+    if top_keywords <= 0:
+        return []
+    cfg = _optional_llm_config()
+    if not cfg:
+        return []
+
+    prompt = (
+        "Extract concise academic search keywords from the query. "
+        "Return JSON only: {\"keywords\":[{\"text\":\"keyword phrase\",\"score\":1-10}]}. "
+        f"Return at most {top_keywords} keywords. Prefer specific technical phrases."
+    )
+    payload = {
+        "model": cfg["model"],
+        "messages": [
+            {"role": "system", "content": "You extract scientific retrieval keywords."},
+            {"role": "user", "content": prompt + "\n\nQuery:\n" + text[:4000]},
+        ],
+        "temperature": cfg["temperature"],
+        "max_tokens": cfg["max_tokens"],
+    }
+    headers = {"Content-Type": "application/json", **cfg.get("headers", {})}
+    request = urllib.request.Request(
+        cfg["chat_completions_url"],
+        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+        headers=headers,
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=cfg["timeout"]) as resp:
+            data = json.loads(resp.read().decode("utf-8", errors="replace"))
+        content = data["choices"][0]["message"]["content"]
+        parsed = _parse_json_object_from_text(content)
+        if not parsed:
+            return []
+    except Exception:
+        return []
+
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in parsed.get("keywords", []):
+        if isinstance(item, str):
+            kw, score = normalize_text(item), 8
+        elif isinstance(item, dict):
+            kw = normalize_text(str(item.get("text") or item.get("keyword") or ""))
+            try:
+                score = int(round(float(item.get("score", 8))))
+            except Exception:
+                score = 8
+        else:
+            continue
+        if not kw or kw.lower() in seen:
+            continue
+        seen.add(kw.lower())
+        out.append({"text": kw[:120], "score": max(1, min(10, score))})
+        if len(out) >= top_keywords:
+            break
+    return out
+
+
+def optional_provider_config_status() -> dict[str, Any]:
+    return {
+        "llm_keyword_extraction_enabled": _optional_llm_config() is not None,
+        "openalex_configured": not _missing_or_placeholder(_env_first("OA_API_KEY", "OPENALEX_API_KEY", "SCINET_OPENALEX_API_KEY")),
+        "openalex_mailto_configured": not _missing_or_placeholder(_env_first("OPENALEX_MAILTO", "OPENALEX_EMAIL", "SCINET_OPENALEX_MAILTO")),
+        "grobid_configured": not _missing_or_placeholder(_env_first("GROBID_BASE_URL", "SCINET_GROBID_BASE_URL")),
+    }
+
+
 def build_plan_from_text(
 
     *,
@@ -1793,6 +1976,19 @@ def build_plan_from_text(
     titles = extract_title_hints(clean_text, max_titles=max_titles)
 
     reference_titles = extract_reference_titles(query_text, max_refs=max_refs)
+
+    llm_keywords = extract_keywords_with_optional_llm(clean_text, top_keywords=top_keywords)
+    if llm_keywords:
+        plan = {
+            "query_text": clean_text,
+            "source_type": source_type,
+            "source_title": source_title,
+            "keywords": llm_keywords,
+            "titles": titles,
+            "reference_titles": reference_titles,
+        }
+        return plan
+
 
 
 
@@ -3993,6 +4189,7 @@ def cmd_config(args: argparse.Namespace) -> int:
             "base_url": args.base_url,
 
             "api_key_configured": bool(args.api_key),
+            "optional_provider_config": optional_provider_config_status(),
 
             "runs_dir": args.runs_dir,
 
