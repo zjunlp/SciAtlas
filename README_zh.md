@@ -7,11 +7,7 @@
 </p>
 
 <p align="center">
-<<<<<<< HEAD
-  <a href="docs/api/SCINET_API_DOC_zh.html">📚 API 文档站</a>
-=======
-  <a href="https://huadongjian.github.io/SciNet/api/SCINET_API_DOC_zh.html">📚 API 文档站</a>
->>>>>>> 3d1a104 (Update docs and polish downstream frontend outputs)
+  <a href="http://scinet.openkg.cn/api/docs?lang=zh">📚 API 文档站</a>
 </p>
 
 <p align="center">
@@ -52,70 +48,30 @@
   <em>图谱把论文与作者、机构、来源、关键词、引用、相关工作，以及 Domain-Field-Subfield-Topic 层级连接起来。</em>
 </p>
 
-通过这个客户端，你可以：
+通过这个客户端，SciNet 可以直接服务于这些场景：
 
-- 使用关键词、语义、标题、参考文献和图检索能力查找论文；
-- 运行文献综述、idea grounding、idea evaluation、idea generation、趋势分析、相关作者检索和研究者画像等科研工作流；
-- 保存 `request.json`、`response.json`、`summary.txt`、`report.md` 等可复现实验产物；
-- 通过可编辑 CLI **skills** 定制自己的下游科研流程。
+- **图谱增强论文检索**：结合关键词、语义、标题锚点、参考文献和图传播，不局限于普通关键词匹配；
+- **科研工作流自动化**：运行文献综述、idea grounding、idea evaluation、idea generation、趋势分析、相关作者检索和研究者画像；
+- **Agent 友好的输出**：保留 `request.json`、`response.json` 等机器可读产物，同时生成面向用户的 `summary.txt` 和 `report.md`；
+- **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill。
 
 ---
 
 ## 📑 目录
 
 - [✨ 项目概览](#-项目概览)
-<<<<<<< HEAD
+- [📑 目录](#-目录)
 - [🚀 快速开始](#-快速开始)
 - [🔑 API Token](#-api-token)
-- [🧠 SciNet 能做什么](#-scinet-能做什么)
-- [🧩 支持任务](#-支持任务)
-- [🛠️ CLI 优先工作流](#-cli-优先工作流)
-- [🧰 可编辑 Skills](#-可编辑-skills)
-- [🐍 Python SDK](#-python-sdk)
-- [⚙️ 配置说明](#-配置说明)
-- [🧪 示例命令](#-示例命令)
-- [📦 输出与运行产物](#-输出与运行产物)
-- [🛠️ PDF 工作流中的 GROBID](#-pdf-工作流中的-grobid)
-- [📂 仓库结构](#-仓库结构)
-- [🧯 常见问题](#-常见问题)
-- [🗺️ Roadmap](#-roadmap)
-- [✍️ Citation](#-citation)
-=======
-- [� 目录](#-目录)
-- [🚀 快速开始](#-快速开始)
-  - [1. 安装](#1-安装)
-  - [2. 注册 API Token](#2-注册-api-token)
-  - [3. 配置](#3-配置)
-  - [4. 测试](#4-测试)
-  - [5. 运行论文检索](#5-运行论文检索)
-- [🔑 API Token](#-api-token)
-  - [浏览器注册](#浏览器注册)
-  - [查询 Token 状态](#查询-token-状态)
-  - [查询用量](#查询用量)
-- [🧠 SciNet 能做什么](#-scinet-能做什么)
 - [🧩 支持任务](#-支持任务)
 - [🛠️ CLI 优先工作流](#️-cli-优先工作流)
-  - [检索模式](#检索模式)
-  - [专家锚点](#专家锚点)
-  - [图检索偏好](#图检索偏好)
 - [🧰 可编辑 Skills](#-可编辑-skills)
 - [🐍 Python SDK](#-python-sdk)
-- [⚙️ 配置说明](#️-配置说明)
-- [🧪 示例命令](#-示例命令)
-  - [文献综述](#文献综述)
-  - [Idea Evaluation](#idea-evaluation)
-  - [Trend Report](#trend-report)
 - [📦 输出与运行产物](#-输出与运行产物)
-- [🛠️ PDF 工作流中的 GROBID](#️-pdf-工作流中的-grobid)
 - [📂 仓库结构](#-仓库结构)
 - [🧯 常见问题](#-常见问题)
-  - [`scinet health` 成功，但 `search-papers` 返回 401](#scinet-health-成功但-search-papers-返回-401)
-  - [没有收到邮箱验证码](#没有收到邮箱验证码)
-  - [检索很慢或超时](#检索很慢或超时)
-  - [Windows 上找不到 `scinet` 命令](#windows-上找不到-scinet-命令)
 - [📝 TODO](#-todo)
 - [✍️ Citation](#️-citation)
->>>>>>> 3d1a104 (Update docs and polish downstream frontend outputs)
 - [📄 License](#-license)
 
 ---
@@ -147,19 +103,119 @@ http://scinet.openkg.cn/register
 ```
 
 完成邮箱验证码注册，并复制个人 Token。
+
+快速链接：[🔑 API Token](#-api-token)。
+
 ### 3. 配置
+
+最少需要配置托管 SciNet API 地址和你的个人 Token。
 
 Linux / macOS：
 ```bash
 export SCINET_API_BASE_URL="http://scinet.openkg.cn"
 export SCINET_API_KEY="your-personal-scinet-token"
+export SCINET_TIMEOUT=900
+export SCINET_RUNS_DIR="./runs"
 ```
 
 Windows CMD：
 ```bat
 set SCINET_API_BASE_URL=http://scinet.openkg.cn
 set SCINET_API_KEY=your-personal-scinet-token
+set SCINET_TIMEOUT=900
+set SCINET_RUNS_DIR=.\runs
 ```
+
+兼容旧变量：
+
+```env
+KG2API_BASE_URL=http://scinet.openkg.cn
+KG2API_API_KEY=your-personal-scinet-token
+```
+
+新用户推荐使用 `SCINET_*`。
+
+
+
+📕 可选：用自己的 LLM 提升关键词抽取
+
+```bash
+export LLM_PROVIDER="chat_completions"
+export LLM_API_KEY="your-provider-api-key"
+export LLM_BASE_URL="https://your-provider-or-gateway.example/v1"
+export LLM_MODEL="your-model-name"
+# 如果服务商使用特殊接口地址或鉴权头，可按需打开：
+# export LLM_CHAT_COMPLETIONS_URL="https://your-provider-or-gateway.example/v1/chat/completions"
+# export LLM_AUTH_HEADER="x-api-key: your-provider-api-key"
+export SCINET_LLM_TIMEOUT=30
+export SCINET_LLM_TEMPERATURE=0
+export SCINET_LLM_MAX_TOKENS=512
+```
+
+这是可选项。只有当你希望 SciNet 在检索前，用你的 LLM API 从自然语言输入中提炼更好的关键词时，才需要配置。
+
+`LLM_PROVIDER` 保持 `chat_completions`，然后把 `LLM_API_KEY`、`LLM_BASE_URL` 和 `LLM_MODEL` 换成你的服务商参数。若服务商直接给出完整 chat-completions 接口地址，填写 `LLM_CHAT_COMPLETIONS_URL`；若需要自定义鉴权头，填写 `LLM_AUTH_HEADER`。
+
+不需要 LLM 时可以全部留空。SciNet 会自动使用内置关键词抽取，论文检索、文献综述、idea、趋势分析和研究者画像等流程都能正常运行。
+
+用户需要编辑的配置模板：[.env.example](.env.example#L7-L24)。只有需要 LLM 辅助关键词抽取时，才填写这些变量。
+
+🖊 可选：OpenAlex 元数据支持
+
+```bash
+export OA_API_KEY=""
+export OPENALEX_MAILTO=""
+```
+
+OpenAlex 主要用于补充元数据或辅助 PDF 相关流程。README 中的常用 CLI 示例不依赖它。即使不填写这些变量，普通 SciNet 检索也可以正常运行。
+
+用户需要编辑的配置模板：[.env.example](.env.example#L29-L31)。只有需要 OpenAlex 辅助元数据支持时才填写。
+
+🖌 可选：本地 PDF 工作流需要 GROBID
+
+只有当你要处理本地 PDF 文件时，才需要配置 GROBID。它会从科研 PDF 中抽取标题、作者、摘要和参考文献。如果你只运行上面的文本检索和下游 CLI 命令，可以直接跳过这一段。
+
+本地启动 GROBID：
+
+```bash
+docker pull lfoppiano/grobid:latest
+docker run -d --rm --name grobid -p 8070:8070 lfoppiano/grobid:latest
+curl http://127.0.0.1:8070/api/isalive
+```
+
+然后设置：
+
+```bash
+export GROBID_BASE_URL="http://127.0.0.1:8070"
+```
+
+Windows CMD：
+
+```bat
+set GROBID_BASE_URL=http://127.0.0.1:8070
+```
+
+用户需要编辑的配置模板：[.env.example](.env.example#L26-L27)。不处理本地 PDF 时可以留空。
+
+运行时变量说明：
+
+| 变量 | 所需场景 | 说明 |
+|---|---|---|
+| `SCINET_API_BASE_URL` | 所有托管 SciNet 任务 | 托管 SciNet API 基础 URL。 |
+| `SCINET_API_KEY` | 所有托管 SciNet 任务 | 作为 `X-API-Key` 和 `Authorization: Bearer` 发送。 |
+| `LLM_PROVIDER` | 可选前端增强 | 保持为 `chat_completions`。 |
+| `LLM_API_KEY` | 可选前端增强 | 你的服务商密钥；本地或无鉴权服务可留空。 |
+| `LLM_BASE_URL` | 可选前端增强 | 服务商基础 URL，通常以 `/v1` 结尾。 |
+| `LLM_CHAT_COMPLETIONS_URL` | 可选前端增强 | 只有服务商给出完整接口地址时才填写。 |
+| `LLM_MODEL` | 可选前端增强 | 服务商提供的模型名称。 |
+| `LLM_AUTH_HEADER` | 可选前端增强 | 只有需要自定义鉴权时才填写，例如 `x-api-key: your-provider-api-key`。 |
+| `LLM_HTTP_HEADERS` | 可选前端增强 | 可选的额外请求头，填写 JSON 对象。 |
+| `OPENAI_API_KEY` | 可选旧版兼容 | `LLM_API_KEY` 的兼容别名。 |
+| `OPENAI_BASE_URL` | 可选旧版兼容 | `LLM_BASE_URL` 的兼容别名。 |
+| `OPENAI_MODEL` | 可选旧版兼容 | `LLM_MODEL` 的兼容别名。 |
+| `GROBID_BASE_URL` | PDF 任务 | 使用 `--pdf-path` 工作流时需要。 |
+| `OA_API_KEY` | 可选 | OpenAlex 元数据 / PDF 支持。 |
+| `OPENALEX_MAILTO` | 可选 | OpenAlex 联系邮箱。 |
 
 ### 4. 测试
 
@@ -173,7 +229,7 @@ scinet config
 scinet search-papers \
   --query "open world agent" \
   --keyword "high:open world agent" \
-  --top-k 3
+  --top-k 10
 ```
 
 ---
@@ -214,17 +270,6 @@ curl -H "Authorization: Bearer $SCINET_API_KEY" \
 
 ---
 
-## 🧠 SciNet 能做什么
-
-SciNet 面向科研任务，而不只是普通关键词检索。
-
-1. **Search + KG Retrieval**：基于关键词、语义、标题锚点、参考文献和图传播检索相关论文。
-2. **科研工作流自动化**：支持文献综述、idea grounding、idea evaluation、idea generation、趋势分析、相关作者检索和研究者画像。
-3. **Agent 友好的输出**：每次运行都会保留机器可读 JSON 产物和面向用户的 Markdown 报告。
-4. **可编辑 Skills**：常用下游任务可以封装为 JSON skill，用户可查看、复制、修改并通过 CLI 一键运行。
-
----
-
 ## 🧩 支持任务
 
 | 命令 | 场景 | 主要输出 |
@@ -246,7 +291,9 @@ SciNet 面向科研任务，而不只是普通关键词检索。
 
 ## 🛠️ CLI 优先工作流
 
-SciNet 以 CLI 为优先界面，方便用户和 AI Agent 调用。
+SciNet 以 CLI 为优先界面。新用户可以先查看帮助，再跑一次基础检索，最后按任务选择下游工作流；每次运行都会保存完整结果，方便复现、调试和交给 AI Agent 继续处理。
+
+### 帮助
 
 ```bash
 scinet -h
@@ -255,7 +302,9 @@ scinet literature-review -h
 scinet skill -h
 ```
 
-基础检索：
+### 基础检索
+
+适合快速围绕一个主题获取有证据支撑的论文列表。
 
 ```bash
 scinet search-papers \
@@ -263,13 +312,85 @@ scinet search-papers \
   --domain "artificial intelligence" \
   --time-range 2020-2024 \
   --keyword "high:open world agent" \
-  --top-k 3 \
+  --top-k 5 \
   --top-keywords 0 \
   --max-titles 0 \
   --max-refs 0
 ```
 
+### 五种下游工作流
+
+下面的命令可以直接作为起点。你只需要替换 `--query`、`--idea`、`--author`、`--domain`、`--time-range` 和 `--keyword` 等参数。
+
+#### 文献综述
+
+用于快速形成初始阅读清单，并收集写作文献综述所需的核心证据。
+
+```bash
+scinet literature-review \
+  --query "retrieval augmented generation" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2025 \
+  --keyword "high:retrieval augmented generation" \
+  --top-k 10
+```
+
+#### Idea Evaluation
+
+用于评估一个研究想法的新颖性、可行性和已有文献支撑。
+
+```bash
+scinet idea-evaluate \
+  --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2025 \
+  --keyword "high:idea evaluation" \
+  --keyword "middle:LLM as a judge" \
+  --top-k 10
+```
+
+#### Idea Generation
+
+用于探索潜在主题组合，生成可继续扩展的研究方向。
+
+```bash
+scinet idea-generate \
+  --query "knowledge editing for large language models" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2025 \
+  --keyword "high:knowledge editing" \
+  --keyword "middle:large language models" \
+  --keyword "low:continual learning" \
+  --top-k 10
+```
+
+#### Trend Report
+
+用于梳理一个研究主题的发展脉络，找出代表性论文和阶段性变化。
+
+```bash
+scinet trend-report \
+  --query "retrieval augmented generation" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2025 \
+  --keyword "high:retrieval augmented generation" \
+  --keyword "middle:knowledge graph" \
+  --top-k 10
+```
+
+#### Researcher Review
+
+用于快速了解一位研究者的研究轨迹、代表论文和相关方向。
+
+```bash
+scinet researcher-review \
+  --author "Yoshua Bengio" \
+  --limit 10 \
+  --no-abstract
+```
+
 ### 检索模式
+
 | 模式 | 含义 | 适用场景 |
 |---|---|---|
 | `keyword` | 关键词驱动 KG 检索 | 术语明确 |
@@ -278,7 +399,10 @@ scinet search-papers \
 | `hybrid` | 关键词 + 语义 + 标题 + 图游走 | 默认推荐 |
 
 未指定 `--retrieval-mode` 时，默认使用 `hybrid`。
+
 ### 专家锚点
+
+当你已经知道高质量关键词、代表论文标题或参考文献时，可以用锚点引导图检索从这些线索出发。
 
 ```bash
 --keyword "high:open world agent"
@@ -298,6 +422,16 @@ scinet search-papers \
 | `--bias-cooccurrence` | 关键词共现强度 |
 | `--bias-exploration` | 图探索程度 |
 | `--ranking-profile` | 排序偏好：`precision`、`balanced`、`discovery`、`impact` |
+
+推荐的稳妥起点：
+
+```bash
+--top-k 10
+--top-keywords 0
+--max-titles 0
+--max-refs 0
+--bias-exploration low
+```
 
 ---
 
@@ -354,66 +488,6 @@ client = SciNetClient(
 )
 ```
 
----
-
-## ⚙️ 配置说明
-
-```env
-SCINET_API_BASE_URL=http://scinet.openkg.cn
-SCINET_API_KEY=your-personal-scinet-token
-SCINET_TIMEOUT=900
-SCINET_RUNS_DIR=./runs
-```
-
-兼容旧变量：
-
-```env
-KG2API_BASE_URL=http://scinet.openkg.cn
-KG2API_API_KEY=your-personal-scinet-token
-```
-
-新用户推荐使用 `SCINET_*`。
-
----
-
-## 🧪 示例命令
-
-### 文献综述
-
-```bash
-scinet literature-review \
-  --query "retrieval augmented generation" \
-  --domain "artificial intelligence" \
-  --time-range 2020-2025 \
-  --keyword "high:retrieval augmented generation" \
-  --top-k 5
-```
-
-### Idea Evaluation
-
-```bash
-scinet idea-evaluate \
-  --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
-  --domain "artificial intelligence" \
-  --time-range 2020-2025 \
-  --keyword "high:idea evaluation" \
-  --keyword "middle:LLM as a judge" \
-  --top-k 3
-```
-
-### Trend Report
-
-```bash
-scinet trend-report \
-  --query "retrieval augmented generation" \
-  --domain "artificial intelligence" \
-  --time-range 2020-2025 \
-  --keyword "high:retrieval augmented generation" \
-  --top-k 5
-```
-
----
-
 ## 📦 输出与运行产物
 终端默认输出简洁表格，完整结果保存在：
 
@@ -433,47 +507,26 @@ runs/<run_id>/
 
 ---
 
-## 🛠️ PDF 工作流中的 GROBID
-
-GROBID 用于从科研 PDF 中抽取标题、作者、摘要和参考文献等结构化信息，只在 PDF 输入工作流中需要。
-```bash
-docker pull lfoppiano/grobid:latest
-docker run -d --rm --name grobid -p 8070:8070 lfoppiano/grobid:latest
-curl http://127.0.0.1:8070/api/isalive
-```
-
-配置：
-```env
-GROBID_BASE_URL=http://127.0.0.1:8070
-```
-
----
-
 ## 📂 仓库结构
+
+下面只保留仓库展示和新用户上手最需要的主入口，已省略生成产物、虚拟环境和缓存目录。
 
 ```text
 SciNet/
-  pyproject.toml
-  README.md
-  README_zh.md
-  README_skills.md
-  .env.example
-  src/
-    scinet/
-      __init__.py
-      cli.py
-      client.py
-      config.py
-      skills.py
-      builtin_skills.json
-  examples/
-    search_papers.sh
-    literature_review.sh
-    idea_evaluate.sh
-  tests/
-    test_import.py
-  references/
-    search/
+  README.md / README_zh.md       # 项目文档
+  .env.example                   # 根目录运行配置模板
+  requirements.txt
+  run_scinet.py                  # 轻量本地运行入口
+  docs/api/                      # 静态 API 文档站
+  imgs/                          # README 图片资源
+  scinet/                        # 可 pip 安装的 SciNet 客户端包
+    pyproject.toml
+    src/scinet/                  # 打包发布的 CLI、client、config、skills
+    core/ search/ tasks/         # 检索规划与科研工作流逻辑
+    evidence/ llm/ renderers/    # PDF 证据、可选 LLM、报告渲染
+    examples/ tests/
+  references/search/             # KG 检索参考实现
+  runs/                          # 生成的 CLI 运行产物
 ```
 
 ---
@@ -522,32 +575,6 @@ set SCINET_API_KEY=your-personal-scinet-token
 
 ---
 
-<<<<<<< HEAD
-## 🗺️ Roadmap
-
-- [ ] 发布 PyPI 包，支持 `pip install scinet-client`
-- [ ] 增加 `scinet auth login/status/usage`
-- [ ] 增加更多内置 agent skills
-- [ ] 支持 Token 重置和吊销
-- [ ] API Playground
-- [ ] MCP / Agent Runtime 集成
-- [ ] 扩展论文之外的知识类型，如数据集、代码、标准、定理和实验经验
-- [ ] 建立面向科学研究任务的评测基准
-- [ ] 更系统的动态知识更新机制
-
----
-
-## ✍️ Citation
-
-如果 SciNet 对你的研究有帮助，请引用：
-```bibtex
-@article{scinet2026,
-  title={SciNet: A Large-Scale Knowledge Graph for Automated Scientific Research},
-  author={SciNet Team},
-  journal={arXiv preprint arXiv:2602.14367},
-  year={2026}
-}
-=======
 ## 📝 TODO
 
 - [ ] **命令行工具。** 增加更多面向用户的命令行功能，以便下游用户和 AI 代理无需接触数据库内部即可调用检索工作流。
@@ -564,7 +591,6 @@ set SCINET_API_KEY=your-personal-scinet-token
 如果 SciNet 对你的研究有帮助，请引用：
 ```
 
->>>>>>> 3d1a104 (Update docs and polish downstream frontend outputs)
 ```
 
 ---

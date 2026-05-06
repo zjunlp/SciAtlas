@@ -169,3 +169,28 @@ Do not commit `.env`, API tokens, SMTP credentials, `.cache/`, or `runs/`.
 ## License
 
 MIT.
+
+<!-- SCINET_FRONTEND_OPTIONAL_LLM_OPENALEX_START -->
+## Frontend LLM and OpenAlex Configuration
+
+Optional LLM settings are only for better keyword extraction before retrieval. They are not required for normal KG search.
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `SCINET_API_BASE_URL` | yes | Hosted SciNet API base URL. |
+| `SCINET_API_KEY` | yes | SciNet token. |
+| `LLM_PROVIDER` | optional | Keep as `chat_completions`. |
+| `LLM_API_KEY` | optional | Your provider key; leave empty for local or no-auth services. |
+| `LLM_BASE_URL` | optional | Provider base URL, usually ending in `/v1`. |
+| `LLM_CHAT_COMPLETIONS_URL` | optional | Use only when your provider gives a full endpoint. |
+| `LLM_MODEL` | optional | Model name from your provider. |
+| `LLM_AUTH_HEADER` | optional | Use only for custom auth, such as `x-api-key: your-provider-api-key`. |
+| `LLM_HTTP_HEADERS` | optional | Optional extra headers as JSON. |
+| `GROBID_BASE_URL` | PDF tasks only | Required for `--pdf-path` workflows. |
+| `OA_API_KEY` | optional | OpenAlex fallback/enrichment support. |
+| `OPENALEX_MAILTO` | optional | OpenAlex contact email. |
+
+If LLM variables are empty or the LLM call fails, SciNet falls back to built-in keyword extraction. If OpenAlex variables are empty, OpenAlex enrichment is skipped and normal KG retrieval still works.
+
+User-editable config template: [.env.example](.env.example#L7-L31).
+<!-- SCINET_FRONTEND_OPTIONAL_LLM_OPENALEX_END -->
