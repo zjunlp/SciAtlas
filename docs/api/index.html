@@ -3,11 +3,1609 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SciNet API Documentation</title>
-<meta http-equiv="refresh" content="0; url=SCINET_API_DOC.html">
-<script>location.replace("SCINET_API_DOC.html");</script>
+<title>SciNet API & CLI Documentation</title>
+<style>
+:root{
+  --bg:#f5f8f7;
+  --panel:#ffffff;
+  --ink:#17212b;
+  --muted:#64706f;
+  --line:#d8e4e0;
+  --line-soft:#edf3f1;
+  --blue:#2563eb;
+  --blue-soft:#eef5ff;
+  --teal:#0f766e;
+  --teal-soft:#eaf7f4;
+  --green:#15803d;
+  --amber:#b7791f;
+  --amber-soft:#fff7e6;
+  --rose:#be123c;
+  --code:#101820;
+  --shadow:0 14px 34px rgba(23,33,43,.07);
+  --table-head:#f0f7f5;
+  --table-row:#fbfdfc;
+  --table-row-alt:#f7faf9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  line-height:1.58;
+}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+button,input{font:inherit}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:12px 26px;
+  border-bottom:1px solid rgba(216,228,224,.92);
+  background:rgba(255,255,255,.94);
+  backdrop-filter:saturate(180%) blur(14px);
+}
+.brand{display:flex;align-items:center;gap:10px;font-weight:850;color:var(--ink)}
+.brand-mark{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:8px;
+  background:var(--teal-soft);
+  color:var(--teal);
+  font-weight:900;
+}
+.top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.pill,.lang-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  padding:6px 11px;
+  font-size:13px;
+  font-weight:750;
+}
+.pill.primary{background:var(--teal-soft);border-color:#b8e2d8;color:#0f5f59}
+.lang-button{cursor:pointer}
+.lang-button.active{background:var(--ink);border-color:var(--ink);color:#fff}
+.hero{
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#ffffff 0%,#f8fbfa 100%);
+}
+.hero-inner{
+  max-width:1420px;
+  margin:0 auto;
+  padding:42px 26px 30px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 380px;
+  gap:26px;
+  align-items:end;
+}
+.eyebrow{
+  margin:0 0 10px;
+  color:var(--teal);
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+h1{margin:0;font-size:42px;line-height:1.08;letter-spacing:0}
+.hero-copy{max-width:840px;margin:16px 0 0;color:#475569;font-size:17px}
+.hero-links{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.button-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 13px;
+  background:#fff;
+  color:var(--ink);
+  font-weight:800;
+}
+.button-link.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+.button-link:hover{text-decoration:none;border-color:#8fd5c8;color:#0f5f59}
+.inline-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:34px;
+  border:1px solid #b8e2d8;
+  border-radius:8px;
+  padding:6px 10px;
+  background:var(--teal-soft);
+  color:#0f5f59;
+  font-size:13px;
+  font-weight:800;
+}
+.inline-link:hover{text-decoration:none;border-color:#8fd5c8;background:#dff3ee}
+.quick-panel{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:18px;
+  background:#fff;
+  box-shadow:var(--shadow);
+}
+.quick-panel h2{margin:0 0 12px;font-size:16px}
+.quick-list{display:grid;gap:9px;margin:0;padding:0;list-style:none}
+.quick-list li{
+  border:1px solid var(--line-soft);
+  border-radius:8px;
+  padding:10px 12px;
+  background:#fbfdfc;
+}
+.quick-list b{display:block;color:var(--ink)}
+.quick-list span{color:var(--muted);font-size:13px}
+.quick-list code{font-size:13px}
+.shell{
+  max-width:1420px;
+  margin:0 auto;
+  padding:24px 26px 42px;
+  display:grid;
+  grid-template-columns:260px minmax(0,1fr) 340px;
+  gap:22px;
+  align-items:start;
+}
+.side,.right-panel{
+  position:sticky;
+  top:70px;
+  max-height:calc(100vh - 88px);
+  overflow:auto;
+}
+.panel{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:var(--panel);
+  box-shadow:0 10px 26px rgba(15,23,42,.045);
+}
+.side{padding:14px}
+.side-title{display:block;margin:2px 0 10px;color:var(--muted);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em}
+.side a{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  border-radius:8px;
+  padding:8px 9px;
+  color:#334155;
+  font-size:14px;
+  font-weight:650;
+}
+.side a:hover,.side a.active{background:var(--teal-soft);color:#0f5f59;text-decoration:none}
+.command-toc{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.command-toc a{font-size:13px;font-weight:600}
+main{display:flex;flex-direction:column;gap:18px}
+.section{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  padding:24px;
+  box-shadow:0 8px 24px rgba(23,33,43,.035);
+}
+.section h2{margin:0 0 10px;font-size:27px;letter-spacing:0}
+.section h3{margin:24px 0 10px;font-size:18px}
+.section p{color:#475569}
+.section > p:first-of-type{margin-top:0}
+.section-lead{max-width:900px}
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.feature{
+  border:1px solid var(--line-soft);
+  border-radius:8px;
+  padding:14px;
+  background:#fbfdfc;
+}
+.feature b{display:block;margin-bottom:4px}
+.feature p{margin:0;font-size:14px}
+.callout{
+  border-left:4px solid var(--teal);
+  border-radius:8px;
+  background:var(--teal-soft);
+  padding:14px 16px;
+  color:#135f59;
+}
+.toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
+.searchbox{
+  flex:1;
+  min-width:220px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:10px 12px;
+  background:#fff;
+}
+.searchbox:focus,.example-select:focus,.lang-button:focus-visible,.ghost-button:focus-visible,.button-link:focus-visible,.pill:focus-visible{
+  outline:3px solid rgba(15,118,110,.18);
+  outline-offset:2px;
+  border-color:#8fd5c8;
+}
+.command-card{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  margin-top:14px;
+  overflow:hidden;
+}
+.command-head{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:18px;
+  border-bottom:1px solid var(--line-soft);
+  background:#fbfdfc;
+}
+.command-title{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.command-title h3{margin:0;font-size:20px}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:26px;
+  border-radius:8px;
+  padding:3px 8px;
+  font-size:12px;
+  font-weight:850;
+  background:#e6f4ff;
+  color:#0b5b8a;
+}
+.badge.core{background:#e8f1ff;color:#1d4f91}
+.badge.workflow{background:#eaf7f0;color:#166534}
+.badge.author{background:var(--amber-soft);color:#8a4b10}
+.badge.utility{background:#edf3f1;color:#3b4a48}
+.command-desc{margin:8px 0 0;color:#475569}
+.mini-actions{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;justify-content:flex-end}
+.ghost-button{
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--ink);
+  padding:7px 10px;
+  cursor:pointer;
+  font-weight:750;
+  font-size:13px;
+}
+.ghost-button:hover{border-color:#8fd5c8;color:#0f5f59}
+.command-body{padding:18px}
+table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  margin:12px 0 18px;
+  font-size:14px;
+}
+th,td{
+  border:0;
+  border-bottom:1px solid var(--line-soft);
+  padding:11px 14px;
+  text-align:left;
+  vertical-align:top;
+  white-space:nowrap;
+}
+th{
+  background:var(--table-head);
+  color:#253735;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+tbody tr{background:var(--table-row)}
+tbody tr:nth-child(even){background:var(--table-row-alt)}
+tbody tr:hover{background:#eef8f5}
+td{
+  color:#3b4a48;
+  line-height:1.5;
+}
+td:first-child{
+  color:#17212b;
+  font-weight:760;
+}
+.table-scroll{
+  overflow:auto;
+  margin:12px 0 20px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  box-shadow:0 6px 18px rgba(23,33,43,.035);
+}
+.table-scroll::-webkit-scrollbar{height:10px}
+.table-scroll::-webkit-scrollbar-track{background:#f4f8f6;border-radius:999px}
+.table-scroll::-webkit-scrollbar-thumb{background:#bfd8d1;border-radius:999px;border:2px solid #f4f8f6}
+.table-scroll::-webkit-scrollbar-thumb:hover{background:#94c8bc}
+.table-scroll table{
+  margin:0;
+  min-width:max-content;
+  table-layout:auto;
+}
+.table-scroll th:first-child{border-top-left-radius:8px}
+.table-scroll th:last-child{border-top-right-radius:8px}
+.table-scroll tr:last-child td{border-bottom:0}
+.compact-table td,.compact-table th{padding:10px 12px;font-size:13px}
+.compact-table td:first-child,.compact-table th:first-child{min-width:210px}
+.compact-table td:nth-child(2),.compact-table th:nth-child(2){min-width:150px}
+.compact-table td:nth-child(3),.compact-table th:nth-child(3){min-width:160px}
+.compact-table td:nth-child(4),.compact-table th:nth-child(4){min-width:300px}
+.compact-table td:last-child,.compact-table th:last-child{min-width:280px}
+.tag-list{display:flex;gap:6px;flex-wrap:wrap}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  border-radius:8px;
+  background:var(--amber-soft);
+  color:#8a4b10;
+  padding:2px 7px;
+  font-size:12px;
+  font-weight:800;
+}
+td code,li code,p code{
+  display:inline-block;
+  background:#eef6f3;
+  color:#0f5f59;
+  border:1px solid #d5ebe4;
+  border-radius:6px;
+  padding:1px 6px;
+  font-size:.92em;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+td:first-child code{
+  background:#fff;
+  color:#17212b;
+  border-color:#dfe9e5;
+  font-weight:760;
+}
+pre{
+  position:relative;
+  overflow:auto;
+  margin:12px 0 18px;
+  border-radius:8px;
+  background:var(--code);
+  color:#e5e7eb;
+  padding:16px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+pre code{
+  display:block;
+  min-width:0;
+  white-space:pre;
+  font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  font-size:13px;
+  line-height:1.55;
+}
+.copy-code{
+  position:absolute;
+  top:8px;
+  right:8px;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:8px;
+  background:rgba(255,255,255,.10);
+  color:#fff;
+  padding:5px 8px;
+  cursor:pointer;
+  font-size:12px;
+  font-weight:800;
+}
+.right-panel{padding:16px}
+.right-panel h2{margin:0 0 10px;font-size:17px}
+.field{display:grid;gap:6px;margin:12px 0}
+.field span{font-size:13px;font-weight:800;color:#475569}
+.field input{
+  min-height:38px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 10px;
+}
+.example-select{
+  width:100%;
+  min-height:38px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:8px 10px;
+  background:#fbfdfc;
+}
+.mode-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.mode{border:1px solid var(--line-soft);border-radius:8px;padding:13px;background:#fbfdfc}
+.mode b{display:block;margin-bottom:4px}
+.mode p{margin:0;color:#475569;font-size:14px}
+.info-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin:16px 0 18px;
+}
+.info-card{
+  border:1px solid var(--line-soft);
+  border-radius:8px;
+  padding:14px;
+  background:#fbfdfc;
+}
+.info-card h3{margin:0 0 8px;font-size:16px}
+.info-card p{margin:0;color:#475569;font-size:14px}
+.info-card ul{margin:10px 0 0;padding-left:19px;color:#475569;font-size:14px}
+.info-card li{margin:5px 0}
+.link-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:14px 0 18px;
+}
+.link-card{
+  display:block;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:13px;
+  background:#fbfdfc;
+  color:var(--ink);
+}
+.link-card:hover{
+  text-decoration:none;
+  border-color:#8fd5c8;
+  box-shadow:0 8px 20px rgba(15,118,110,.08);
+}
+.link-card b{display:block;margin-bottom:3px}
+.link-card span{display:block;color:var(--muted);font-size:13px}
+.meta-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin:14px 0 16px;
+}
+.meta-box{
+  border:1px solid #e6edf5;
+  border-radius:8px;
+  padding:12px;
+  background:#fbfdff;
+}
+.meta-label{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.meta-box p{margin:0;color:#475569;font-size:14px}
+.small-note{font-size:13px;color:var(--muted);margin-top:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+[hidden]{display:none!important}
+@media (max-width:1180px){
+  .hero-inner{grid-template-columns:1fr}
+  .shell{grid-template-columns:220px minmax(0,1fr)}
+  .right-panel{position:static;grid-column:1 / -1;max-height:none}
+}
+@media (max-width:820px){
+  .topbar{padding:10px 16px;align-items:flex-start}
+  .hero-inner,.shell{padding-left:16px;padding-right:16px}
+  .shell{grid-template-columns:1fr}
+  .side{position:static;max-height:none}
+  h1{font-size:34px}
+  .feature-grid,.mode-grid,.info-grid,.meta-grid,.link-grid{grid-template-columns:1fr}
+  .command-head{display:block}
+  .mini-actions{justify-content:flex-start;margin-top:12px}
+}
+</style>
 </head>
 <body>
-<p>Opening <a href="SCINET_API_DOC.html">SciNet API Documentation</a>...</p>
+<nav class="topbar">
+  <a class="brand" href="#overview" aria-label="SciNet API and CLI Documentation">
+    <span class="brand-mark">S</span>
+    <span>SciNet Docs</span>
+  </a>
+  <div class="top-actions">
+    <a class="pill" href="http://scinet.openkg.cn" data-i18n="homeLink">Home</a>
+    <a class="pill primary" href="http://scinet.openkg.cn/register" data-i18n="getToken">Get API Token</a>
+    <a class="pill" href="http://scinet.openkg.cn/healthz" data-i18n="healthLink">Health Check</a>
+    <button class="lang-button" type="button" data-set-lang="en">EN</button>
+    <button class="lang-button" type="button" data-set-lang="zh">中文</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div>
+      <p class="eyebrow" data-i18n="eyebrow">Hosted API + CLI Manual</p>
+      <h1 data-i18n="heroTitle">SciNet API & CLI Documentation</h1>
+      <p class="hero-copy" data-i18n="heroCopy">Use this page when you want to run SciNet from the terminal: install the CLI, configure your token, choose a command, understand every parameter, and copy a ready-to-run example.</p>
+      <div class="hero-links">
+        <a class="button-link primary" href="#quickstart" data-i18n="startLink">Start with CLI</a>
+        <a class="button-link" href="#api-config" data-i18n="apiConfigLink">API Setup</a>
+        <a class="button-link" href="#commands" data-i18n="commandsLink">Browse Commands</a>
+        <a class="button-link" href="#parameters" data-i18n="paramsLink">Parameter Guide</a>
+      </div>
+    </div>
+    <aside class="quick-panel">
+      <h2 data-i18n="quickTitle">CLI at a glance</h2>
+      <ul class="quick-list">
+        <li><b>scinet health</b><span data-i18n="quickHealth">Check whether the hosted service is reachable.</span></li>
+        <li><b><code>SCINET_API_KEY</code></b><span data-i18n="quickApiKey">Configure once, then reuse in every command.</span></li>
+        <li><b>scinet &lt;command&gt; -h</b><span data-i18n="quickHelp">Show the exact options for one command.</span></li>
+        <li><b>scinet search-papers</b><span data-i18n="quickSearch">Retrieve papers with expert anchors or natural language.</span></li>
+        <li><b>scinet literature-review</b><span data-i18n="quickWorkflow">Generate downstream reports from KG evidence.</span></li>
+        <li><b>scinet skill run</b><span data-i18n="quickSkill">Reuse editable workflow presets.</span></li>
+      </ul>
+    </aside>
+  </div>
+</header>
+
+<div class="shell">
+  <aside class="side panel" aria-label="Documentation navigation">
+    <strong class="side-title" data-i18n="tocTitle">Contents</strong>
+    <a href="#overview"><span data-i18n="navOverview">Overview</span></a>
+    <a href="#api-config"><span data-i18n="navApiConfig">API Setup</span></a>
+    <a href="#workflow"><span data-i18n="navWorkflow">Workflow</span></a>
+    <a href="#quickstart"><span data-i18n="navQuickstart">Quick Start</span></a>
+    <a href="#input-styles"><span data-i18n="navInput">Input Styles</span></a>
+    <a href="#parameters"><span data-i18n="navParameters">Parameters</span></a>
+    <a href="#commands"><span data-i18n="navCommands">Commands</span></a>
+    <a href="#recipes"><span data-i18n="navRecipes">Examples</span></a>
+    <div class="command-toc" id="commandToc"></div>
+  </aside>
+
+  <main>
+    <section class="section" id="overview">
+      <h2 data-i18n="overviewTitle">Overview</h2>
+      <p class="section-lead" data-i18n="overviewP1">SciNet is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciNet knowledge-graph backend, and saves reproducible artifacts under a run directory.</p>
+      <p data-i18n="overviewP2">Most users do not need to write JSON by hand. Start with expert parameters for stable results, or use natural-language input for fast exploration.</p>
+      <div class="feature-grid">
+        <div class="feature"><b data-i18n="featurePlanTitle">Structured but friendly</b><p data-i18n="featurePlanText">Use flags such as --query, --keyword, --time-range, and --top-k instead of hand-writing API payloads.</p></div>
+        <div class="feature"><b data-i18n="featureReportsTitle">Report-ready outputs</b><p data-i18n="featureReportsText">Every workflow can save request, response, metadata, and Markdown reports for review or reproduction.</p></div>
+        <div class="feature"><b data-i18n="featureSafeTitle">Optional LLM help</b><p data-i18n="featureSafeText">If you configure your own LLM provider, SciNet can improve keyword extraction. If not, it keeps running with deterministic extraction.</p></div>
+      </div>
+    </section>
+
+    <section class="section" id="api-config">
+      <h2 data-i18n="apiConfigTitle">API Configuration</h2>
+      <p class="section-lead" data-i18n="apiConfigIntro">The CLI is the recommended entry point, but it still calls the hosted SciNet API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.</p>
+      <h3 data-i18n="directLinksTitle">Direct Links</h3>
+      <div class="link-grid" id="directLinks"></div>
+
+      <h3 data-i18n="apiBaseTitle">Base URL and Runtime Variables</h3>
+      <div class="table-scroll"><table class="compact-table" id="apiConfigTable"></table></div>
+
+      <h3 data-i18n="authHeadersTitle">Authentication Headers</h3>
+      <p data-i18n="authHeadersText">Most hosted endpoints require a valid SciNet token. The CLI sends both headers for compatibility.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>Authorization: Bearer YOUR_SCINET_TOKEN
+X-API-Key: YOUR_SCINET_TOKEN</code></pre>
+
+      <h3 data-i18n="browserTokenTitle">Browser Registration</h3>
+      <p data-i18n="browserTokenText">Open the registration page, complete email verification, and copy the returned scinet_xxx token. The token is shown only once, so store it securely.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>http://scinet.openkg.cn/register</code></pre>
+
+      <h3 data-i18n="tokenCheckTitle">Token Status and Usage</h3>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>curl -H "Authorization: Bearer $SCINET_API_KEY" \
+  http://scinet.openkg.cn/v1/auth/token/status
+
+curl -H "Authorization: Bearer $SCINET_API_KEY" \
+  "http://scinet.openkg.cn/v1/auth/usage?days=7"</code></pre>
+
+      <h3 data-i18n="publicEndpointsTitle">Useful API Routes</h3>
+      <div class="table-scroll"><table class="compact-table" id="apiRoutesTable"></table></div>
+
+      <h3 data-i18n="errorLimitsTitle">Errors and Limits</h3>
+      <p data-i18n="errorLimitsIntro">Errors use regular HTTP status codes plus a short error type in the response body. Each personal token has a daily quota; heavier retrieval routes may consume more units than status checks.</p>
+      <div class="table-scroll"><table class="compact-table" id="apiErrorsTable"></table></div>
+    </section>
+
+    <section class="section" id="workflow">
+      <h2 data-i18n="workflowTitle">How the CLI Works</h2>
+      <p data-i18n="workflowIntro">A SciNet command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.</p>
+      <div class="callout" data-i18n="workflowCallout">Mental model: use expert parameters when the topic matters, use natural language when you are still exploring, and use command-specific help when you are unsure about one command.</div>
+    </section>
+
+    <section class="section" id="quickstart">
+      <h2 data-i18n="quickstartTitle">Quick Start</h2>
+      <h3 data-i18n="installTitle">1. Install</h3>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>python -m venv .venv
+source .venv/bin/activate
+pip install -U pip
+pip install -e ./scinet</code></pre>
+      <h3 data-i18n="tokenTitle">2. Configure your token</h3>
+      <p data-i18n="tokenText">Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciNet backend.</p>
+      <p><a class="inline-link" href="http://scinet.openkg.cn/register" data-i18n="tokenRegisterLink">Open token registration</a></p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>export SCINET_API_BASE_URL="http://scinet.openkg.cn"
+export SCINET_API_KEY="your-personal-scinet-token"</code></pre>
+      <h3 data-i18n="checkTitle">3. Check the setup</h3>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet health
+scinet config
+scinet search-papers -h</code></pre>
+      <h3 data-i18n="firstRunTitle">4. Run a first retrieval</h3>
+      <p data-i18n="firstRunText">Start with a small result set. Once the topic and anchors look right, increase --top-k or adjust ranking preferences.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet search-papers \
+  --query "open world agent" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2024 \
+  --keyword "high:open world agent" \
+  --top-k 3 \
+  --top-keywords 0 \
+  --max-titles 0 \
+  --max-refs 0</code></pre>
+      <p data-i18n="artifactText">After the command finishes, check the new folder under runs/. It keeps the request, response, metadata, and report so the result can be shared or reproduced.</p>
+      <div class="callout" data-i18n="quickCallout">Windows PowerShell users can use setx or $env:SCINET_API_KEY="..." for the current session.</div>
+    </section>
+
+    <section class="section" id="input-styles">
+      <h2 data-i18n="inputTitle">Input Styles</h2>
+      <div class="mode-grid">
+        <div class="mode">
+          <b data-i18n="expertTitle">Recommended: expert parameters</b>
+          <p data-i18n="expertText">Best for formal use. You state the topic, domain, time range, keywords, title anchors, and ranking preference explicitly.</p>
+        </div>
+        <div class="mode">
+          <b data-i18n="naturalTitle">Compatible: natural language</b>
+          <p data-i18n="naturalText">Best for quick exploration. Put your intent in --text; SciNet extracts a plan and can also read structured hints inside the text.</p>
+        </div>
+      </div>
+      <h3 data-i18n="anchorTitle">Anchor Levels</h3>
+      <p data-i18n="anchorIntro">Anchors tell SciNet which signals should pull the graph closer to your real intent. Use high for must-match ideas, middle for helpful context, and low for weak hints.</p>
+      <div class="table-scroll"><table class="compact-table" id="anchorGuide"></table></div>
+      <h3 data-i18n="expertExampleTitle">Expert example</h3>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet --timeout 900 search-papers \
+  --retrieval-mode hybrid \
+  --query "open world agent" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2024 \
+  --keyword "high:open world agent" \
+  --keyword "middle:embodied agent" \
+  --title "middle:Voyager: An Open-Ended Embodied Agent with Large Language Models" \
+  --reference "low:JARVIS-1: Open-World Multi-task Agents with Memory-Augmented Multimodal Language Models" \
+  --top-k 5 \
+  --top-keywords 0 \
+  --max-titles 0 \
+  --max-refs 0 \
+  --bias-keyword high \
+  --bias-related high \
+  --bias-exploration low \
+  --ranking-profile precision \
+  --report-max-items 5</code></pre>
+      <h3 data-i18n="naturalExampleTitle">Natural-language example</h3>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet --timeout 900 search-papers \
+  --retrieval-mode hybrid \
+  --text "Find papers about open world agent in artificial intelligence after 2020. Return 3 papers.
+
+Keywords[high]: open world agent" \
+  --top-k 3 \
+  --top-keywords 1 \
+  --max-titles 0 \
+  --max-refs 0</code></pre>
+    </section>
+
+    <section class="section" id="parameters">
+      <h2 data-i18n="paramsTitle">Parameter Guide</h2>
+      <p data-i18n="paramsIntro">These parameter groups are reused by most SciNet commands. Command-specific parameters are listed in the command cards below.</p>
+
+      <h3 data-i18n="globalParamsTitle">Global options</h3>
+      <div class="table-scroll"><table class="compact-table" id="globalParams"></table></div>
+
+      <h3 data-i18n="inputParamsTitle">Input options</h3>
+      <div class="table-scroll"><table class="compact-table" id="inputParams"></table></div>
+
+      <h3 data-i18n="planParamsTitle">Plan and anchor options</h3>
+      <div class="table-scroll"><table class="compact-table" id="planParams"></table></div>
+
+      <h3 data-i18n="retrievalParamsTitle">Retrieval options</h3>
+      <div class="table-scroll"><table class="compact-table" id="retrievalParams"></table></div>
+      <h3 data-i18n="rankingTitle">Retrieval and Ranking Choices</h3>
+      <div class="info-grid" id="rankingGuide"></div>
+
+      <h3 data-i18n="outputParamsTitle">Output options</h3>
+      <div class="table-scroll"><table class="compact-table" id="outputParams"></table></div>
+    </section>
+
+    <section class="section" id="commands">
+      <h2 data-i18n="commandsTitle">Command Reference</h2>
+      <p data-i18n="commandsIntro">Use the search box to find a workflow or parameter. Each card includes what the command does, the parameter groups it accepts, command-specific options, and a working example.</p>
+      <h3 data-i18n="commandMapTitle">Command Map</h3>
+      <p data-i18n="commandMapIntro">Use this table when you know the task but are not sure which command to start from.</p>
+      <div class="table-scroll"><table class="compact-table" id="commandMatrix"></table></div>
+      <div class="toolbar">
+        <label class="sr-only" for="commandSearch">Search commands</label>
+        <input class="searchbox" id="commandSearch" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="Search commands or parameters">
+      </div>
+      <div id="commandDocs"></div>
+    </section>
+
+    <section class="section" id="recipes">
+      <h2 data-i18n="recipesTitle">Common Examples</h2>
+      <div id="recipeDocs"></div>
+    </section>
+
+  </main>
+
+  <aside class="right-panel panel">
+    <h2 data-i18n="copyTitle">Copy a starter command</h2>
+    <label class="field">
+      <span data-i18n="exampleLabel">Example</span>
+      <select class="example-select" id="exampleSelect"></select>
+    </label>
+    <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code id="starterCommand"></code></pre>
+    <p class="small-note" data-i18n="rightNote">Replace the topic, domain, author, token, and time range with your own values.</p>
+  </aside>
+</div>
+
+<script>
+const I18N = {
+  en: {
+    homeLink:"Home", getToken:"Get API Token", healthLink:"Health Check", eyebrow:"Hosted API + CLI Manual",
+    heroTitle:"SciNet API & CLI Documentation",
+    heroCopy:"A compact guide for configuring SciNet API access and running the CLI: get a token, choose a workflow, understand the parameters, and copy a working command.",
+    startLink:"Start with CLI", apiConfigLink:"API Setup", commandsLink:"Browse Commands", paramsLink:"Parameter Guide",
+    quickTitle:"Start here", quickHealth:"Check whether the hosted service is reachable.", quickApiKey:"Configure once, then reuse in every command.", quickHelp:"Show the exact options for one command.", quickSearch:"Retrieve papers with expert anchors or natural language.", quickWorkflow:"Generate downstream reports from KG evidence.", quickSkill:"Reuse editable workflow presets.",
+    tocTitle:"Contents", navOverview:"Overview", navApiConfig:"API Setup", navWorkflow:"Workflow", navQuickstart:"Quick Start", navInput:"Input Styles", navParameters:"Parameters", navCommands:"Commands", navRecipes:"Examples",
+    overviewTitle:"Overview", overviewP1:"SciNet is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciNet knowledge-graph backend, and saves reproducible artifacts under a run directory.",
+    overviewP2:"Most users do not need to write JSON by hand. Start with expert parameters for stable results, or use natural-language input for fast exploration.",
+    featurePlanTitle:"Structured but friendly", featurePlanText:"Use flags such as --query, --keyword, --time-range, and --top-k instead of hand-writing API payloads.",
+    featureReportsTitle:"Report-ready outputs", featureReportsText:"Every workflow can save request, response, metadata, and Markdown reports for review or reproduction.",
+    featureSafeTitle:"Optional LLM help", featureSafeText:"If you configure your own LLM provider, SciNet can improve keyword extraction. If not, it keeps running with deterministic extraction.",
+    apiConfigTitle:"API Configuration", apiConfigIntro:"The CLI is the recommended entry point, but it still calls the hosted SciNet API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.",
+    directLinksTitle:"Direct Links",
+    apiBaseTitle:"Base URL and Runtime Variables", authHeadersTitle:"Authentication Headers", authHeadersText:"Most hosted endpoints require a valid SciNet token. The CLI sends both headers for compatibility.",
+    browserTokenTitle:"Browser Registration", browserTokenText:"Open the registration page, complete email verification, and copy the returned scinet_xxx token. The token is shown only once, so store it securely.",
+    tokenCheckTitle:"Token Status and Usage", publicEndpointsTitle:"Useful API Routes", errorLimitsTitle:"Errors and Limits", errorLimitsIntro:"Errors use regular HTTP status codes plus a short error type in the response body. Each personal token has a daily quota; heavier retrieval routes may consume more units than status checks.",
+    workflowTitle:"How the CLI Works", workflowIntro:"A SciNet command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.",
+    workflowCallout:"Mental model: use expert parameters when the topic matters, use natural language when you are still exploring, and use command-specific help when you are unsure about one command.",
+    quickstartTitle:"Quick Start", installTitle:"1. Install", tokenTitle:"2. Configure your token", tokenText:"Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciNet backend.", tokenRegisterLink:"Open token registration",
+    checkTitle:"3. Check the setup", firstRunTitle:"4. Run a first retrieval", firstRunText:"Start with a small result set. Once the topic and anchors look right, increase --top-k or adjust ranking preferences.",
+    artifactText:"After the command finishes, check the new folder under runs/. It keeps the request, response, metadata, and report so the result can be shared or reproduced.",
+    quickCallout:"Windows PowerShell users can use setx or $env:SCINET_API_KEY=\"...\" for the current session.",
+    inputTitle:"Input Styles", expertTitle:"Recommended: expert parameters", expertText:"Best for formal use. You state the topic, domain, time range, keywords, title anchors, and ranking preference explicitly.",
+    naturalTitle:"Compatible: natural language", naturalText:"Best for quick exploration. Put your intent in --text; SciNet extracts a plan and can also read structured hints inside the text.",
+    anchorTitle:"Anchor Levels", anchorIntro:"Anchors tell SciNet which signals should pull the graph closer to your real intent. Use high for must-match ideas, middle for helpful context, and low for weak hints.",
+    expertExampleTitle:"Expert example", naturalExampleTitle:"Natural-language example",
+    paramsTitle:"Parameter Guide", paramsIntro:"These parameter groups are reused by most SciNet commands. Command-specific parameters are listed in the command cards below.",
+    globalParamsTitle:"Global options", inputParamsTitle:"Input options", planParamsTitle:"Plan and anchor options", retrievalParamsTitle:"Retrieval options", rankingTitle:"Retrieval and Ranking Choices", outputParamsTitle:"Output options",
+    commandsTitle:"Command Reference", commandsIntro:"Use the search box to find a workflow or parameter. Each card includes what the command does, the parameter groups it accepts, command-specific options, and a working example.",
+    commandMapTitle:"Command Map", commandMapIntro:"Use this table when you know the task but are not sure which command to start from.",
+    searchPlaceholder:"Search commands or parameters", recipesTitle:"Common Examples",
+    apiCommand:"CLI command",
+    copyTitle:"Copy a starter command", exampleLabel:"Example", rightNote:"Replace the topic, domain, author, token, and time range with your own values.",
+    option:"Option", required:"Required", defaultValue:"Default", meaning:"Meaning", accepts:"Accepts", groups:"Parameter groups", specific:"Command-specific options", example:"Example",
+    variable:"Variable", whereUsed:"Where used", route:"Route", auth:"Auth", notes:"Notes", status:"Status", errorType:"Error type", task:"Task", mainInput:"Main input", keyParams:"Key parameters", output:"Output",
+    whenToUse:"When to use", outputYouGet:"Output you get", practicalTip:"Practical tip", noSpecific:"No command-specific options; use the shared parameter groups above.", recipeHowToUse:"How to use it", copy:"Copy", copied:"Copied"
+  },
+  zh: {
+    homeLink:"首页", getToken:"获取 API Token", healthLink:"健康检查", eyebrow:"托管 API + CLI 使用手册",
+    heroTitle:"SciNet API 与 CLI 使用文档",
+    heroCopy:"一份紧凑的 SciNet 使用指南：配置 API 访问、获取 Token、选择 CLI 工作流、理解参数，并复制可运行命令。",
+    startLink:"从 CLI 开始", apiConfigLink:"API 配置", commandsLink:"查看命令", paramsLink:"参数说明",
+    quickTitle:"从这里开始", quickHealth:"检查托管服务是否可访问。", quickApiKey:"配置一次，所有命令都能复用。", quickHelp:"查看某个命令的精确参数。", quickSearch:"用专家锚点或自然语言检索论文。", quickWorkflow:"基于知识图谱证据生成下游报告。", quickSkill:"复用可编辑的工作流预设。",
+    tocTitle:"目录", navOverview:"概览", navApiConfig:"API 配置", navWorkflow:"运行流程", navQuickstart:"快速开始", navInput:"输入方式", navParameters:"参数说明", navCommands:"命令参考", navRecipes:"使用样例",
+    overviewTitle:"概览", overviewP1:"SciNet 以命令行为优先使用方式。CLI 会把你的主题、研究想法、作者、关键词锚点、论文标题锚点和检索偏好整理成结构化请求，调用托管的 SciNet 知识图谱后端，并把可复现的运行文件保存到本地目录。",
+    overviewP2:"大多数用户不需要手写 JSON。正式使用推荐专家参数输入；快速探索时可以用自然语言输入。",
+    featurePlanTitle:"结构化但不生硬", featurePlanText:"用 --query、--keyword、--time-range、--top-k 等参数表达需求，不必手写 API 请求体。",
+    featureReportsTitle:"直接生成报告材料", featureReportsText:"每个工作流都可以保存 request、response、metadata 和 Markdown 报告，便于复查和复现。",
+    featureSafeTitle:"LLM 可选增强", featureSafeText:"如果配置自己的 LLM 服务，SciNet 可优化关键词抽取；不配置时会继续使用确定性抽取逻辑。",
+    apiConfigTitle:"API 配置说明", apiConfigIntro:"CLI 是推荐入口，但它背后仍然调用托管 SciNet API。先配置基础地址和个人 Token，之后所有 CLI 命令和客户端代码都可以复用。",
+    directLinksTitle:"直接跳转",
+    apiBaseTitle:"基础地址与运行时变量", authHeadersTitle:"认证请求头", authHeadersText:"多数托管端点需要有效 SciNet Token。CLI 会同时发送两个请求头，以兼容不同调用方式。",
+    browserTokenTitle:"浏览器注册", browserTokenText:"打开注册页，完成邮箱验证，并复制返回的 scinet_xxx Token。Token 只显示一次，请妥善保存。",
+    tokenCheckTitle:"Token 状态与用量", publicEndpointsTitle:"常用 API 路径", errorLimitsTitle:"错误与限额", errorLimitsIntro:"错误使用常规 HTTP 状态码，并在响应体中返回简短错误类型。每个个人 Token 都有每日配额，较重的检索路径可能比状态检查消耗更多额度。",
+    workflowTitle:"CLI 是怎么工作的", workflowIntro:"一条 SciNet 命令通常由四部分组成：全局连接参数、一个任务命令、输入或锚点参数、输出控制。CLI 会先生成检索计划，再调用对应后端路线，最后把结果文件写到本地，方便复查。",
+    workflowCallout:"使用思路：主题很明确时用专家参数；还在探索时用自然语言；只拿不准某个命令时，用 scinet <command> -h 看该命令的专属帮助。",
+    quickstartTitle:"快速开始", installTitle:"1. 安装", tokenTitle:"2. 配置 Token", tokenText:"先注册个人 Token，再暴露给 CLI。CLI 调用托管 SciNet 后端时，会自动把 Token 放入 Authorization 和 X-API-Key 请求头。", tokenRegisterLink:"打开 Token 注册网站",
+    checkTitle:"3. 检查配置", firstRunTitle:"4. 跑一次最小检索", firstRunText:"第一次建议先返回少量结果。确认主题和锚点方向正确后，再增加 --top-k 或调整排序偏好。",
+    artifactText:"命令完成后，查看 runs/ 下新生成的目录。里面会保存 request、response、metadata 和 report，便于分享、排查和复现。",
+    quickCallout:"Windows PowerShell 用户可使用 setx，或在当前会话中使用 $env:SCINET_API_KEY=\"...\"。",
+    inputTitle:"输入方式", expertTitle:"推荐：专家参数输入", expertText:"适合正式使用。主题、领域、时间范围、关键词、标题锚点和排序偏好都写得更清楚，结果也更稳定。",
+    naturalTitle:"兼容：自然语言输入", naturalText:"适合快速试跑。把意图写入 --text，SciNet 会抽取检索计划，也能读取文本里的结构化提示。",
+    anchorTitle:"锚点强度怎么填", anchorIntro:"锚点告诉 SciNet 哪些信号应当更贴近你的真实意图。high 用于必须命中的核心概念，middle 用于有帮助的上下文，low 用于较弱线索。",
+    expertExampleTitle:"专家参数示例", naturalExampleTitle:"自然语言示例",
+    paramsTitle:"参数说明", paramsIntro:"这些参数组会被多个 SciNet 命令复用。命令自己的专属参数会在下方命令卡片中单独列出。",
+    globalParamsTitle:"全局参数", inputParamsTitle:"输入参数", planParamsTitle:"计划与锚点参数", retrievalParamsTitle:"检索参数", rankingTitle:"检索与排序怎么选", outputParamsTitle:"输出参数",
+    commandsTitle:"命令参考", commandsIntro:"可以用搜索框查找工作流或参数。每张卡片都包含功能说明、可用参数组、专属参数和可运行示例。",
+    commandMapTitle:"命令选择表", commandMapIntro:"已经知道任务，但不确定从哪个命令开始时，先看这张表。",
+    searchPlaceholder:"搜索命令或参数", recipesTitle:"常用样例",
+    apiCommand:"CLI 命令",
+    copyTitle:"复制起步命令", exampleLabel:"示例", rightNote:"把主题、领域、作者、Token 和时间范围替换成你自己的值即可。",
+    option:"参数", required:"是否必填", defaultValue:"默认值", meaning:"含义", accepts:"可用值", groups:"参数组", specific:"专属参数", example:"示例",
+    variable:"变量", whereUsed:"使用位置", route:"路径", auth:"认证", notes:"说明", status:"状态", errorType:"错误类型", task:"任务", mainInput:"主输入", keyParams:"关键参数", output:"输出",
+    whenToUse:"什么时候用", outputYouGet:"会得到什么", practicalTip:"实用提示", noSpecific:"无专属参数；使用上方通用参数组即可。", recipeHowToUse:"怎么使用这个样例", copy:"复制", copied:"已复制"
+  }
+};
+
+const apiSetupGuide = [
+  {
+    title:{en:"Hosted service",zh:"托管服务"},
+    body:{en:"Default base URL is `http://scinet.openkg.cn`. Use `SCINET_API_BASE_URL` or the global `--base-url` flag only when you need a different deployment.",
+      zh:"默认基础地址是 `http://scinet.openkg.cn`。只有切换部署时，才需要设置 `SCINET_API_BASE_URL` 或全局 `--base-url`。"}
+  },
+  {
+    title:{en:"Personal token",zh:"个人 Token"},
+    body:{en:"Register in the browser and store the returned `scinet_xxx` token in `SCINET_API_KEY`. Avoid pasting long-lived tokens directly into shared commands.",
+      zh:"在浏览器完成注册，把返回的 `scinet_xxx` Token 保存到 `SCINET_API_KEY`。不建议把长期 Token 直接写进可分享命令。"}
+  },
+  {
+    title:{en:"CLI and raw API share the same auth",zh:"CLI 与原始 API 共用认证"},
+    body:{en:"The CLI sends `Authorization: Bearer` and `X-API-Key` for you. Direct REST callers should send the same token headers.",
+      zh:"CLI 会自动发送 `Authorization: Bearer` 和 `X-API-Key`。如果直接调用 REST API，也使用同一组认证头。"}
+  },
+  {
+    title:{en:"Quota awareness",zh:"注意配额"},
+    body:{en:"Status routes are lightweight. Graph retrieval routes are heavier and may consume more daily quota units.",
+      zh:"状态检查是轻量请求。知识图谱检索更重，可能消耗更多每日配额。"}
+  }
+];
+
+const directLinks = [
+  {
+    href:"http://scinet.openkg.cn/register",
+    title:{en:"Get API Token",zh:"获取 API Token"},
+    desc:{en:"Open browser registration and create a personal token.",zh:"打开浏览器注册页，创建个人 Token。"}
+  },
+  {
+    href:"http://scinet.openkg.cn/healthz",
+    title:{en:"Health Check",zh:"健康检查"},
+    desc:{en:"Check whether the hosted service is online.",zh:"检查托管服务是否在线。"}
+  },
+  {
+    href:"http://scinet.openkg.cn",
+    title:{en:"API Base URL",zh:"API 基础地址"},
+    desc:{en:"Default backend used by the CLI.",zh:"CLI 默认调用的后端地址。"}
+  }
+];
+
+const apiConfigRows = [
+  ["SCINET_API_BASE_URL", "CLI and Python client", "Hosted SciNet API base URL. Default: http://scinet.openkg.cn", "CLI 与 Python 客户端", "托管 SciNet API 基础地址。默认：http://scinet.openkg.cn"],
+  ["SCINET_API_KEY", "CLI and Python client", "Personal SciNet token. Sent as Authorization and X-API-Key.", "CLI 与 Python 客户端", "个人 SciNet Token，会作为 Authorization 和 X-API-Key 发送。"],
+  ["--base-url", "CLI global option", "Temporary override for one command.", "CLI 全局参数", "只对当前命令临时覆盖后端地址。"],
+  ["--api-key", "CLI global option", "Temporary token override. Prefer SCINET_API_KEY for daily use.", "CLI 全局参数", "只对当前命令临时覆盖 Token。日常更推荐 SCINET_API_KEY。"],
+  ["SCINET_RUNS_DIR", "CLI output", "Optional default directory for run artifacts.", "CLI 输出目录", "可选。设置默认运行结果保存目录。"]
+];
+
+const apiRouteRows = [
+  ["GET /healthz", "No", "Health check. Useful before debugging token or retrieval issues.", "无需", "健康检查。排查 Token 或检索问题前可先访问。"],
+  ["/register", "No", "Browser registration page for creating personal tokens.", "无需", "浏览器注册页，用于创建个人 Token。"],
+  ["GET /v1/auth/token/status", "Token", "Check whether the current token is valid.", "需要 Token", "检查当前 Token 是否有效。"],
+  ["GET /v1/auth/usage?days=7", "Token", "Check recent token usage.", "需要 Token", "查询近期 Token 用量。"],
+  ["POST /v1/search", "Token", "Main graph retrieval route behind search-papers and downstream workflows.", "需要 Token", "search-papers 和下游工作流背后的主图谱检索路径。"]
+];
+
+const apiErrorRows = [
+  ["400", "Invalid payload or verification code.", "请求体或验证码无效。"],
+  ["401", "Missing or invalid token.", "Token 缺失或无效。"],
+  ["403", "Disabled or expired token.", "Token 被禁用或过期。"],
+  ["429", "Daily quota exhausted.", "每日配额已用尽。"],
+  ["500", "Backend or email service error.", "后端或邮件服务错误。"]
+];
+
+const workflowGuide = [
+  {
+    title:{en:"1. Choose a command",zh:"1. 先选命令"},
+    body:{en:"Start from the task, not from the API route. Use search-papers for papers, related-authors for authors, and downstream workflows when you want a report-oriented result.",
+      zh:"先从任务出发，而不是从接口出发。查论文用 search-papers，找作者用 related-authors，需要报告型结果时用下游工作流。"},
+    bullets:[
+      {en:"Use `scinet <command> -h` to see only that command's options.",zh:"用 `scinet <command> -h` 只查看该命令的参数。"},
+      {en:"Use `scinet config` before a long run to confirm token and base URL.",zh:"长任务前先跑 `scinet config`，确认 Token 和后端地址。"}
+    ]
+  },
+  {
+    title:{en:"2. Provide intent",zh:"2. 填写检索意图"},
+    body:{en:"Expert mode is usually the most stable: --query gives the main topic, --domain narrows the academic area, and --keyword/--title/--reference provide anchors.",
+      zh:"专家参数通常更稳定：--query 写主问题，--domain 写学科领域，--keyword/--title/--reference 写可控锚点。"},
+    bullets:[
+      {en:"Keep --query short and clear.",zh:"--query 尽量短而清楚。"},
+      {en:"Put long instructions into --text only when exploring.",zh:"长段需求适合放进 --text，用于探索阶段。"}
+    ]
+  },
+  {
+    title:{en:"3. Control retrieval",zh:"3. 控制检索范围"},
+    body:{en:"Use --time-range, --top-k, --retrieval-mode, --bias-* and --ranking-profile to decide how broad, strict, or discovery-oriented the graph traversal should be.",
+      zh:"用 --time-range、--top-k、--retrieval-mode、--bias-* 和 --ranking-profile 控制图检索是更严格、更宽泛，还是更偏发现。"},
+    bullets:[
+      {en:"For formal searches, start with `--ranking-profile precision`.",zh:"正式检索可先用 `--ranking-profile precision`。"},
+      {en:"For topic exploration, try `--ranking-profile discovery` and higher exploration.",zh:"探索新方向可尝试 `--ranking-profile discovery` 和更高探索度。"}
+    ]
+  },
+  {
+    title:{en:"4. Review saved artifacts",zh:"4. 查看保存结果"},
+    body:{en:"Each run can save request.json, response.json, metadata.json and report.md. These files are useful for debugging, sharing, and regenerating reports.",
+      zh:"每次运行会保存 request.json、response.json、metadata.json 和 report.md。这些文件适合排查、分享，也能用于重新生成报告。"},
+    bullets:[
+      {en:"Use --run-id when you want a stable folder name.",zh:"需要固定目录名时使用 --run-id。"},
+      {en:"Use make-report if you want to rebuild report.md later.",zh:"之后想重建 report.md，可用 make-report。"}
+    ]
+  }
+];
+
+const inputGuide = [
+  {
+    title:{en:"Use expert parameters for reproducible searches",zh:"需要稳定复现时，用专家参数"},
+    body:{en:"This is the recommended mode for project demos, formal retrieval, and paper-writing support. The important choices are visible in the command line, so teammates can review and rerun them.",
+      zh:"这是项目演示、正式检索和论文写作辅助的推荐方式。关键选择都写在命令里，团队成员可以直接复查和复跑。"}
+  },
+  {
+    title:{en:"Use natural language for fast exploration",zh:"快速摸索时，用自然语言"},
+    body:{en:"Natural language is convenient when the user has not decided exact keywords yet. If an LLM provider is configured, keyword extraction may be better; otherwise SciNet falls back to deterministic local extraction.",
+      zh:"当用户还没确定关键词时，自然语言更方便。如果配置了 LLM 服务，关键词抽取会更好；没有配置时，SciNet 会自动退回本地确定性抽取。"}
+  },
+  {
+    title:{en:"Prefer --domain before --target-field",zh:"优先用 --domain，而不是一上来锁死字段"},
+    body:{en:"--domain is a soft hint and usually safer. --target-field is stricter and should be used only when you know the backend field taxonomy you want.",
+      zh:"--domain 是软提示，通常更稳妥。--target-field 更严格，适合你已经明确知道后端领域字段时使用。"}
+  },
+  {
+    title:{en:"Set auto-extraction counts to 0 when anchors are explicit",zh:"手动锚点明确时，把自动抽取数量设为 0"},
+    body:{en:"If you already pass strong --keyword, --title, or --reference anchors, set --top-keywords 0, --max-titles 0, and --max-refs 0 to keep the plan focused.",
+      zh:"如果已经手动提供了强关键词、标题或参考文献锚点，可把 --top-keywords 0、--max-titles 0、--max-refs 0 打开，让 plan 更聚焦。"}
+  }
+];
+
+const anchorRows = [
+  ["high", "Core concept that must strongly affect retrieval.", "必须强影响检索的核心概念。", "--keyword \"high:open world agent\""],
+  ["middle", "Helpful context or secondary concept.", "有帮助的上下文或二级概念。", "--keyword \"middle:embodied agent\""],
+  ["low", "Weak hint, background term, or known reference that should not dominate.", "较弱线索、背景词，或不希望主导结果的已知参考。", "--reference \"low:JARVIS-1: Open-World Multi-task Agents...\""]
+];
+
+const paramPlaybook = [
+  {
+    title:{en:"Connection options",zh:"连接参数"},
+    body:{en:"--base-url and --api-key decide which SciNet backend you call. In normal use, configure SCINET_API_BASE_URL and SCINET_API_KEY once, then omit these flags from daily commands.",
+      zh:"--base-url 和 --api-key 决定调用哪个 SciNet 后端。日常使用建议先配置 SCINET_API_BASE_URL 和 SCINET_API_KEY，之后命令里不用每次都写。"}
+  },
+  {
+    title:{en:"Input options",zh:"输入参数"},
+    body:{en:"Exactly one main input is needed: --query for expert mode, --text for natural language, or --text-file for longer prompts saved as UTF-8 text.",
+      zh:"主输入三选一即可：专家模式用 --query，自然语言用 --text，较长需求可保存成 UTF-8 文本后用 --text-file。"}
+  },
+  {
+    title:{en:"Plan options",zh:"计划参数"},
+    body:{en:"Plan options shape the search request before it reaches the backend. They are the best place to express known keywords, representative papers, references, and source type.",
+      zh:"计划参数会在调用后端前塑造检索请求，最适合表达已知关键词、代表论文、参考文献和来源类型。"}
+  },
+  {
+    title:{en:"Output options",zh:"输出参数"},
+    body:{en:"--report-max-items controls how many results appear in the Markdown report. --run-id is useful when you want predictable folder names for tutorials or demos.",
+      zh:"--report-max-items 控制 Markdown 报告展示多少条结果。教程或演示中想固定目录名时，可以设置 --run-id。"}
+  }
+];
+
+const rankingGuide = [
+  {
+    title:{en:"retrieval-mode",zh:"retrieval-mode 怎么选"},
+    body:{en:"hybrid is the normal default. keyword is literal and precise, semantic is broader, title works best when title anchors are strong.",
+      zh:"hybrid 是常规默认值。keyword 更字面、更精确；semantic 更宽；title 适合标题锚点很强的场景。"}
+  },
+  {
+    title:{en:"ranking-profile",zh:"ranking-profile 怎么选"},
+    body:{en:"precision favors close matches, balanced is neutral, discovery is broader, and impact favors influential evidence such as citation-heavy papers.",
+      zh:"precision 偏精确匹配，balanced 偏均衡，discovery 偏探索，impact 偏影响力证据，例如高引用论文。"}
+  },
+  {
+    title:{en:"bias-* controls",zh:"bias-* 控制什么"},
+    body:{en:"Bias flags adjust graph relationship strengths. Raise only the signal you care about: citations for impact, related/cooccurrence for broader discovery, keyword for term-focused retrieval.",
+      zh:"bias 参数调整图关系强度。只提高你真正关心的信号：重影响力看 citation，重探索看 related/cooccurrence，重关键词匹配看 keyword。"}
+  },
+  {
+    title:{en:"top-k and time range",zh:"top-k 与时间范围"},
+    body:{en:"Use a small --top-k for testing, then increase it for reports. Use --time-range to avoid mixing historical classics with current work when recency matters.",
+      zh:"测试时先用较小 --top-k，生成报告时再增加。关注近期工作时，用 --time-range 避免经典老论文和最新论文混在一起。"}
+  }
+];
+
+const paramGroups = {
+  global: [
+    ["--base-url", "no", "SCINET_API_BASE_URL or http://scinet.openkg.cn", "Hosted SciNet backend URL.", "托管 SciNet 后端地址。"],
+    ["--api-key", "yes for hosted calls", "SCINET_API_KEY", "Personal SciNet token. Prefer environment variables over typing it into shell history.", "个人 SciNet Token。推荐用环境变量，不建议长期写在命令历史里。"],
+    ["--timeout", "no", "600", "HTTP timeout in seconds. Use 900 or higher for heavier graph retrieval.", "HTTP 超时时间，单位秒。复杂图检索可设为 900 或更高。"],
+    ["--runs-dir", "no", "./runs", "Directory for saved plans, responses, metadata, and reports.", "保存 plan、响应、元数据和报告的目录。"]
+  ],
+  input: [
+    ["--query", "one input required", "none", "Expert-mode primary query. It takes precedence over --text and --text-file.", "专家模式主查询内容，优先级高于 --text 和 --text-file。"],
+    ["--domain", "no", "none", "Soft domain hint appended to the query, such as artificial intelligence or medicine.", "软性领域提示，会加入查询文本，例如 artificial intelligence 或 medicine。"],
+    ["--text", "one input required", "none", "Natural-language input. Good for quick exploration.", "自然语言输入，适合快速探索。"],
+    ["--text-file", "one input required", "none", "Read natural-language input from a UTF-8 text file.", "从 UTF-8 文本文件读取自然语言输入。"]
+  ],
+  plan: [
+    ["--source-type", "no", "idea_text", "Input source type.", "输入来源类型。", "idea_text, pdf"],
+    ["--source-title", "no", "none", "Source title. Useful when the source is a known paper.", "来源标题。输入来自已知论文时有帮助。"],
+    ["--top-keywords", "no", "8", "Number of automatically extracted keywords. Set 0 when you provide expert --keyword anchors.", "自动抽取关键词数量。已经手动提供 --keyword 时可设为 0。"],
+    ["--max-titles", "no", "5", "Maximum number of automatically extracted title hints.", "自动抽取论文标题线索的最大数量。"],
+    ["--max-refs", "no", "10", "Maximum number of reference-title hints.", "自动抽取参考文献标题线索的最大数量。"],
+    ["--keyword", "repeatable", "none", "Keyword anchor. Format: high:open world agent, middle:embodied agent, or low:benchmark.", "关键词锚点，可重复。格式如 high:open world agent。", "low, middle, high"],
+    ["--title", "repeatable", "none", "Known paper-title anchor. Use when you already know representative papers.", "已知论文标题锚点。适合已有代表论文时使用。", "low, middle, high"],
+    ["--reference, --ref", "repeatable", "none", "Reference-title anchor used to guide related-paper retrieval.", "参考文献标题锚点，用来引导相关论文检索。", "low, middle, high"]
+  ],
+  retrieval: [
+    ["--top-k", "no", "inferred", "Number of returned papers or authors.", "返回论文或作者数量。"],
+    ["--target-field", "no", "none", "Strict backend field filter. Usually start with --domain first.", "严格的后端领域过滤。通常建议先使用 --domain。"],
+    ["--after, --start-date", "no", "none", "Start date in YYYY-MM-DD format.", "开始日期，格式 YYYY-MM-DD。"],
+    ["--before, --end-date", "no", "none", "End date in YYYY-MM-DD format.", "结束日期，格式 YYYY-MM-DD。"],
+    ["--time-range", "no", "none", "Convenient time expression such as 2020-2024, 2020-01-01..2024-12-31, or since 2020.", "便捷时间范围，例如 2020-2024、2020-01-01..2024-12-31 或 since 2020。"],
+    ["--retrieval-mode", "no", "hybrid", "Choose the retrieval path.", "选择检索模式。", "keyword, semantic, title, hybrid"],
+    ["--bias-keyword", "no", "command default", "Strength of keyword associations in the graph.", "关键词路径强度。", "low, middle, high"],
+    ["--bias-non-seed-keyword", "no", "command default", "Strength of non-seed keyword expansion.", "非种子关键词扩展强度。", "low, middle, high"],
+    ["--bias-citation", "no", "command default", "Strength of citation relations.", "引用关系强度。", "low, middle, high"],
+    ["--bias-related", "no", "command default", "Strength of paper RELATED_TO relations.", "论文相关关系强度。", "low, middle, high"],
+    ["--bias-authorship", "no", "command default", "Strength of author-paper authorship relations.", "作者-论文关系强度。", "low, middle, high"],
+    ["--bias-coauthorship", "no", "command default", "Strength of coauthor network expansion.", "合作者网络扩展强度。", "low, middle, high"],
+    ["--bias-cooccurrence", "no", "command default", "Strength of keyword co-occurrence expansion.", "关键词共现扩展强度。", "low, middle, high"],
+    ["--bias-exploration", "no", "command default", "Graph exploration level. Low stays close to anchors; high is broader.", "图探索程度。low 更贴近锚点，high 更发散。", "low, middle, high"],
+    ["--ranking-profile", "no", "command default", "Final ranking preference.", "最终排序偏好。", "precision, balanced, discovery, impact"]
+  ],
+  output: [
+    ["--run-id", "no", "auto", "Custom run ID used in saved artifact paths.", "自定义运行 ID，会用于保存文件路径。"],
+    ["--report-max-items", "no", "10", "Maximum number of papers or authors shown in the Markdown report.", "Markdown 报告中最多展示的论文或作者数量。"]
+  ]
+};
+
+const commands = [
+  {id:"health", group:"utility", badge:{en:"utility",zh:"工具"}, name:"health", desc:{en:"Check whether the hosted SciNet backend is reachable.", zh:"检查托管 SciNet 后端是否可访问。"}, groups:["global"], specific:[], example:"scinet health"},
+  {id:"config", group:"utility", badge:{en:"utility",zh:"工具"}, name:"config", desc:{en:"Show base URL, token status, optional provider status, runs directory, and available commands.", zh:"查看后端地址、Token 是否已配置、可选服务状态、运行目录和可用命令。"}, groups:["global"], specific:[], example:"scinet config"},
+  {id:"build-plan", group:"core", badge:{en:"plan",zh:"计划"}, name:"build-plan", desc:{en:"Build a structured search plan locally without calling the retrieval backend.", zh:"在本地生成结构化检索计划，不调用检索后端。"}, groups:["global","input","plan","output"], specific:[], example:`scinet build-plan \\
+  --query "open world agent" \\
+  --domain "artificial intelligence" \\
+  --keyword "high:open world agent" \\
+  --top-keywords 0 \\
+  --max-titles 0`},
+  {id:"search-papers", group:"core", badge:{en:"core",zh:"核心"}, name:"search-papers", desc:{en:"Search related papers with keyword, semantic, title, reference, and graph signals.", zh:"结合关键词、语义、标题、参考文献和图关系检索相关论文。"}, groups:["global","input","plan","retrieval","output"], specific:[], example:`scinet --timeout 900 search-papers \\
+  --retrieval-mode hybrid \\
+  --query "open world agent" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2024 \\
+  --keyword "high:open world agent" \\
+  --top-keywords 0 \\
+  --max-titles 0 \\
+  --max-refs 0 \\
+  --top-k 5`},
+  {id:"literature-review", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"literature-review", desc:{en:"Collect papers and evidence for a first-pass literature review report.", zh:"为文献综述收集论文清单和证据材料。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","balanced retrieval, low exploration, report_max_items=8","默认 balanced 检索、低探索、报告最多 8 项"]], example:`scinet literature-review \\
+  --query "retrieval augmented generation" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2025 \\
+  --keyword "high:retrieval augmented generation" \\
+  --top-k 10`},
+  {id:"idea-grounding", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-grounding", desc:{en:"Retrieve related and supporting papers for grounding a research idea.", zh:"为研究想法检索相关和支撑论文。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`scinet idea-grounding \\
+  --idea "LLM-based multi-perspective evaluation for scientific research ideas" \\
+  --domain "artificial intelligence" \\
+  --keyword "high:idea evaluation" \\
+  --keyword "middle:LLM as a judge" \\
+  --top-k 5`},
+  {id:"idea-evaluate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-evaluate", desc:{en:"Collect KG evidence for evaluating novelty, feasibility, and related-work support.", zh:"为 idea 的新颖性、可行性和文献支撑收集知识图谱证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`scinet idea-evaluate \\
+  --idea "LLM-based multi-perspective evaluation for scientific research ideas" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2025 \\
+  --keyword "high:idea evaluation" \\
+  --keyword "middle:LLM as a judge" \\
+  --top-k 10`},
+  {id:"idea-generate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-generate", desc:{en:"Use broader graph discovery settings to find idea seeds and cross-topic opportunities.", zh:"用更发散的图探索设置寻找 idea 种子和跨主题机会。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","discovery ranking, high related/cooccurrence/exploration bias","默认 discovery 排序，并提高相关、共现和探索偏好"]], example:`scinet idea-generate \\
+  --query "knowledge editing for large language models" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2025 \\
+  --keyword "high:knowledge editing" \\
+  --keyword "middle:large language models" \\
+  --top-k 10`},
+  {id:"trend-report", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"trend-report", desc:{en:"Collect timeline and citation-aware evidence for topic trend analysis.", zh:"为主题趋势分析收集时间线和引用影响证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","impact ranking, high citation bias, medium exploration","默认 impact 排序、高引用偏好、中等探索"]], example:`scinet trend-report \\
+  --query "retrieval augmented generation" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2025 \\
+  --keyword "high:retrieval augmented generation" \\
+  --keyword "middle:knowledge graph" \\
+  --top-k 10`},
+  {id:"related-authors", group:"author", badge:{en:"author",zh:"作者"}, name:"related-authors", desc:{en:"Find authors related to a research direction or structured plan.", zh:"根据研究方向或结构化 plan 检索相关作者。"}, groups:["global","input","plan","retrieval","output"], specific:[], example:`scinet related-authors \\
+  --query "retrieval augmented generation" \\
+  --domain "artificial intelligence" \\
+  --keyword "high:retrieval augmented generation" \\
+  --top-k 10`},
+  {id:"author-papers", group:"author", badge:{en:"author",zh:"作者"}, name:"author-papers", desc:{en:"Look up publications by researcher name or OpenAlex Author ID.", zh:"根据研究者姓名或 OpenAlex Author ID 查询论文。"}, groups:["global","input","output"], specific:[
+    ["--limit","Maximum returned papers. If omitted, inferred from text or defaults to 20.","返回论文数量；不写时从文本推断或默认 20。"],
+    ["--no-merge-same-name-authors","Do not merge same-name authors.","不合并同名作者。"],
+    ["--no-dedupe-papers","Do not deduplicate papers.","不对论文去重。"],
+    ["--no-abstract","Do not return abstracts.","不返回摘要。"],
+    ["--include-embeddings","Return embeddings if supported by backend.","后端支持时返回 embedding。"]
+  ], example:`scinet author-papers \\
+  --query "papers by Yoshua Bengio" \\
+  --limit 10 \\
+  --no-abstract`},
+  {id:"support-papers", group:"author", badge:{en:"author",zh:"作者"}, name:"support-papers", desc:{en:"Find topic-relevant support papers for candidate authors mentioned in the input.", zh:"为输入中提到的候选作者检索与主题相关的支撑论文。"}, groups:["global","input","output"], specific:[
+    ["--top-k-per-author","Support papers returned for each author.","每位作者返回的支撑论文数量。"],
+    ["--no-author-stats","Do not fetch author statistics.","不获取作者统计信息。"],
+    ["--author-search-fallback","Author lookup fallback strategy.","作者检索失败时的回退策略。", "id_then_name, name_then_id, none"]
+  ], example:`scinet support-papers \\
+  --text "Candidate authors: Yoshua Bengio, Geoffrey Hinton. Query topic: deep learning representation learning" \\
+  --top-k-per-author 3`},
+  {id:"researcher-review", group:"author", badge:{en:"author",zh:"作者"}, name:"researcher-review", desc:{en:"Review a researcher's background using author lookup plus KG retrieval from seed papers.", zh:"结合作者论文查询和知识图谱检索，快速整理研究者背景。"}, groups:["global","input","output"], specific:[
+    ["--author","Researcher name or OpenAlex Author ID. Preferred over free-form --query.","研究者姓名或 OpenAlex Author ID，优先于自由文本 --query。"],
+    ["--limit","Number of papers used in the review, capped internally.","用于画像的论文数量，内部会限制上限。"],
+    ["--no-merge-same-name-authors","Do not merge same-name authors.","不合并同名作者。"],
+    ["--no-dedupe-papers","Do not deduplicate papers.","不对论文去重。"],
+    ["--no-abstract","Do not return abstracts in the seed lookup.","种子查询阶段不返回摘要。"]
+  ], example:`scinet researcher-review \\
+  --author "Yoshua Bengio" \\
+  --limit 10 \\
+  --report-max-items 10`},
+  {id:"paper-search", group:"utility", badge:{en:"utility",zh:"工具"}, name:"paper-search", desc:{en:"Low-level paper search for quick testing or debugging.", zh:"轻量级底层论文搜索，适合快速测试或排查。"}, groups:["global","input","output"], specific:[
+    ["--mode","Low-level search mode.","底层搜索模式。"],
+    ["--field","Low-level search field, often title.","底层搜索字段，常用 title。"],
+    ["--top-k","Number of returned papers.","返回论文数量。"]
+  ], example:`scinet paper-search \\
+  --query "retrieval augmented generation" \\
+  --mode vector \\
+  --field title \\
+  --top-k 5`},
+  {id:"make-report", group:"utility", badge:{en:"utility",zh:"工具"}, name:"make-report", desc:{en:"Regenerate a Markdown report from saved request.json and response.json.", zh:"根据已保存的 request.json 和 response.json 重新生成 Markdown 报告。"}, groups:["global","output"], specific:[
+    ["--request-json","Path to saved request.json.","已保存 request.json 路径。"],
+    ["--response-json","Path to saved response.json.","已保存 response.json 路径。"],
+    ["--command-name","Command name displayed in the report.","报告中展示的命令名称。"]
+  ], example:`scinet make-report \\
+  --request-json runs/search_papers/request.json \\
+  --response-json runs/search_papers/response.json \\
+  --command-name search-papers`},
+  {id:"skill", group:"utility", badge:{en:"preset",zh:"预设"}, name:"skill", desc:{en:"Manage editable downstream presets and run them as shortcuts.", zh:"管理可编辑的下游任务预设，并把它们作为快捷命令运行。"}, groups:["skill"], specific:[
+    ["list","List built-in and user-defined skills.","列出内置和用户自定义 skill。"],
+    ["show <name> [--json]","Show a skill definition.","查看某个 skill 的定义。"],
+    ["run <name> [extra args...]","Run a skill and forward extra arguments to its underlying command.","运行某个 skill，并把额外参数转交给底层命令。"],
+    ["init <name> [--from SOURCE] [--output PATH]","Create an editable skill JSON file.","创建可编辑的 skill JSON 文件。"],
+    ["where","Show skill directories.","显示 skill 搜索目录。"]
+  ], example:`scinet skill list
+scinet skill show literature-review
+scinet skill run literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3
+scinet skill init my-review --from literature-review`}
+];
+
+const commandDetails = {
+  "health": {
+    when:{en:"Use this before debugging anything else. It tells you whether the hosted service is reachable from your machine.",zh:"排查问题时先用它。它能确认你的机器是否能访问托管服务。"},
+    output:{en:"A small health response with HTTP status and backend reachability.",zh:"返回健康检查结果、HTTP 状态和后端可访问性。"},
+    tip:{en:"If this fails, check network access, base URL, and whether the service is online before changing retrieval parameters.",zh:"如果失败，先检查网络、后端地址和服务状态，不要急着改检索参数。"}
+  },
+  "config": {
+    when:{en:"Use this after setting environment variables or switching between hosted and local backends.",zh:"配置环境变量后，或在托管后端和本地后端之间切换时使用。"},
+    output:{en:"Base URL, token status, optional LLM/OpenAlex status, runs directory, and command list.",zh:"展示后端地址、Token 状态、可选 LLM/OpenAlex 状态、运行目录和命令列表。"},
+    tip:{en:"It masks secrets, so it is safe to use for checking whether a token exists.",zh:"它会隐藏密钥内容，适合用来确认 Token 是否已配置。"}
+  },
+  "build-plan": {
+    when:{en:"Use this when you want to inspect the structured retrieval plan before making a backend search.",zh:"想先检查结构化检索计划、暂时不调用后端检索时使用。"},
+    output:{en:"A local plan file showing query text, keywords, title anchors, references, and options.",zh:"生成本地 plan 文件，展示查询文本、关键词、标题锚点、参考文献锚点和选项。"},
+    tip:{en:"If search results look off-topic, run build-plan first and check whether the extracted keywords match your intent.",zh:"如果检索结果跑偏，先用 build-plan 看关键词和锚点是否符合你的意图。"}
+  },
+  "search-papers": {
+    when:{en:"Use this as the main paper retrieval command. It is the best starting point for most users.",zh:"这是主论文检索命令，也是大多数用户最适合的起点。"},
+    output:{en:"Related papers plus saved request/response files and a Markdown report.",zh:"返回相关论文，并保存 request、response 和 Markdown 报告。"},
+    tip:{en:"For precision, provide high-quality --keyword anchors and set auto-extraction counts to 0.",zh:"想要更精确，就提供高质量 --keyword 锚点，并把自动抽取数量设为 0。"}
+  },
+  "literature-review": {
+    when:{en:"Use this when you need material for a first-pass literature review rather than only a ranked paper list.",zh:"需要文献综述材料，而不只是论文排序列表时使用。"},
+    output:{en:"A review-oriented report with paper pool, representative works, timeline cues, and writing suggestions.",zh:"生成面向综述的报告，包括论文池、代表工作、时间线线索和写作建议。"},
+    tip:{en:"Start with one or two high anchors; too many weak anchors can make the review scattered.",zh:"先给一两个强锚点即可；弱锚点太多会让综述材料发散。"}
+  },
+  "idea-grounding": {
+    when:{en:"Use this when you have a research idea and want related work, motivation, and differentiation evidence.",zh:"已有研究想法，需要相关工作、动机和差异化证据时使用。"},
+    output:{en:"Evidence that helps connect the idea to existing literature.",zh:"生成帮助你把 idea 对齐到已有文献的证据。"},
+    tip:{en:"Write the idea in one sentence, then add 1-3 high or middle keywords.",zh:"把 idea 写成一句话，再补 1 到 3 个 high 或 middle 关键词。"}
+  },
+  "idea-evaluate": {
+    when:{en:"Use this to collect evidence for novelty, feasibility, soundness, and related-work support.",zh:"用于收集新颖性、可行性、合理性和相关工作支撑证据。"},
+    output:{en:"A report organized around evaluation evidence rather than open-ended discovery.",zh:"输出围绕评估证据组织的报告，而不是开放式发散结果。"},
+    tip:{en:"This command collects KG evidence; it is not an LLM judge.",zh:"该命令收集知识图谱证据，并不是 LLM 自动评审器。"}
+  },
+  "idea-generate": {
+    when:{en:"Use this when you want broader idea seeds or cross-topic opportunities.",zh:"想寻找更发散的 idea 种子或跨主题机会时使用。"},
+    output:{en:"Discovery-oriented papers and signals that may inspire new combinations.",zh:"返回偏发现的论文和信号，帮助启发新的组合。"},
+    tip:{en:"If results become too broad, lower --bias-exploration or switch to --ranking-profile precision.",zh:"如果结果太散，降低 --bias-exploration，或切换到 --ranking-profile precision。"}
+  },
+  "trend-report": {
+    when:{en:"Use this when you care about topic evolution, influential papers, and time-aware evidence.",zh:"关注主题演化、高影响论文和时间线证据时使用。"},
+    output:{en:"A trend-oriented report emphasizing years, citations, and influential works.",zh:"生成趋势分析报告，强调年份、引用和高影响工作。"},
+    tip:{en:"Always set --time-range for trend analysis so the timeline is meaningful.",zh:"趋势分析建议始终设置 --time-range，这样时间线才有意义。"}
+  },
+  "related-authors": {
+    when:{en:"Use this to find researchers connected to a topic before choosing collaborators, reviewers, or candidate experts.",zh:"在选择合作对象、评审专家或候选学者前，用它查找与主题相关的研究者。"},
+    output:{en:"A ranked author list with topic-related evidence when available.",zh:"返回作者排序列表，并尽量附带主题相关证据。"},
+    tip:{en:"Use topic anchors just like paper search; author retrieval still benefits from precise keywords.",zh:"和论文检索一样，作者检索也会从精确关键词锚点中受益。"}
+  },
+  "author-papers": {
+    when:{en:"Use this when the task is simply to list a researcher's papers.",zh:"只是想列出某位研究者的论文时使用。"},
+    output:{en:"Papers by the named author, optionally with abstracts and embeddings.",zh:"返回指定作者的论文，可选择是否包含摘要和 embedding。"},
+    tip:{en:"Use --no-abstract for faster, lighter responses.",zh:"想更快更轻量时，加 --no-abstract。"}
+  },
+  "support-papers": {
+    when:{en:"Use this when you already have candidate authors and need topic-relevant support papers for each one.",zh:"已有候选作者，需要为每位作者找主题相关支撑论文时使用。"},
+    output:{en:"Per-author support papers, optionally with author statistics.",zh:"按作者返回支撑论文，并可附带作者统计信息。"},
+    tip:{en:"Put both the topic and candidate authors into --text so the parser has enough context.",zh:"把主题和候选作者都写进 --text，解析会更稳定。"}
+  },
+  "researcher-review": {
+    when:{en:"Use this for a researcher background review. It first gathers seed papers, then runs richer KG retrieval.",zh:"用于研究者背景梳理。它会先收集作者种子论文，再走更完整的知识图谱检索。"},
+    output:{en:"A researcher-oriented report with papers and related KG evidence.",zh:"生成面向研究者画像的报告，包括论文与相关图谱证据。"},
+    tip:{en:"Prefer --author when you know the researcher name or OpenAlex Author ID.",zh:"知道姓名或 OpenAlex Author ID 时，优先用 --author。"}
+  },
+  "paper-search": {
+    when:{en:"Use this for quick low-level testing, not as the main research workflow.",zh:"用于快速底层测试，不建议作为正式研究工作流主入口。"},
+    output:{en:"A lightweight paper-search response from the selected field and mode.",zh:"返回指定字段和模式下的轻量论文搜索结果。"},
+    tip:{en:"Use --field title for title search and --field abstract when you need broader semantic matches.",zh:"标题检索用 --field title，需要更宽语义匹配时用 --field abstract。"}
+  },
+  "make-report": {
+    when:{en:"Use this when request.json and response.json already exist and you only want to rebuild report.md.",zh:"已有 request.json 和 response.json，只想重新生成 report.md 时使用。"},
+    output:{en:"A regenerated Markdown report in the run directory.",zh:"在运行目录中重新生成 Markdown 报告。"},
+    tip:{en:"This does not rerun backend retrieval, so it is useful for formatting or report regeneration.",zh:"它不会重新调用后端检索，适合格式调整或报告重建。"}
+  },
+  "skill": {
+    when:{en:"Use this when repeated workflows should become reusable presets.",zh:"当某类工作流需要反复使用时，把它做成可复用预设。"},
+    output:{en:"Skill lists, skill definitions, generated JSON files, or the expanded command that will run.",zh:"输出 skill 列表、定义、生成的 JSON 文件，或展开后的实际命令。"},
+    tip:{en:"Use `scinet skill run --dry-run <name> ...` to inspect the expanded command before executing it.",zh:"执行前可用 `scinet skill run --dry-run <name> ...` 查看展开后的命令。"}
+  }
+};
+
+const commandMatrixRows = [
+  ["search-papers", "Paper retrieval with KG signals.", "用图谱信号检索论文。", "--query / --text", "--keyword, --title, --reference, --retrieval-mode, --ranking-profile", "Paper list + report.md", "论文列表 + report.md"],
+  ["literature-review", "First-pass literature review material.", "文献综述起步材料。", "--query", "--domain, --time-range, --keyword, --top-k", "Review-oriented report", "综述型报告"],
+  ["idea-grounding", "Ground a research idea in related work.", "把研究想法对齐到相关工作。", "--idea / --query", "--keyword, --bias-related, --ranking-profile precision", "Related-work evidence", "相关工作证据"],
+  ["idea-evaluate", "Collect evidence for idea evaluation.", "为 idea 评估收集证据。", "--idea / --query", "--keyword, --bias-citation, --top-k", "Evaluation evidence report", "评估证据报告"],
+  ["idea-generate", "Explore broader idea seeds.", "探索更发散的 idea 种子。", "--query / --text", "--ranking-profile discovery, --bias-exploration high", "Discovery-oriented results", "发现型结果"],
+  ["trend-report", "Analyze topic evolution and influence.", "分析主题演化与影响力。", "--query", "--time-range, --ranking-profile impact, --bias-citation high", "Trend report", "趋势报告"],
+  ["related-authors", "Find researchers related to a topic.", "查找与主题相关的研究者。", "--query / --text", "--keyword, --top-k", "Ranked author list", "作者排序列表"],
+  ["author-papers", "List papers by an author.", "列出某位作者的论文。", "--text / --query", "--limit, --no-abstract", "Author paper list", "作者论文列表"],
+  ["support-papers", "Find topic support papers for candidate authors.", "为候选作者找主题支撑论文。", "--text", "--top-k-per-author, --author-search-fallback", "Per-author support papers", "按作者组织的支撑论文"],
+  ["researcher-review", "Create a researcher background review.", "生成研究者背景梳理。", "--author / --query", "--limit, --report-max-items", "Researcher-oriented report", "研究者画像报告"],
+  ["paper-search", "Low-level quick paper search.", "底层快速论文搜索。", "--query / --text", "--mode, --field, --top-k", "Lightweight paper results", "轻量论文结果"],
+  ["build-plan", "Inspect the plan before retrieval.", "检索前检查 plan。", "--query / --text", "--top-keywords, --keyword, --title", "Local plan artifact", "本地 plan 文件"],
+  ["make-report", "Rebuild a report from saved JSON.", "从已保存 JSON 重建报告。", "--request-json + --response-json", "--command-name, --report-max-items", "Regenerated report.md", "重新生成 report.md"],
+  ["skill", "Manage reusable workflow presets.", "管理可复用工作流预设。", "skill action", "list, show, run, init, where", "Expanded preset or skill JSON", "展开后的预设或 skill JSON"]
+];
+
+const recipes = [
+  {id:"precision", title:{en:"High-precision paper search",zh:"高精度论文检索"}, body:`scinet --timeout 900 search-papers \\
+  --query "open world agent" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2024 \\
+  --keyword "high:open world agent" \\
+  --title "middle:Voyager: An Open-Ended Embodied Agent with Large Language Models" \\
+  --top-keywords 0 \\
+  --max-titles 0 \\
+  --max-refs 0 \\
+  --bias-keyword high \\
+  --bias-related high \\
+  --bias-exploration low \\
+  --ranking-profile precision \\
+  --top-k 5`},
+  {id:"review", title:{en:"Literature review starter",zh:"文献综述起步"}, body:`scinet literature-review \\
+  --query "retrieval augmented generation" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2025 \\
+  --keyword "high:retrieval augmented generation" \\
+  --top-k 10 \\
+  --report-max-items 8`},
+  {id:"author", title:{en:"Researcher background review",zh:"研究者背景整理"}, body:`scinet researcher-review \\
+  --author "Yoshua Bengio" \\
+  --limit 10 \\
+  --report-max-items 10`},
+  {id:"natural", title:{en:"Natural-language quick run",zh:"自然语言快速试跑"}, body:`scinet search-papers \\
+  --text "Find three papers about open world agent in artificial intelligence after 2020. Keywords[high]: open world agent" \\
+  --top-k 3 \\
+  --top-keywords 1 \\
+  --max-titles 0 \\
+  --max-refs 0`},
+  {id:"trend", title:{en:"Trend-oriented topic analysis",zh:"主题趋势分析"}, body:`scinet trend-report \\
+  --query "retrieval augmented generation" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2025 \\
+  --keyword "high:retrieval augmented generation" \\
+  --keyword "middle:knowledge graph" \\
+  --top-k 10 \\
+  --report-max-items 10`},
+  {id:"relatedAuthors", title:{en:"Find related researchers",zh:"查找相关研究者"}, body:`scinet related-authors \\
+  --query "open world agent" \\
+  --domain "artificial intelligence" \\
+  --keyword "high:open world agent" \\
+  --top-k 10`},
+  {id:"support", title:{en:"Support papers for candidate authors",zh:"候选作者支撑论文"}, body:`scinet support-papers \\
+  --text "Query topic: open world agents and embodied AI. Candidate authors: Yoshua Bengio, Pieter Abbeel." \\
+  --top-k-per-author 3 \\
+  --no-author-stats`},
+  {id:"skillDryRun", title:{en:"Check a reusable preset before running",zh:"运行前检查可复用预设"}, body:`scinet skill list
+scinet skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3`}
+];
+
+const recipeNotes = {
+  precision:{
+    en:"Use this when you already know the core topic and want a tight, reviewable paper list. Replace the title anchor with a representative paper from your field.",
+    zh:"适合主题已经明确、希望得到紧凑论文清单的场景。把标题锚点替换成你所在领域的代表论文。"
+  },
+  review:{
+    en:"Use this as a literature-review starting point. Increase --report-max-items when you want a longer reading list.",
+    zh:"适合作为文献综述起点。想要更长阅读清单时，提高 --report-max-items。"
+  },
+  author:{
+    en:"Use this to create a quick researcher profile. Replace the author name or use an OpenAlex Author ID if available.",
+    zh:"适合快速整理研究者背景。替换作者姓名；如果有 OpenAlex Author ID，也可以直接使用。"
+  },
+  natural:{
+    en:"Use this for quick trials. Once the first run looks promising, convert important phrases into explicit --keyword anchors.",
+    zh:"适合快速试跑。初步结果可用后，再把重要短语改成明确的 --keyword 锚点。"
+  },
+  trend:{
+    en:"Use this when the question is about development over time. Keep the time range explicit.",
+    zh:"适合关注研究随时间演化的场景。时间范围建议明确写出。"
+  },
+  relatedAuthors:{
+    en:"Use this before building an expert list, reviewer list, or collaborator shortlist.",
+    zh:"适合在整理专家、评审人或潜在合作对象名单前使用。"
+  },
+  support:{
+    en:"Use this when you already have candidate authors and need papers that connect them to the query topic.",
+    zh:"适合已有候选作者，需要找出他们与主题相关的支撑论文时使用。"
+  },
+  skillDryRun:{
+    en:"Use --dry-run to inspect the expanded command. Remove --dry-run when the command looks right.",
+    zh:"先用 --dry-run 查看展开后的实际命令。确认无误后去掉 --dry-run 再运行。"
+  }
+};
+
+let lang = new URLSearchParams(location.search).get("lang") || "en";
+if (!I18N[lang]) lang = "en";
+const $ = (selector, root=document) => root.querySelector(selector);
+const $$ = (selector, root=document) => Array.from(root.querySelectorAll(selector));
+const t = (key) => I18N[lang][key] || I18N.en[key] || key;
+const textFor = (value) => typeof value === "object" ? value[lang] || value.en : value;
+const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[char]));
+const formatInline = (value) => escapeHtml(value).replace(/`([^`]+)`/g, "<code>$1</code>");
+
+function renderInfoCards(target, items){
+  $(target).innerHTML = items.map((item) => `
+    <article class="info-card">
+      <h3>${escapeHtml(textFor(item.title))}</h3>
+      <p>${formatInline(textFor(item.body))}</p>
+      ${item.bullets ? `<ul>${item.bullets.map((bullet) => `<li>${formatInline(textFor(bullet))}</li>`).join("")}</ul>` : ""}
+    </article>
+  `).join("");
+}
+
+function renderLinkCards(){
+  $("#directLinks").innerHTML = directLinks.map((item) => `
+    <a class="link-card" href="${escapeHtml(item.href)}">
+      <b>${escapeHtml(textFor(item.title))}</b>
+      <span>${escapeHtml(textFor(item.desc))}</span>
+    </a>
+  `).join("");
+}
+
+function renderAnchorGuide(){
+  $("#anchorGuide").innerHTML = `
+    <thead><tr><th>${escapeHtml(t("option"))}</th><th>${escapeHtml(t("meaning"))}</th><th>${escapeHtml(t("example"))}</th></tr></thead>
+    <tbody>${anchorRows.map((row) => `
+      <tr>
+        <td><code>${escapeHtml(row[0])}</code></td>
+        <td>${escapeHtml(lang === "zh" ? row[2] : row[1])}</td>
+        <td><code>${escapeHtml(row[3])}</code></td>
+      </tr>
+    `).join("")}</tbody>`;
+}
+
+function simpleTable(headers, rows){
+  return `
+    <thead><tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join("")}</tr></thead>
+    <tbody>${rows.map((row) => `
+      <tr>${row.map((cell) => `<td>${formatInline(cell)}</td>`).join("")}</tr>
+    `).join("")}</tbody>`;
+}
+
+function renderApiTables(){
+  $("#apiConfigTable").innerHTML = simpleTable(
+    [t("variable"), t("whereUsed"), t("meaning")],
+    apiConfigRows.map((row) => [row[0], lang === "zh" ? row[3] : row[1], lang === "zh" ? row[4] : row[2]])
+  );
+  $("#apiRoutesTable").innerHTML = simpleTable(
+    [t("route"), t("auth"), t("notes")],
+    apiRouteRows.map((row) => [row[0], lang === "zh" ? row[3] : row[1], lang === "zh" ? row[4] : row[2]])
+  );
+  $("#apiErrorsTable").innerHTML = simpleTable(
+    [t("status"), t("meaning")],
+    apiErrorRows.map((row) => [row[0], lang === "zh" ? row[2] : row[1]])
+  );
+}
+
+function renderCommandMatrix(){
+  $("#commandMatrix").innerHTML = simpleTable(
+    [t("apiCommand"), t("task"), t("mainInput"), t("keyParams"), t("output")],
+    commandMatrixRows.map((row) => [row[0], lang === "zh" ? row[2] : row[1], row[3], row[4], lang === "zh" ? row[6] : row[5]])
+  );
+}
+
+function renderGuides(){
+  renderLinkCards();
+  renderInfoCards("#rankingGuide", rankingGuide);
+  renderAnchorGuide();
+  renderApiTables();
+  renderCommandMatrix();
+}
+
+function tableFor(rows){
+  return `
+    <thead><tr><th>${escapeHtml(t("option"))}</th><th>${escapeHtml(t("required"))}</th><th>${escapeHtml(t("defaultValue"))}</th><th>${escapeHtml(t("meaning"))}</th><th>${escapeHtml(t("accepts"))}</th></tr></thead>
+    <tbody>${rows.map((row) => `
+      <tr>
+        <td><code>${escapeHtml(row[0])}</code></td>
+        <td>${escapeHtml(row[1])}</td>
+        <td>${escapeHtml(row[2])}</td>
+        <td>${escapeHtml(lang === "zh" ? row[4] : row[3])}</td>
+        <td>${row[5] ? `<code>${escapeHtml(row[5])}</code>` : ""}</td>
+      </tr>
+    `).join("")}</tbody>`;
+}
+
+function renderParams(){
+  $("#globalParams").innerHTML = tableFor(paramGroups.global);
+  $("#inputParams").innerHTML = tableFor(paramGroups.input);
+  $("#planParams").innerHTML = tableFor(paramGroups.plan);
+  $("#retrievalParams").innerHTML = tableFor(paramGroups.retrieval);
+  $("#outputParams").innerHTML = tableFor(paramGroups.output);
+}
+
+function groupsList(command){
+  return command.groups.map((group) => `<code>${escapeHtml(group)}</code>`).join(" ");
+}
+
+function specificTable(command){
+  if (!command.specific.length) return `<p>${escapeHtml(t("noSpecific"))}</p>`;
+  return `<div class="table-scroll"><table class="compact-table">
+    <thead><tr><th>${escapeHtml(t("option"))}</th><th>${escapeHtml(t("meaning"))}</th><th>${escapeHtml(t("accepts"))}</th></tr></thead>
+    <tbody>${command.specific.map((row) => `
+      <tr>
+        <td><code>${escapeHtml(row[0])}</code></td>
+        <td>${escapeHtml(lang === "zh" ? row[2] : row[1])}</td>
+        <td>${row[3] ? `<code>${escapeHtml(row[3])}</code>` : ""}</td>
+      </tr>
+    `).join("")}</tbody>
+  </table></div>`;
+}
+
+function codeBlock(content){
+  return `<pre><button class="copy-code" type="button" data-copy-code>${escapeHtml(t("copy"))}</button><code>${escapeHtml(content)}</code></pre>`;
+}
+
+function renderCommandToc(){
+  $("#commandToc").innerHTML = `<strong class="side-title">${escapeHtml(t("navCommands"))}</strong>` + commands.map((cmd) => `
+    <a href="#cmd-${cmd.id}" data-command-link="${cmd.id}">
+      <span>${escapeHtml(cmd.name)}</span>
+    </a>
+  `).join("");
+}
+
+function renderCommands(){
+  $("#commandDocs").innerHTML = commands.map((cmd) => `
+    <article class="command-card" id="cmd-${cmd.id}" data-command-card="${cmd.id}">
+      <div class="command-head">
+        <div>
+          <div class="command-title">
+            <span class="badge ${cmd.group}">${escapeHtml(textFor(cmd.badge))}</span>
+            <h3><code>scinet ${escapeHtml(cmd.name)}</code></h3>
+          </div>
+          <p class="command-desc">${escapeHtml(textFor(cmd.desc))}</p>
+        </div>
+        <div class="mini-actions">
+          <button class="ghost-button" type="button" data-use-example="${cmd.id}">${escapeHtml(t("copy"))}</button>
+        </div>
+      </div>
+      <div class="command-body">
+        <h3>${escapeHtml(t("groups"))}</h3>
+        <p>${groupsList(cmd)}</p>
+        <h3>${escapeHtml(t("specific"))}</h3>
+        ${specificTable(cmd)}
+        <h3>${escapeHtml(t("example"))}</h3>
+        ${codeBlock(cmd.example)}
+      </div>
+    </article>
+  `).join("");
+}
+
+function renderRecipes(){
+  $("#recipeDocs").innerHTML = recipes.map((recipe) => `
+    <article class="command-card" id="recipe-${recipe.id}">
+      <div class="command-body">
+        <h3>${escapeHtml(textFor(recipe.title))}</h3>
+        ${recipeNotes[recipe.id] ? `<p><b>${escapeHtml(t("recipeHowToUse"))}</b>: ${formatInline(textFor(recipeNotes[recipe.id]))}</p>` : ""}
+        ${codeBlock(recipe.body)}
+      </div>
+    </article>
+  `).join("");
+}
+
+function renderExamples(){
+  $("#exampleSelect").innerHTML = recipes.map((recipe) => `<option value="${recipe.id}">${escapeHtml(textFor(recipe.title))}</option>`).join("");
+  $("#starterCommand").textContent = recipes[0].body;
+}
+
+function applyTranslations(){
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.title = t("heroTitle");
+  $$("[data-i18n]").forEach((node) => { node.textContent = t(node.dataset.i18n); });
+  $$("[data-i18n-placeholder]").forEach((node) => { node.placeholder = t(node.dataset.i18nPlaceholder); });
+  $$("[data-set-lang]").forEach((button) => button.classList.toggle("active", button.dataset.setLang === lang));
+}
+
+function filterCommands(query){
+  const needle = query.trim().toLowerCase();
+  commands.forEach((cmd) => {
+    const haystack = [
+      cmd.name,
+      textFor(cmd.desc),
+      cmd.groups.join(" "),
+      cmd.example,
+      JSON.stringify(cmd.specific),
+      JSON.stringify(commandDetails[cmd.id] || {})
+    ].join(" ").toLowerCase();
+    const visible = !needle || haystack.includes(needle);
+    $(`[data-command-card="${cmd.id}"]`)?.toggleAttribute("hidden", !visible);
+    $(`[data-command-link="${cmd.id}"]`)?.toggleAttribute("hidden", !visible);
+  });
+}
+
+async function copyText(text, button){
+  try {
+    await navigator.clipboard.writeText(text);
+    if (button) {
+      const original = button.textContent;
+      button.textContent = t("copied");
+      setTimeout(() => { button.textContent = original; }, 1200);
+    }
+  } catch {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    textarea.remove();
+  }
+}
+
+function bindEvents(){
+  $$("[data-set-lang]").forEach((button) => {
+    button.addEventListener("click", () => {
+      lang = button.dataset.setLang;
+      history.replaceState(null, "", lang === "zh" ? "?lang=zh" : location.pathname);
+      boot();
+    });
+  });
+  $("#commandSearch").addEventListener("input", (event) => filterCommands(event.target.value));
+  $("#exampleSelect").addEventListener("change", (event) => {
+    const recipe = recipes.find((item) => item.id === event.target.value) || recipes[0];
+    $("#starterCommand").textContent = recipe.body;
+  });
+  document.addEventListener("click", (event) => {
+    const copyButton = event.target.closest("[data-copy-code]");
+    if (copyButton) {
+      const code = copyButton.parentElement.querySelector("code")?.textContent || "";
+      copyText(code, copyButton);
+    }
+    const useButton = event.target.closest("[data-use-example]");
+    if (useButton) {
+      const cmd = commands.find((item) => item.id === useButton.dataset.useExample);
+      if (cmd) copyText(cmd.example, useButton);
+    }
+  });
+}
+
+function boot(){
+  applyTranslations();
+  renderGuides();
+  renderParams();
+  renderCommandToc();
+  renderCommands();
+  renderRecipes();
+  renderExamples();
+}
+
+boot();
+bindEvents();
+</script>
 </body>
 </html>

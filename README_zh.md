@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="http://scinet.openkg.cn/api/docs?lang=zh">📚 API 文档站</a>
+  <a href="http://scinet.openkg.cn/api/docs/?lang=zh">📚 SciNet 文档网站</a>
 </p>
 
 <p align="center">
@@ -158,7 +158,7 @@ export SCINET_LLM_MAX_TOKENS=512
 
 不需要 LLM 时可以全部留空。SciNet 会自动使用内置关键词抽取，论文检索、文献综述、idea、趋势分析和研究者画像等流程都能正常运行。
 
-用户需要编辑的配置模板：[.env.example](.env.example#L7-L24)。只有需要 LLM 辅助关键词抽取时，才填写这些变量。
+用户需要编辑的配置模板：[.env.example](.env.example#L7-L19)。只有需要 LLM 辅助关键词抽取时，才填写这些变量。
 
 🖊 可选：OpenAlex 元数据支持
 
@@ -169,7 +169,7 @@ export OPENALEX_MAILTO=""
 
 OpenAlex 主要用于补充元数据或辅助 PDF 相关流程。README 中的常用 CLI 示例不依赖它。即使不填写这些变量，普通 SciNet 检索也可以正常运行。
 
-用户需要编辑的配置模板：[.env.example](.env.example#L29-L31)。只有需要 OpenAlex 辅助元数据支持时才填写。
+用户需要编辑的配置模板：[.env.example](.env.example#L24-L26)。只有需要 OpenAlex 辅助元数据支持时才填写。
 
 🖌 可选：本地 PDF 工作流需要 GROBID
 
@@ -195,7 +195,7 @@ Windows CMD：
 set GROBID_BASE_URL=http://127.0.0.1:8070
 ```
 
-用户需要编辑的配置模板：[.env.example](.env.example#L26-L27)。不处理本地 PDF 时可以留空。
+用户需要编辑的配置模板：[.env.example](.env.example#L21-L22)。不处理本地 PDF 时可以留空。
 
 运行时变量说明：
 
@@ -210,9 +210,6 @@ set GROBID_BASE_URL=http://127.0.0.1:8070
 | `LLM_MODEL` | 可选前端增强 | 服务商提供的模型名称。 |
 | `LLM_AUTH_HEADER` | 可选前端增强 | 只有需要自定义鉴权时才填写，例如 `x-api-key: your-provider-api-key`。 |
 | `LLM_HTTP_HEADERS` | 可选前端增强 | 可选的额外请求头，填写 JSON 对象。 |
-| `OPENAI_API_KEY` | 可选旧版兼容 | `LLM_API_KEY` 的兼容别名。 |
-| `OPENAI_BASE_URL` | 可选旧版兼容 | `LLM_BASE_URL` 的兼容别名。 |
-| `OPENAI_MODEL` | 可选旧版兼容 | `LLM_MODEL` 的兼容别名。 |
 | `GROBID_BASE_URL` | PDF 任务 | 使用 `--pdf-path` 工作流时需要。 |
 | `OA_API_KEY` | 可选 | OpenAlex 元数据 / PDF 支持。 |
 | `OPENALEX_MAILTO` | 可选 | OpenAlex 联系邮箱。 |
@@ -293,6 +290,8 @@ curl -H "Authorization: Bearer $SCINET_API_KEY" \
 
 SciNet 以 CLI 为优先界面。新用户可以先查看帮助，再跑一次基础检索，最后按任务选择下游工作流；每次运行都会保存完整结果，方便复现、调试和交给 AI Agent 继续处理。
 
+文档网站：[📚 SciNet 文档网站](http://scinet.openkg.cn/api/docs/?lang=zh)。用于查看 API 配置、CLI 命令、参数含义和可运行示例。
+
 ### 帮助
 
 ```bash
@@ -300,6 +299,51 @@ scinet -h
 scinet search-papers -h
 scinet literature-review -h
 scinet skill -h
+```
+
+### 输入方式
+
+SciNet 支持两种输入方式：专家参数输入和自然语言输入。正式使用时，推荐优先使用专家参数，因为每个检索条件都写得清楚，结果也更容易复现；自然语言输入更适合快速试跑和探索。
+
+#### 推荐：专家参数输入
+
+```bash
+scinet --timeout 900 search-papers \
+  --retrieval-mode hybrid \
+  --query "open world agent" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2024 \
+  --keyword "high:open world agent" \
+  --keyword "middle:embodied agent" \
+  --title "middle:Voyager: An Open-Ended Embodied Agent with Large Language Models" \
+  --reference "low:JARVIS-1: Open-World Multi-task Agents with Memory-Augmented Multimodal Language Models" \
+  --top-k 5 \
+  --top-keywords 0 \
+  --max-titles 0 \
+  --max-refs 0 \
+  --bias-keyword high \
+  --bias-related high \
+  --bias-exploration low \
+  --ranking-profile precision \
+  --report-max-items 5
+```
+
+示例中使用的是通用英文参数名；`--查询`、`--检索领域`、`--时间范围` 也可以作为中文别名使用。
+
+#### 兼容：自然语言输入
+
+使用 `--text` 时，SciNet 会从一段说明中解析检索意图。你也可以在文本里加入 `关键词[high]：...` 这类结构化提示，让关键词更稳定。
+
+```bash
+scinet --timeout 900 search-papers \
+  --retrieval-mode hybrid \
+  --text "检索 open world agent 相关论文，领域是 artificial intelligence，从 2020 年以后，返回 3 篇。
+
+关键词[high]：open world agent" \
+  --top-k 3 \
+  --top-keywords 1 \
+  --max-titles 0 \
+  --max-refs 0
 ```
 
 ### 基础检索
@@ -517,7 +561,7 @@ SciNet/
   .env.example                   # 根目录运行配置模板
   requirements.txt
   run_scinet.py                  # 轻量本地运行入口
-  docs/api/                      # 静态 API 文档站
+  docs/api/                      # 统一静态 API 与 CLI 文档网站
   imgs/                          # README 图片资源
   scinet/                        # 可 pip 安装的 SciNet 客户端包
     pyproject.toml
