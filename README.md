@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="http://scinet.openkg.cn/api/docs">📚 API Docs Website</a>
+  <a href="http://scinet.openkg.cn/api/docs/">📚 SciNet Documentation</a>
 </p>
 
 <p align="center">
@@ -73,37 +73,14 @@ With the client, SciNet becomes a practical research assistant for:
 - [✨ Overview](#-overview)
 - [📑 Table of Contents](#-table-of-contents)
 - [🚀 Quick Start](#-quick-start)
-  - [1. Install](#1-install)
-  - [2. Register an API Token](#2-register-an-api-token)
-  - [3. Configure](#3-configure)
-  - [4. Test](#4-test)
-  - [5. Run a Paper Search](#5-run-a-paper-search)
 - [🔑 API Token](#-api-token)
-  - [Browser Registration](#browser-registration)
-  - [Check Token Status](#check-token-status)
-  - [Check Usage](#check-usage)
 - [🧩 Supported Tasks](#-supported-tasks)
 - [🛠️ CLI-First Workflow](#️-cli-first-workflow)
-  - [Help](#help)
-  - [Basic Retrieval](#basic-retrieval)
-  - [Downstream Workflows](#downstream-workflows)
-    - [Literature Review](#literature-review)
-    - [Idea Evaluation](#idea-evaluation)
-    - [Idea Generation](#idea-generation)
-    - [Trend Report](#trend-report)
-    - [Researcher Review](#researcher-review)
-  - [Retrieval Modes](#retrieval-modes)
-  - [Expert Anchors](#expert-anchors)
-  - [Graph Bias Parameters](#graph-bias-parameters)
 - [🧰 Editable Skills](#-editable-skills)
 - [🐍 Python SDK](#-python-sdk)
 - [📦 Outputs and Artifacts](#-outputs-and-artifacts)
 - [📂 Repository Layout](#-repository-layout)
 - [🧯 Troubleshooting](#-troubleshooting)
-  - [`scinet health` works but `search-papers` returns 401](#scinet-health-works-but-search-papers-returns-401)
-  - [No email verification code](#no-email-verification-code)
-  - [Retrieval is slow or times out](#retrieval-is-slow-or-times-out)
-  - [`scinet` command is not found on Windows](#scinet-command-is-not-found-on-windows)
 - [📝 TODO](#-todo)
 - [✍️ Citation](#️-citation)
 - [📄 License](#-license)
@@ -198,7 +175,7 @@ Keep `LLM_PROVIDER=chat_completions`, then replace `LLM_API_KEY`, `LLM_BASE_URL`
 
 Leave the LLM values empty if you do not need this. SciNet will use built-in keyword extraction, and normal search, review, idea, trend, and researcher workflows still run.
 
-User-editable template: [.env.example](.env.example#L7-L24). Set these variables only if you want LLM-assisted keyword extraction.
+User-editable template: [.env.example](.env.example#L7-L19). Set these variables only if you want LLM-assisted keyword extraction.
 
 🖊 Optional: OpenAlex metadata support
 
@@ -209,7 +186,7 @@ export OPENALEX_MAILTO=""
 
 OpenAlex is useful when you want extra metadata or PDF-related support. It is not required for the main CLI examples in this README. If you leave these variables empty, normal SciNet retrieval still works.
 
-User-editable template: [.env.example](.env.example#L29-L31). Set these only if you want OpenAlex-assisted metadata support.
+User-editable template: [.env.example](.env.example#L24-L26). Set these only if you want OpenAlex-assisted metadata support.
 
 🖌 Optional: GROBID for local PDF workflows
 
@@ -235,7 +212,7 @@ Windows CMD:
 set GROBID_BASE_URL=http://127.0.0.1:8070
 ```
 
-User-editable template: [.env.example](.env.example#L26-L27). Leave `GROBID_BASE_URL` empty unless you process local PDFs.
+User-editable template: [.env.example](.env.example#L21-L22). Leave `GROBID_BASE_URL` empty unless you process local PDFs.
 
 Runtime variables:
 
@@ -250,9 +227,6 @@ Runtime variables:
 | `LLM_MODEL` | optional frontend enhancement | Model name from your provider. |
 | `LLM_AUTH_HEADER` | optional frontend enhancement | Use only for custom auth, for example `x-api-key: your-provider-api-key`. |
 | `LLM_HTTP_HEADERS` | optional frontend enhancement | Optional extra headers as JSON. |
-| `OPENAI_API_KEY` | optional legacy compatibility | Backward-compatible alias for `LLM_API_KEY`. |
-| `OPENAI_BASE_URL` | optional legacy compatibility | Backward-compatible alias for `LLM_BASE_URL`. |
-| `OPENAI_MODEL` | optional legacy compatibility | Backward-compatible alias for `LLM_MODEL`. |
 | `GROBID_BASE_URL` | PDF tasks | Needed for `--pdf-path` workflows. |
 | `OA_API_KEY` | optional | OpenAlex metadata/PDF support. |
 | `OPENALEX_MAILTO` | optional | OpenAlex contact email. |
@@ -336,6 +310,8 @@ curl -H "Authorization: Bearer $SCINET_API_KEY" \
 
 SciNet is CLI-first: you can start with one command, inspect the saved artifacts, and then move into larger research workflows. If you are new, run help once, try a basic retrieval, then choose one of the downstream workflows below.
 
+Documentation: [📚 SciNet Documentation](http://scinet.openkg.cn/api/docs/). Use it to check API setup, CLI commands, parameter meanings, and runnable examples.
+
 ### Help
 
 ```bash
@@ -343,6 +319,49 @@ scinet -h
 scinet search-papers -h
 scinet literature-review -h
 scinet skill -h
+```
+
+### Input Styles
+
+SciNet supports two input styles. For formal runs, prefer expert parameters because every field is explicit and easier to reproduce. Natural-language input is useful for quick trials or exploratory use.
+
+#### Recommended: expert parameters
+
+```bash
+scinet --timeout 900 search-papers \
+  --retrieval-mode hybrid \
+  --query "open world agent" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2024 \
+  --keyword "high:open world agent" \
+  --keyword "middle:embodied agent" \
+  --title "middle:Voyager: An Open-Ended Embodied Agent with Large Language Models" \
+  --reference "low:JARVIS-1: Open-World Multi-task Agents with Memory-Augmented Multimodal Language Models" \
+  --top-k 5 \
+  --top-keywords 0 \
+  --max-titles 0 \
+  --max-refs 0 \
+  --bias-keyword high \
+  --bias-related high \
+  --bias-exploration low \
+  --ranking-profile precision \
+  --report-max-items 5
+```
+
+#### Compatible: natural-language input
+
+Use `--text` when you want SciNet to parse the request from a short instruction. You can still add structured hints such as `keyword[high]: ...` in the text.
+
+```bash
+scinet --timeout 900 search-papers \
+  --retrieval-mode hybrid \
+  --text "Find papers related to open world agent in artificial intelligence since 2020. Return 3 papers.
+
+keyword[high]: open world agent" \
+  --top-k 3 \
+  --top-keywords 1 \
+  --max-titles 0 \
+  --max-refs 0
 ```
 
 ### Basic Retrieval
@@ -582,7 +601,7 @@ SciNet/
   .env.example                   # root runtime configuration template
   requirements.txt
   run_scinet.py                  # lightweight local runner
-  docs/api/                      # static API documentation site
+  docs/api/                      # unified static API and CLI documentation site
   imgs/                          # README figures
   scinet/                        # pip-installable SciNet client package
     pyproject.toml

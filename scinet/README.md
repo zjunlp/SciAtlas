@@ -4,6 +4,8 @@ A lightweight pip-installable client and CLI for the hosted SciNet / KG2API serv
 
 SciNet provides scientific knowledge-graph retrieval for paper search, related-author discovery, author-paper lookup, literature review, idea grounding/evaluation, idea generation, trend analysis, and researcher review.
 
+Documentation: http://scinet.openkg.cn/api/docs/
+
 ## Installation
 
 Install directly from GitHub:
@@ -192,5 +194,5 @@ Optional LLM settings are only for better keyword extraction before retrieval. T
 
 If LLM variables are empty or the LLM call fails, SciNet falls back to built-in keyword extraction. If OpenAlex variables are empty, OpenAlex enrichment is skipped and normal KG retrieval still works.
 
-User-editable config template: [.env.example](.env.example#L7-L31).
+User-editable config template: [.env.example](.env.example#L7-L26).
 <!-- SCINET_FRONTEND_OPTIONAL_LLM_OPENALEX_END -->
