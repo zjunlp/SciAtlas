@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>SciNet: A Large-Scale Knowledge Graph for Automated Scientific Research</h1>
+  <h1>SciGraph-Research: A Large-Scale Knowledge Graph for Automated Scientific Research</h1>
 </div>
 
 <p align="center">
