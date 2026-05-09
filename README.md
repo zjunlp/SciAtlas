@@ -64,7 +64,8 @@ With the client, SciNet becomes a practical research assistant for:
 - **graph-aware paper search**: combine keywords, semantic matching, title anchors, references, and graph propagation instead of stopping at plain keyword matching;
 - **research workflow automation**: run literature review, idea grounding, idea evaluation, idea generation, trend analysis, related-author retrieval, and researcher profiling;
 - **agent-friendly outputs**: keep reproducible machine-readable artifacts such as `request.json` and `response.json`, plus user-facing `summary.txt` and `report.md`;
-- **editable CLI skills**: inspect, copy, modify, and rerun common downstream workflows as reusable JSON skills.
+- **editable CLI skills**: inspect, copy, modify, and rerun common downstream workflows as reusable JSON skills;
+- **portable Agent Skill pack**: use the packaged skills in [`agent-skill/`](agent-skill/) to let tools such as Codex, Claude Code, and other coding agents invoke SciNet workflows with the right defaults and artifact-reading habits.
 
 ---
 
@@ -77,6 +78,7 @@ With the client, SciNet becomes a practical research assistant for:
 - [🧩 Supported Tasks](#-supported-tasks)
 - [🛠️ CLI-First Workflow](#️-cli-first-workflow)
 - [🧰 Editable Skills](#-editable-skills)
+- [Agent Skill](#agent-skill)
 - [🐍 Python SDK](#-python-sdk)
 - [📦 Outputs and Artifacts](#-outputs-and-artifacts)
 - [📂 Repository Layout](#-repository-layout)
@@ -537,6 +539,26 @@ User-defined skills can override built-in skills with the same name.
 
 ---
 
+## Agent Skill
+
+SciNet also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs; they are reusable skill packs that teach tools such as Codex, Claude Code, and other coding agents how to choose and run SciNet workflows, pass reliable parameters, and read saved artifacts.
+
+Included skills:
+
+| Skill | Workflow | Use case |
+|---|---|---|
+| `scinet-literature-review` | `literature-review` | Reading lists and related-work reports |
+| `scinet-idea-grounding` | `idea-grounding` | Prior-art grounding for research ideas |
+| `scinet-idea-evaluate` | `idea-evaluate` | Novelty, feasibility, and soundness checks |
+| `scinet-idea-generate` | `idea-generate` | Literature-grounded idea seeds |
+| `scinet-trend-report` | `trend-report` | Timeline and trend analysis |
+| `scinet-researcher-review` | `researcher-review` | Researcher profiles and representative works |
+| `scinet-quick-paper-search` | `paper-search` | Fast paper candidate lookup |
+
+To use one locally, copy its directory into the skill directory supported by your agent tool, then restart or refresh that tool. For Codex, that is usually `~/.codex/skills` or `%USERPROFILE%\.codex\skills`. The CLI presets remain in `scinet/src/scinet/builtin_skills.json`; the Agent Skill pack is the agent-facing layer on top.
+
+---
+
 ## 🐍 Python SDK
 
 SciNet also provides a lightweight Python client.
@@ -601,6 +623,7 @@ SciNet/
   .env.example                   # root runtime configuration template
   requirements.txt
   run_scinet.py                  # lightweight local runner
+  agent-skill/                   # portable Agent Skill pack
   docs/api/                      # unified static API and CLI documentation site
   imgs/                          # README figures
   scinet/                        # pip-installable SciNet client package
@@ -667,7 +690,7 @@ or reinstall:
 ## 📝 TODO
 
 - [ ] **CLI Tools.** Add more user-facing CLI capabilities so downstream users and AI agents can invoke retrieval workflows without touching database internals.
-- [ ] **Skills.** Package reusable agent skills for common scientific discovery workflows and expose best practices as easier-to-load components.
+- [x] **Portable Agent Skill pack.** Package reusable agent skills for common scientific discovery workflows and expose best practices as easier-to-load components.
 - [ ] **More Knowledge.** Integrate more knowledge forms beyond paper-centric entities, such as datasets, code, standards, theorems, and experimental experience.
 - [ ] **Benchmark and Evaluation.** Build dedicated benchmarks and evaluation protocols for downstream scientific research tasks supported by SciNet.
 - [ ] **Dynamic Update**Improve dynamic knowledge updates toward a more systematic and frequent refresh mechanism.

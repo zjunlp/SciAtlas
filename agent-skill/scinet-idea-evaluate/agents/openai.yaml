@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciNet Idea Evaluate"
+  short_description: "Evaluate novelty and feasibility with SciNet"
+  default_prompt: "Use $scinet-idea-evaluate to assess this research idea for novelty and feasibility."

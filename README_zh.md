@@ -53,7 +53,8 @@
 - **图谱增强论文检索**：结合关键词、语义、标题锚点、参考文献和图传播，不局限于普通关键词匹配；
 - **科研工作流自动化**：运行文献综述、idea grounding、idea evaluation、idea generation、趋势分析、相关作者检索和研究者画像；
 - **Agent 友好的输出**：保留 `request.json`、`response.json` 等机器可读产物，同时生成面向用户的 `summary.txt` 和 `report.md`；
-- **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill。
+- **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill；
+- **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 提供可插拔技能包，让 Codex、Claude Code 等工具型 Agent 按推荐参数调用 SciNet 工作流，并读取可复现运行产物。
 
 ---
 
@@ -66,6 +67,7 @@
 - [🧩 支持任务](#-支持任务)
 - [🛠️ CLI 优先工作流](#️-cli-优先工作流)
 - [🧰 可编辑 Skills](#-可编辑-skills)
+- [Agent Skill](#agent-skill)
 - [🐍 Python SDK](#-python-sdk)
 - [📦 输出与运行产物](#-输出与运行产物)
 - [📂 仓库结构](#-仓库结构)
@@ -507,6 +509,26 @@ scinet skill run my-review --query "your topic"
 
 ---
 
+## Agent Skill
+
+SciNet 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。这些目录不是运行产物，而是面向 Codex、Claude Code 等工具型 Agent 的可复用技能包：它们会告诉 Agent 什么时候选择哪个 SciNet 工作流、如何传入稳定参数，以及运行后应该读取哪些 `runs/<run_id>/` 产物。
+
+已包含的技能：
+
+| Skill | 对应工作流 | 适用场景 |
+|---|---|---|
+| `scinet-literature-review` | `literature-review` | 阅读清单与 related work 报告 |
+| `scinet-idea-grounding` | `idea-grounding` | 为研究想法检索相似工作和差异化证据 |
+| `scinet-idea-evaluate` | `idea-evaluate` | 评估新颖性、可行性和可靠性 |
+| `scinet-idea-generate` | `idea-generate` | 生成有文献依据的研究 idea seeds |
+| `scinet-trend-report` | `trend-report` | 梳理主题演化、时间线和代表性论文 |
+| `scinet-researcher-review` | `researcher-review` | 研究者画像与代表作梳理 |
+| `scinet-quick-paper-search` | `paper-search` | 快速检索候选论文 |
+
+使用时，将需要的 skill 目录复制到你的 Agent 工具支持的技能目录，然后重启或刷新该工具。例如 Codex 通常使用 `~/.codex/skills` 或 `%USERPROFILE%\.codex\skills`。CLI 预设仍位于 `scinet/src/scinet/builtin_skills.json`；`agent-skill/` 是其上的 Agent 调用层。
+
+---
+
 ## 🐍 Python SDK
 
 ```python
@@ -561,6 +583,7 @@ SciNet/
   .env.example                   # 根目录运行配置模板
   requirements.txt
   run_scinet.py                  # 轻量本地运行入口
+  agent-skill/                   # 通用 Agent Skill 包
   docs/api/                      # 统一静态 API 与 CLI 文档网站
   imgs/                          # README 图片资源
   scinet/                        # 可 pip 安装的 SciNet 客户端包
@@ -622,7 +645,7 @@ set SCINET_API_KEY=your-personal-scinet-token
 ## 📝 TODO
 
 - [ ] **命令行工具。** 增加更多面向用户的命令行功能，以便下游用户和 AI 代理无需接触数据库内部即可调用检索工作流。
-- [ ] **技能。** 为常见的科学发现工作流打包可重用的代理技能，并将最佳实践作为更易于加载的组件提供。
+- [x] **通用 Agent Skill 包。** 为常见的科学发现工作流打包可重用的代理技能，并将最佳实践作为更易于加载的组件提供。
 - [ ] **更多知识。** 整合超越以论文为中心的实体之外的更多知识形式，例如数据集、代码、标准、定理和实验经验。
 - [ ] **基准测试与评估。** 为 SciNet 支持的下游科学研究任务构建专用基准测试和评估协议。
 - [ ] **动态更新** 改进动态知识更新机制，使其更加系统化并提高刷新频率。
