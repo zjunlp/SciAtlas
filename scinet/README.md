@@ -1,10 +1,10 @@
-# SciNet Client
+# SciScholar Client
 
-A lightweight pip-installable client and CLI for the hosted SciNet / KG2API service.
+A lightweight pip-installable client and CLI for the hosted SciScholar / KG2API service.
 
-SciNet provides scientific knowledge-graph retrieval for paper search, related-author discovery, author-paper lookup, literature review, idea grounding/evaluation, idea generation, trend analysis, and researcher review.
+SciScholar provides scientific knowledge-graph retrieval for paper search, related-author discovery, author-paper lookup, literature review, idea grounding/evaluation, idea generation, trend analysis, and researcher review.
 
-The repository also includes a portable Agent Skill pack in `../agent-skill/`, which wraps these workflows for tools such as Codex, Claude Code, and other coding agents.
+The repository also includes a portable Agent Skill pack in `../agent-skill/`, which turns the base `search-papers` retrieval capability into downstream task playbooks for tools such as Codex, Claude Code, and other coding agents.
 
 Documentation: http://scinet.openkg.cn/api/docs/
 
@@ -13,19 +13,19 @@ Documentation: http://scinet.openkg.cn/api/docs/
 Install directly from GitHub:
 
 ```bash
-pip install git+https://github.com/zjunlp/SciNet.git
+pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
 ```
 
 For isolated CLI usage:
 
 ```bash
-pipx install git+https://github.com/zjunlp/SciNet.git
+pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
 ```
 
 After installation:
 
 ```bash
-scinet -h
+scischolar -h
 ```
 
 ## Get an API Token
@@ -41,8 +41,8 @@ Complete email verification and copy your personal token.
 Then configure:
 
 ```bash
-export SCINET_API_BASE_URL="http://scinet.openkg.cn"
-export SCINET_API_KEY="your-personal-scinet-token"
+export SCISCHOLAR_API_BASE_URL="http://scinet.openkg.cn"
+export SCISCHOLAR_API_KEY="your-personal-scischolar-token"
 ```
 
 You can also create a local `.env` from `.env.example`, although the CLI reads environment variables directly.
@@ -50,14 +50,14 @@ You can also create a local `.env` from `.env.example`, although the CLI reads e
 ## Quick Start
 
 ```bash
-scinet health
-scinet config
+scischolar health
+scischolar config
 ```
 
 Search papers:
 
 ```bash
-scinet --timeout 900 search-papers \
+scischolar --timeout 900 search-papers \
   --query "open world agent" \
   --domain "artificial intelligence" \
   --time-range 2020-2024 \
@@ -72,7 +72,7 @@ scinet --timeout 900 search-papers \
 Literature review:
 
 ```bash
-scinet --timeout 900 literature-review \
+scischolar --timeout 900 literature-review \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -83,7 +83,7 @@ scinet --timeout 900 literature-review \
 Idea evaluation:
 
 ```bash
-scinet --timeout 900 idea-evaluate \
+scischolar --timeout 900 idea-evaluate \
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
   --keyword "high:idea evaluation" \
   --top-k 3
@@ -92,7 +92,7 @@ scinet --timeout 900 idea-evaluate \
 Researcher review:
 
 ```bash
-scinet --timeout 900 researcher-review \
+scischolar --timeout 900 researcher-review \
   --author "Yoshua Bengio" \
   --limit 10 \
   --no-abstract
@@ -101,9 +101,9 @@ scinet --timeout 900 researcher-review \
 ## Python SDK
 
 ```python
-from scinet import SciNetClient
+from scischolar import SciScholarClient
 
-client = SciNetClient()
+client = SciScholarClient()
 print(client.health())
 
 result = client.search_papers(
@@ -155,7 +155,7 @@ Install editable mode:
 
 ```bash
 pip install -e .
-scinet -h
+scischolar -h
 ```
 
 Build package:
@@ -174,15 +174,15 @@ Do not commit `.env`, API tokens, SMTP credentials, `.cache/`, or `runs/`.
 
 MIT.
 
-<!-- SCINET_FRONTEND_OPTIONAL_LLM_OPENALEX_START -->
+<!-- SCISCHOLAR_FRONTEND_OPTIONAL_LLM_OPENALEX_START -->
 ## Frontend LLM and OpenAlex Configuration
 
 Optional LLM settings are only for better keyword extraction before retrieval. They are not required for normal KG search.
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `SCINET_API_BASE_URL` | yes | Hosted SciNet API base URL. |
-| `SCINET_API_KEY` | yes | SciNet token. |
+| `SCISCHOLAR_API_BASE_URL` | yes | Hosted SciScholar API base URL. |
+| `SCISCHOLAR_API_KEY` | yes | SciScholar token. |
 | `LLM_PROVIDER` | optional | Keep as `chat_completions`. |
 | `LLM_API_KEY` | optional | Your provider key; leave empty for local or no-auth services. |
 | `LLM_BASE_URL` | optional | Provider base URL, usually ending in `/v1`. |
@@ -194,7 +194,7 @@ Optional LLM settings are only for better keyword extraction before retrieval. T
 | `OA_API_KEY` | optional | OpenAlex fallback/enrichment support. |
 | `OPENALEX_MAILTO` | optional | OpenAlex contact email. |
 
-If LLM variables are empty or the LLM call fails, SciNet falls back to built-in keyword extraction. If OpenAlex variables are empty, OpenAlex enrichment is skipped and normal KG retrieval still works.
+If LLM variables are empty or the LLM call fails, SciScholar falls back to built-in keyword extraction. If OpenAlex variables are empty, OpenAlex enrichment is skipped and normal KG retrieval still works.
 
 User-editable config template: [.env.example](.env.example#L7-L26).
-<!-- SCINET_FRONTEND_OPTIONAL_LLM_OPENALEX_END -->
+<!-- SCISCHOLAR_FRONTEND_OPTIONAL_LLM_OPENALEX_END -->

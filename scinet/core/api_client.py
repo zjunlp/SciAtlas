@@ -69,10 +69,10 @@ def _first_timeout_value(
         value = float(raw_value)
     except ValueError as exc:
         keys = ", ".join((*param_keys, *env_keys))
-        raise ValueError(f"Invalid SciNet API timeout {raw_value!r} for one of: {keys}") from exc
+        raise ValueError(f"Invalid SciScholar API timeout {raw_value!r} for one of: {keys}") from exc
     if value <= 0:
         keys = ", ".join((*param_keys, *env_keys))
-        raise ValueError(f"SciNet API timeout must be positive for one of: {keys}")
+        raise ValueError(f"SciScholar API timeout must be positive for one of: {keys}")
     return value
 
 
@@ -80,42 +80,47 @@ def load_scinet_api_settings(env_path: Path, params: dict[str, Any] | None = Non
     overrides = params or {}
     env_values = load_env_values(env_path)
     base_url = normalize_whitespace(
-        overrides.get("scinet_api_base_url")
+        overrides.get("scischolar_api_base_url")
+        or overrides.get("scinet_api_base_url")
         or overrides.get("scimap_api_base_url")
         or overrides.get("kg2api_base_url")
-        or get_env_value(env_values, "SCINET_API_BASE_URL", "SCIMAP_API_BASE_URL", "KG2API_BASE_URL")
+        or get_env_value(env_values, "SCISCHOLAR_API_BASE_URL", "SCINET_API_BASE_URL", "SCIMAP_API_BASE_URL", "KG2API_BASE_URL")
     )
     api_key = normalize_whitespace(
-        overrides.get("scinet_api_key")
+        overrides.get("scischolar_api_key")
+        or overrides.get("scinet_api_key")
         or overrides.get("scimap_api_key")
         or overrides.get("kg2api_api_key")
-        or get_env_value(env_values, "SCINET_API_KEY", "SCIMAP_API_KEY", "KG2API_API_KEY")
+        or get_env_value(env_values, "SCISCHOLAR_API_KEY", "SCINET_API_KEY", "SCIMAP_API_KEY", "KG2API_API_KEY")
     )
     default_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
         param_keys=(
+            "scischolar_api_timeout_default",
             "scinet_api_timeout_default",
             "api_timeout_default",
+            "scischolar_api_timeout",
             "scinet_api_timeout",
             "scimap_api_timeout",
             "kg2api_timeout",
         ),
-        env_keys=("SCINET_API_TIMEOUT_DEFAULT", "SCINET_API_TIMEOUT", "SCIMAP_API_TIMEOUT", "KG2API_TIMEOUT"),
+        env_keys=("SCISCHOLAR_API_TIMEOUT_DEFAULT", "SCINET_API_TIMEOUT_DEFAULT", "SCISCHOLAR_API_TIMEOUT", "SCINET_API_TIMEOUT", "SCIMAP_API_TIMEOUT", "KG2API_TIMEOUT"),
         default=DEFAULT_SCINET_API_TIMEOUT,
     )
     search_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
-        param_keys=("scinet_api_timeout_search", "api_timeout_search", "search_timeout"),
-        env_keys=("SCINET_API_TIMEOUT_SEARCH", "SCIMAP_API_TIMEOUT_SEARCH", "KG2API_TIMEOUT_SEARCH"),
+        param_keys=("scischolar_api_timeout_search", "scinet_api_timeout_search", "api_timeout_search", "search_timeout"),
+        env_keys=("SCISCHOLAR_API_TIMEOUT_SEARCH", "SCINET_API_TIMEOUT_SEARCH", "SCIMAP_API_TIMEOUT_SEARCH", "KG2API_TIMEOUT_SEARCH"),
         default=DEFAULT_SCINET_API_SEARCH_TIMEOUT,
     )
     authors_related_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
-        param_keys=("scinet_api_timeout_authors_related", "api_timeout_authors_related", "authors_related_timeout"),
+        param_keys=("scischolar_api_timeout_authors_related", "scinet_api_timeout_authors_related", "api_timeout_authors_related", "authors_related_timeout"),
         env_keys=(
+            "SCISCHOLAR_API_TIMEOUT_AUTHORS_RELATED",
             "SCINET_API_TIMEOUT_AUTHORS_RELATED",
             "SCIMAP_API_TIMEOUT_AUTHORS_RELATED",
             "KG2API_TIMEOUT_AUTHORS_RELATED",
@@ -125,8 +130,9 @@ def load_scinet_api_settings(env_path: Path, params: dict[str, Any] | None = Non
     authors_papers_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
-        param_keys=("scinet_api_timeout_authors_papers", "api_timeout_authors_papers", "authors_papers_timeout"),
+        param_keys=("scischolar_api_timeout_authors_papers", "scinet_api_timeout_authors_papers", "api_timeout_authors_papers", "authors_papers_timeout"),
         env_keys=(
+            "SCISCHOLAR_API_TIMEOUT_AUTHORS_PAPERS",
             "SCINET_API_TIMEOUT_AUTHORS_PAPERS",
             "SCIMAP_API_TIMEOUT_AUTHORS_PAPERS",
             "KG2API_TIMEOUT_AUTHORS_PAPERS",
@@ -137,12 +143,14 @@ def load_scinet_api_settings(env_path: Path, params: dict[str, Any] | None = Non
         overrides=overrides,
         env_values=env_values,
         param_keys=(
+            "scischolar_api_timeout_support_papers",
             "scinet_api_timeout_support_papers",
             "api_timeout_support_papers",
             "support_papers_timeout",
             "authors_support_papers_timeout",
         ),
         env_keys=(
+            "SCISCHOLAR_API_TIMEOUT_SUPPORT_PAPERS",
             "SCINET_API_TIMEOUT_SUPPORT_PAPERS",
             "SCIMAP_API_TIMEOUT_SUPPORT_PAPERS",
             "KG2API_TIMEOUT_SUPPORT_PAPERS",
@@ -152,29 +160,29 @@ def load_scinet_api_settings(env_path: Path, params: dict[str, Any] | None = Non
     connect_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
-        param_keys=("scinet_api_connect_timeout", "api_connect_timeout"),
-        env_keys=("SCINET_API_CONNECT_TIMEOUT", "SCIMAP_API_CONNECT_TIMEOUT", "KG2API_CONNECT_TIMEOUT"),
+        param_keys=("scischolar_api_connect_timeout", "scinet_api_connect_timeout", "api_connect_timeout"),
+        env_keys=("SCISCHOLAR_API_CONNECT_TIMEOUT", "SCINET_API_CONNECT_TIMEOUT", "SCIMAP_API_CONNECT_TIMEOUT", "KG2API_CONNECT_TIMEOUT"),
         default=DEFAULT_SCINET_API_CONNECT_TIMEOUT,
     )
     write_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
-        param_keys=("scinet_api_write_timeout", "api_write_timeout"),
-        env_keys=("SCINET_API_WRITE_TIMEOUT", "SCIMAP_API_WRITE_TIMEOUT", "KG2API_WRITE_TIMEOUT"),
+        param_keys=("scischolar_api_write_timeout", "scinet_api_write_timeout", "api_write_timeout"),
+        env_keys=("SCISCHOLAR_API_WRITE_TIMEOUT", "SCINET_API_WRITE_TIMEOUT", "SCIMAP_API_WRITE_TIMEOUT", "KG2API_WRITE_TIMEOUT"),
         default=DEFAULT_SCINET_API_WRITE_TIMEOUT,
     )
     pool_timeout = _first_timeout_value(
         overrides=overrides,
         env_values=env_values,
-        param_keys=("scinet_api_pool_timeout", "api_pool_timeout"),
-        env_keys=("SCINET_API_POOL_TIMEOUT", "SCIMAP_API_POOL_TIMEOUT", "KG2API_POOL_TIMEOUT"),
+        param_keys=("scischolar_api_pool_timeout", "scinet_api_pool_timeout", "api_pool_timeout"),
+        env_keys=("SCISCHOLAR_API_POOL_TIMEOUT", "SCINET_API_POOL_TIMEOUT", "SCIMAP_API_POOL_TIMEOUT", "KG2API_POOL_TIMEOUT"),
         default=DEFAULT_SCINET_API_POOL_TIMEOUT,
     )
 
     if not base_url:
-        raise ValueError(f"Missing SCINET_API_BASE_URL in {env_path}")
+        raise ValueError(f"Missing SCISCHOLAR_API_BASE_URL in {env_path}")
     if not api_key:
-        raise ValueError(f"Missing SCINET_API_KEY in {env_path}")
+        raise ValueError(f"Missing SCISCHOLAR_API_KEY in {env_path}")
     return SciNetApiSettings(
         base_url=base_url.rstrip("/"),
         api_key=api_key,
@@ -241,12 +249,12 @@ class SciNetApiClient:
         except self._httpx.TimeoutException as exc:
             elapsed = monotonic() - started_at
             raise SciNetApiError(
-                f"SciNet API {path} timed out after {elapsed:.1f}s "
+                f"SciScholar API {path} timed out after {elapsed:.1f}s "
                 f"(read_timeout={read_timeout:.1f}s, base_url={self.settings.base_url})"
             ) from exc
         except self._httpx.HTTPError as exc:
             elapsed = monotonic() - started_at
-            message = f"SciNet API request failed for {path} after {elapsed:.1f}s: {exc}"
+            message = f"SciScholar API request failed for {path} after {elapsed:.1f}s: {exc}"
             if isinstance(exc, self._httpx.RemoteProtocolError):
                 message += (
                     " This can happen when the backend interrupts a long-running request; "
@@ -270,13 +278,13 @@ class SciNetApiClient:
             if request_id:
                 message = f"{message} (request_id={request_id})"
             raise SciNetApiError(
-                f"SciNet API {path} returned {response.status_code}: {message}",
+                f"SciScholar API {path} returned {response.status_code}: {message}",
                 status_code=response.status_code,
                 payload=body,
             )
 
         if not isinstance(body, dict):
-            raise SciNetApiError(f"SciNet API {path} returned a non-object response", payload=body)
+            raise SciNetApiError(f"SciScholar API {path} returned a non-object response", payload=body)
         return body
 
     def search(self, *, plan: dict[str, Any], options: dict[str, Any] | None = None) -> dict[str, Any]:

@@ -26,7 +26,7 @@ DEFAULT_OUTPUT_ROOT = REPO_ROOT / "runs" / "pdf_manifest"
 DEFAULT_GROBID_BASE_URL = "http://127.0.0.1:8070"
 OPENALEX_API_BASE = "https://api.openalex.org"
 OPENALEX_CONTENT_BASE = "https://content.openalex.org"
-USER_AGENT = "scinet-pdf-manifest/1.0"
+USER_AGENT = "scischolar-pdf-manifest/1.0"
 TITLE_STOPWORDS = {
     "a",
     "an",
@@ -98,7 +98,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Dot path inside the input JSON that points to the ranked paper list.",
     )
     parser.add_argument("--top-k", type=int, default=20, help="Number of ranked papers to process.")
-    parser.add_argument("--env", default=str(DEFAULT_ENV_PATH), help="Path to the SciNet .env file.")
+    parser.add_argument("--env", default=str(DEFAULT_ENV_PATH), help="Path to the SciScholar .env file.")
     parser.add_argument(
         "--output-root",
         default=str(DEFAULT_OUTPUT_ROOT),
@@ -826,7 +826,7 @@ class PdfXmlPipeline:
             trace,
             step="kg_title_lookup",
             status="running",
-            message="Skipping local KG title lookup in the open-source SciNet client.",
+            message="Skipping local KG title lookup in the open-source SciScholar client.",
             extra={"title": title, "expected_year": expected_year},
         )
         kg_match = self.kg_title_lookup_client.search_work_by_title(title, expected_year)

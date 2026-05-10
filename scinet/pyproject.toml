@@ -3,14 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "scinet-client"
+name = "scischolar-client"
 version = "0.1.0"
-description = "SciNet client and CLI for scientific knowledge-graph retrieval."
+description = "SciScholar client and CLI for scientific knowledge-graph retrieval."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [
-  { name = "SciNet Team" }
+  { name = "SciScholar Team" }
 ]
 keywords = [
   "scientific discovery",
@@ -32,12 +32,13 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/zjunlp/SciNet"
-Repository = "https://github.com/zjunlp/SciNet"
+Homepage = "https://github.com/zjunlp/SciScholar"
+Repository = "https://github.com/zjunlp/SciScholar"
 API = "http://scinet.openkg.cn"
 Registration = "http://scinet.openkg.cn/register"
 
 [project.scripts]
+scischolar = "scinet.cli:main"
 scinet = "scinet.cli:main"
 
 [tool.setuptools.packages.find]

@@ -8,6 +8,14 @@ def _clean(value: str | None) -> str:
     return (value or "").strip()
 
 
+def _env_first(*names: str) -> str:
+    for name in names:
+        value = os.getenv(name)
+        if value and value.strip():
+            return value.strip()
+    return ""
+
+
 def _is_placeholder(value: str | None) -> bool:
     normalized = _clean(value).lower()
     placeholder_tokens = (
@@ -20,6 +28,7 @@ def _is_placeholder(value: str | None) -> bool:
         "replace-me",
         "your-token",
         "your-api-key",
+        "your-personal-scischolar-token",
         "your-personal-scinet-token",
         "your-model-name",
     } or any(token in normalized for token in placeholder_tokens)
@@ -58,7 +67,7 @@ class SciNetConfig:
     def missing_required_config(self, *, require_grobid: bool = False) -> list[str]:
         missing: list[str] = []
         if _is_placeholder(self.api_key):
-            missing.append("SCINET_API_KEY")
+            missing.append("SCISCHOLAR_API_KEY")
         if require_grobid and _is_placeholder(self.grobid_base_url):
             missing.append("GROBID_BASE_URL")
         return missing
@@ -81,20 +90,20 @@ def load_config(
     grobid_base_url: str | None = None,
 ) -> SciNetConfig:
     return SciNetConfig(
-        base_url=(base_url or os.getenv("SCINET_API_BASE_URL") or os.getenv("KG2API_BASE_URL") or "http://scinet.openkg.cn").rstrip("/"),
-        api_key=_clean(api_key or os.getenv("SCINET_API_KEY") or os.getenv("KG2API_API_KEY") or ""),
-        timeout=int(timeout or os.getenv("SCINET_TIMEOUT") or os.getenv("SCINET_API_TIMEOUT_DEFAULT") or 900),
-        llm_provider=_clean(llm_provider or os.getenv("LLM_PROVIDER") or os.getenv("SCINET_LLM_PROVIDER") or "chat_completions"),
-        llm_api_key=_clean(llm_api_key or os.getenv("LLM_API_KEY") or os.getenv("SCINET_LLM_API_KEY") or os.getenv("OPENAI_API_KEY") or ""),
-        llm_base_url=_clean(llm_base_url or os.getenv("LLM_BASE_URL") or os.getenv("SCINET_LLM_BASE_URL") or os.getenv("OPENAI_BASE_URL") or ""),
-        llm_chat_completions_url=_clean(llm_chat_completions_url or os.getenv("LLM_CHAT_COMPLETIONS_URL") or os.getenv("SCINET_LLM_CHAT_COMPLETIONS_URL") or os.getenv("OPENAI_CHAT_COMPLETIONS_URL") or ""),
-        llm_model=_clean(llm_model or os.getenv("LLM_MODEL") or os.getenv("SCINET_LLM_MODEL") or os.getenv("OPENAI_MODEL") or ""),
-        llm_auth_header=_clean(llm_auth_header or os.getenv("LLM_AUTH_HEADER") or os.getenv("SCINET_LLM_AUTH_HEADER") or ""),
-        llm_http_headers=_clean(llm_http_headers or os.getenv("LLM_HTTP_HEADERS") or os.getenv("SCINET_LLM_HTTP_HEADERS") or ""),
-        llm_timeout=int(os.getenv("SCINET_LLM_TIMEOUT") or os.getenv("LLM_TIMEOUT") or 30),
-        llm_temperature=float(os.getenv("SCINET_LLM_TEMPERATURE") or os.getenv("LLM_TEMPERATURE") or 0),
-        llm_max_tokens=int(os.getenv("SCINET_LLM_MAX_TOKENS") or os.getenv("LLM_MAX_TOKENS") or 512),
-        openalex_api_key=_clean(openalex_api_key or os.getenv("OA_API_KEY") or os.getenv("OPENALEX_API_KEY") or os.getenv("SCINET_OPENALEX_API_KEY") or ""),
-        openalex_mailto=_clean(openalex_mailto or os.getenv("OPENALEX_MAILTO") or os.getenv("OPENALEX_EMAIL") or os.getenv("SCINET_OPENALEX_MAILTO") or ""),
-        grobid_base_url=_clean(grobid_base_url or os.getenv("GROBID_BASE_URL") or os.getenv("SCINET_GROBID_BASE_URL") or ""),
+        base_url=(base_url or _env_first("SCISCHOLAR_API_BASE_URL", "SCINET_API_BASE_URL", "KG2API_BASE_URL") or "http://scinet.openkg.cn").rstrip("/"),
+        api_key=_clean(api_key or _env_first("SCISCHOLAR_API_KEY", "SCINET_API_KEY", "KG2API_API_KEY")),
+        timeout=int(timeout or _env_first("SCISCHOLAR_TIMEOUT", "SCINET_TIMEOUT", "SCISCHOLAR_API_TIMEOUT_DEFAULT", "SCINET_API_TIMEOUT_DEFAULT") or 900),
+        llm_provider=_clean(llm_provider or _env_first("LLM_PROVIDER", "SCISCHOLAR_LLM_PROVIDER", "SCINET_LLM_PROVIDER") or "chat_completions"),
+        llm_api_key=_clean(llm_api_key or _env_first("LLM_API_KEY", "SCISCHOLAR_LLM_API_KEY", "SCINET_LLM_API_KEY", "OPENAI_API_KEY")),
+        llm_base_url=_clean(llm_base_url or _env_first("LLM_BASE_URL", "SCISCHOLAR_LLM_BASE_URL", "SCINET_LLM_BASE_URL", "OPENAI_BASE_URL")),
+        llm_chat_completions_url=_clean(llm_chat_completions_url or _env_first("LLM_CHAT_COMPLETIONS_URL", "SCISCHOLAR_LLM_CHAT_COMPLETIONS_URL", "SCINET_LLM_CHAT_COMPLETIONS_URL", "OPENAI_CHAT_COMPLETIONS_URL")),
+        llm_model=_clean(llm_model or _env_first("LLM_MODEL", "SCISCHOLAR_LLM_MODEL", "SCINET_LLM_MODEL", "OPENAI_MODEL")),
+        llm_auth_header=_clean(llm_auth_header or _env_first("LLM_AUTH_HEADER", "SCISCHOLAR_LLM_AUTH_HEADER", "SCINET_LLM_AUTH_HEADER")),
+        llm_http_headers=_clean(llm_http_headers or _env_first("LLM_HTTP_HEADERS", "SCISCHOLAR_LLM_HTTP_HEADERS", "SCINET_LLM_HTTP_HEADERS")),
+        llm_timeout=int(_env_first("SCISCHOLAR_LLM_TIMEOUT", "SCINET_LLM_TIMEOUT", "LLM_TIMEOUT") or 30),
+        llm_temperature=float(_env_first("SCISCHOLAR_LLM_TEMPERATURE", "SCINET_LLM_TEMPERATURE", "LLM_TEMPERATURE") or 0),
+        llm_max_tokens=int(_env_first("SCISCHOLAR_LLM_MAX_TOKENS", "SCINET_LLM_MAX_TOKENS", "LLM_MAX_TOKENS") or 512),
+        openalex_api_key=_clean(openalex_api_key or _env_first("OA_API_KEY", "OPENALEX_API_KEY", "SCISCHOLAR_OPENALEX_API_KEY", "SCINET_OPENALEX_API_KEY")),
+        openalex_mailto=_clean(openalex_mailto or _env_first("OPENALEX_MAILTO", "OPENALEX_EMAIL", "SCISCHOLAR_OPENALEX_MAILTO", "SCINET_OPENALEX_MAILTO")),
+        grobid_base_url=_clean(grobid_base_url or _env_first("GROBID_BASE_URL", "SCISCHOLAR_GROBID_BASE_URL", "SCINET_GROBID_BASE_URL")),
     )

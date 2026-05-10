@@ -1,4 +1,0 @@
-interface:
-  display_name: "SciNet Literature Review"
-  short_description: "Build literature review evidence with SciNet"
-  default_prompt: "Use $scinet-literature-review to review recent papers on retrieval augmented generation."

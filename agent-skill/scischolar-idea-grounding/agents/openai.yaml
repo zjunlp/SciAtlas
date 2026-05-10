@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciScholar Idea Grounding"
+  short_description: "Ground a research idea with SciScholar evidence"
+  default_prompt: "Use $scischolar-idea-grounding to retrieve related papers and position this research idea against prior work."

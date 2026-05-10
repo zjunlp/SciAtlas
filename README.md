@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
   <h1>SciScholar: A Large-Scale Knowledge Graph for Automated Scientific Research</h1>
 </div>
 
@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="http://scinet.openkg.cn/api/docs/">📚 SciNet Documentation</a>
+  <a href="http://scinet.openkg.cn/api/docs/">📚 SciScholar Documentation</a>
 </p>
 
 <p align="center">
-  A pip-installable client and CLI for literature-grounded scientific research workflows on top of the hosted SciNet API.
+  A pip-installable client and CLI for literature-grounded scientific research workflows on top of the hosted SciScholar API.
 </p>
 
 <p align="center">
@@ -23,13 +23,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/zjunlp/SciNet">
+  <a href="https://github.com/zjunlp/SciScholar">
     <img src="https://awesome.re/badge.svg" alt="Awesome">
   </a>
-  <a href="https://github.com/zjunlp/SciNet/blob/main/LICENSE">
+  <a href="https://github.com/zjunlp/SciScholar/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT">
   </a>
-  <img src="https://img.shields.io/github/last-commit/zjunlp/SciNet?color=blue" alt="Last Commit">
+  <img src="https://img.shields.io/github/last-commit/zjunlp/SciScholar?color=blue" alt="Last Commit">
   <img src="https://img.shields.io/badge/PRs-Welcome-red" alt="PRs Welcome">
 </p>
 
@@ -37,35 +37,35 @@
 
 ## ✨ Overview
 
-SciNet is a research map you can use from the command line. Give it a topic, an idea, an author, or a paper trail, and it helps you look up literature, gather graph-backed evidence, and turn the result into readable reports and reusable JSON artifacts.
+SciScholar is a research map you can use from the command line. Give it a topic, an idea, an author, or a paper trail, and it helps you look up literature, gather graph-backed evidence, and turn the result into readable reports and reusable JSON artifacts.
 
-Behind that simple workflow is a large scientific knowledge graph. SciNet connects papers, authors, institutions, venues, keywords, citations, and a four-level research taxonomy from domains down to topics. That means a search is not limited to matching words: it can follow how research areas, people, concepts, and papers relate to one another.
+Behind that simple workflow is a large scientific knowledge graph. SciScholar connects papers, authors, institutions, venues, keywords, citations, and a four-level research taxonomy from domains down to topics. That means a search is not limited to matching words: it can follow how research areas, people, concepts, and papers relate to one another.
 
-This repository packages that capability as a lightweight **SciNet client**. New users can install it with `pip`, register an API token, and start running literature-grounded research tasks without setting up Neo4j, maintaining graph data, or touching backend infrastructure.
+This repository packages that capability as a lightweight **SciScholar client**. New users can install it with `pip`, register an API token, and start running literature-grounded research tasks without setting up Neo4j, maintaining graph data, or touching backend infrastructure.
 
 <p align="center">
-  <img src="imgs/field_distribution_pie.png" alt="SciNet field distribution across research areas" width="92%">
+  <img src="imgs/field_distribution_pie.png" alt="SciScholar field distribution across research areas" width="92%">
 </p>
 
 <p align="center">
-  <em>SciNet spans a broad research landscape, from medicine and social sciences to engineering, computer science, materials science, mathematics, and more.</em>
+  <em>SciScholar spans a broad research landscape, from medicine and social sciences to engineering, computer science, materials science, mathematics, and more.</em>
 </p>
 
 <p align="center">
-  <img src="imgs/schema.png" alt="SciNet knowledge graph schema" width="92%">
+  <img src="imgs/schema.png" alt="SciScholar knowledge graph schema" width="92%">
 </p>
 
 <p align="center">
   <em>The graph links papers with authors, institutions, sources, keywords, citations, related work, and the domain-field-subfield-topic hierarchy.</em>
 </p>
 
-With the client, SciNet becomes a practical research assistant for:
+With the client, SciScholar becomes a practical research assistant for:
 
 - **graph-aware paper search**: combine keywords, semantic matching, title anchors, references, and graph propagation instead of stopping at plain keyword matching;
 - **research workflow automation**: run literature review, idea grounding, idea evaluation, idea generation, trend analysis, related-author retrieval, and researcher profiling;
 - **agent-friendly outputs**: keep reproducible machine-readable artifacts such as `request.json` and `response.json`, plus user-facing `summary.txt` and `report.md`;
 - **editable CLI skills**: inspect, copy, modify, and rerun common downstream workflows as reusable JSON skills;
-- **portable Agent Skill pack**: use the packaged skills in [`agent-skill/`](agent-skill/) to let tools such as Codex, Claude Code, and other coding agents invoke SciNet workflows with the right defaults and artifact-reading habits.
+- **portable Agent Skill pack**: use [`agent-skill/`](agent-skill/) to migrate the base `search-papers` capability into end-to-end downstream tasks for tools such as Codex, Claude Code, and other coding agents.
 
 ---
 
@@ -78,7 +78,7 @@ With the client, SciNet becomes a practical research assistant for:
 - [🧩 Supported Tasks](#-supported-tasks)
 - [🛠️ CLI-First Workflow](#️-cli-first-workflow)
 - [🧰 Editable Skills](#-editable-skills)
-- [Agent Skill](#agent-skill)
+- [🖊Agent Skill](#agent-skill)
 - [🐍 Python SDK](#-python-sdk)
 - [📦 Outputs and Artifacts](#-outputs-and-artifacts)
 - [📂 Repository Layout](#-repository-layout)
@@ -96,19 +96,19 @@ With the client, SciNet becomes a practical research assistant for:
 Install directly from GitHub:
 
 ```bash
-pip install "git+https://github.com/zjunlp/SciNet.git#subdirectory=scinet"
+pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
 ```
 
 For isolated CLI usage:
 
 ```bash
-pipx install "git+https://github.com/zjunlp/SciNet.git#subdirectory=scinet"
+pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
 ```
 
 After installation:
 
 ```bash
-scinet -h
+scischolar -h
 ```
 
 ### 2. Register an API Token
@@ -125,34 +125,34 @@ Quick link: [🔑 API Token](#-api-token).
 
 ### 3. Configure
 
-At minimum, configure the hosted SciNet API endpoint and your personal token.
+At minimum, configure the hosted SciScholar API endpoint and your personal token.
 
 Linux / macOS:
 
 ```bash
-export SCINET_API_BASE_URL="http://scinet.openkg.cn"
-export SCINET_API_KEY="your-personal-scinet-token"
-export SCINET_TIMEOUT=900
-export SCINET_RUNS_DIR="./runs"
+export SCISCHOLAR_API_BASE_URL="http://scinet.openkg.cn"
+export SCISCHOLAR_API_KEY="your-personal-scischolar-token"
+export SCISCHOLAR_TIMEOUT=900
+export SCISCHOLAR_RUNS_DIR="./runs"
 ```
 
 Windows CMD:
 
 ```bat
-set SCINET_API_BASE_URL=http://scinet.openkg.cn
-set SCINET_API_KEY=your-personal-scinet-token
-set SCINET_TIMEOUT=900
-set SCINET_RUNS_DIR=.\runs
+set SCISCHOLAR_API_BASE_URL=http://scinet.openkg.cn
+set SCISCHOLAR_API_KEY=your-personal-scischolar-token
+set SCISCHOLAR_TIMEOUT=900
+set SCISCHOLAR_RUNS_DIR=.\runs
 ```
 
 Compatibility variables:
 
 ```env
 KG2API_BASE_URL=http://scinet.openkg.cn
-KG2API_API_KEY=your-personal-scinet-token
+KG2API_API_KEY=your-personal-scischolar-token
 ```
 
-For new setups, prefer `SCINET_*`.
+For new setups, prefer `SCISCHOLAR_*`.
 
 
 
@@ -166,16 +166,16 @@ export LLM_MODEL="your-model-name"
 # Optional when your provider uses a custom endpoint or auth header:
 # export LLM_CHAT_COMPLETIONS_URL="https://your-provider-or-gateway.example/v1/chat/completions"
 # export LLM_AUTH_HEADER="x-api-key: your-provider-api-key"
-export SCINET_LLM_TIMEOUT=30
-export SCINET_LLM_TEMPERATURE=0
-export SCINET_LLM_MAX_TOKENS=512
+export SCISCHOLAR_LLM_TIMEOUT=30
+export SCISCHOLAR_LLM_TEMPERATURE=0
+export SCISCHOLAR_LLM_MAX_TOKENS=512
 ```
 
-This step is optional. Configure it only when you want SciNet to use your LLM API to turn a free-form query into better search keywords.
+This step is optional. Configure it only when you want SciScholar to use your LLM API to turn a free-form query into better search keywords.
 
 Keep `LLM_PROVIDER=chat_completions`, then replace `LLM_API_KEY`, `LLM_BASE_URL`, and `LLM_MODEL` with your provider values. If your provider gives a full chat-completions endpoint, set `LLM_CHAT_COMPLETIONS_URL`; if it requires a custom auth header, set `LLM_AUTH_HEADER`.
 
-Leave the LLM values empty if you do not need this. SciNet will use built-in keyword extraction, and normal search, review, idea, trend, and researcher workflows still run.
+Leave the LLM values empty if you do not need this. SciScholar will use built-in keyword extraction, and normal search, review, idea, trend, and researcher workflows still run.
 
 User-editable template: [.env.example](.env.example#L7-L19). Set these variables only if you want LLM-assisted keyword extraction.
 
@@ -186,7 +186,7 @@ export OA_API_KEY=""
 export OPENALEX_MAILTO=""
 ```
 
-OpenAlex is useful when you want extra metadata or PDF-related support. It is not required for the main CLI examples in this README. If you leave these variables empty, normal SciNet retrieval still works.
+OpenAlex is useful when you want extra metadata or PDF-related support. It is not required for the main CLI examples in this README. If you leave these variables empty, normal SciScholar retrieval still works.
 
 User-editable template: [.env.example](.env.example#L24-L26). Set these only if you want OpenAlex-assisted metadata support.
 
@@ -220,8 +220,8 @@ Runtime variables:
 
 | Variable | Required For | Notes |
 |---|---|---|
-| `SCINET_API_BASE_URL` | all hosted SciNet tasks | Hosted SciNet API base URL. |
-| `SCINET_API_KEY` | all hosted SciNet tasks | Sent as `X-API-Key` and `Authorization: Bearer`. |
+| `SCISCHOLAR_API_BASE_URL` | all hosted SciScholar tasks | Hosted SciScholar API base URL. |
+| `SCISCHOLAR_API_KEY` | all hosted SciScholar tasks | Sent as `X-API-Key` and `Authorization: Bearer`. |
 | `LLM_PROVIDER` | optional frontend enhancement | Keep as `chat_completions`. |
 | `LLM_API_KEY` | optional frontend enhancement | Your provider key; leave empty for local or no-auth services. |
 | `LLM_BASE_URL` | optional frontend enhancement | Provider base URL, usually ending in `/v1`. |
@@ -236,14 +236,14 @@ Runtime variables:
 ### 4. Test
 
 ```bash
-scinet health
-scinet config
+scischolar health
+scischolar config
 ```
 
 ### 5. Run a Paper Search
 
 ```bash
-scinet search-papers \
+scischolar search-papers \
   --query "open world agent" \
   --keyword "high:open world agent" \
   --top-k 10
@@ -253,7 +253,7 @@ scinet search-papers \
 
 ## 🔑 API Token
 
-SciNet uses personal API tokens for public access.
+SciScholar uses personal API tokens for public access.
 
 ### Browser Registration
 
@@ -269,21 +269,21 @@ Steps:
 2. click **Send code**;
 3. check your inbox for the verification code;
 4. enter the code and create a token;
-5. copy the returned `scinet_xxx` token.
+5. copy the returned `scischolar_xxx` token.
 
 The token is shown only once.
 
 ### Check Token Status
 
 ```bash
-curl -H "Authorization: Bearer $SCINET_API_KEY" \
+curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
   http://scinet.openkg.cn/v1/auth/token/status
 ```
 
 ### Check Usage
 
 ```bash
-curl -H "Authorization: Bearer $SCINET_API_KEY" \
+curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
   "http://scinet.openkg.cn/v1/auth/usage?days=7"
 ```
 
@@ -293,44 +293,44 @@ curl -H "Authorization: Bearer $SCINET_API_KEY" \
 
 | Command | Scenario | Main Output |
 |---|---|---|
-| `scinet search-papers` | Paper search | Related papers and Markdown report |
-| `scinet related-authors` | Related-author discovery | Candidate authors and scores |
-| `scinet author-papers` | Author paper lookup | Papers by a specified author |
-| `scinet support-papers` | Support-paper retrieval | Evidence papers for candidate authors |
-| `scinet paper-search` | Lightweight low-level paper search | Fast paper candidates |
-| `scinet literature-review` | Literature review | Core paper pool, timeline, writing hints |
-| `scinet idea-grounding` | Idea grounding | Similar works and differentiation evidence |
-| `scinet idea-evaluate` | Idea evaluation | Evidence for novelty, feasibility, and soundness |
-| `scinet idea-generate` | Idea generation | Topic combinations and idea seeds |
-| `scinet trend-report` | Trend analysis | Evolution evidence and representative works |
-| `scinet researcher-review` | Researcher background review | Research trajectory and representative works |
-| `scinet skill` | Editable skill registry | Reusable workflow presets |
+| `scischolar search-papers` | Paper search | Related papers and Markdown report |
+| `scischolar related-authors` | Related-author discovery | Candidate authors and scores |
+| `scischolar author-papers` | Author paper lookup | Papers by a specified author |
+| `scischolar support-papers` | Support-paper retrieval | Evidence papers for candidate authors |
+| `scischolar paper-search` | Lightweight low-level paper search | Fast paper candidates |
+| `scischolar literature-review` | Literature review | Core paper pool, timeline, writing hints |
+| `scischolar idea-grounding` | Idea grounding | Similar works and differentiation evidence |
+| `scischolar idea-evaluate` | Idea evaluation | Evidence for novelty, feasibility, and soundness |
+| `scischolar idea-generate` | Idea generation | Topic combinations and idea seeds |
+| `scischolar trend-report` | Trend analysis | Evolution evidence and representative works |
+| `scischolar researcher-review` | Researcher background review | Research trajectory and representative works |
+| `scischolar skill` | Editable skill registry | Reusable workflow presets |
 
 ---
 
 ## 🛠️ CLI-First Workflow
 
-SciNet is CLI-first: you can start with one command, inspect the saved artifacts, and then move into larger research workflows. If you are new, run help once, try a basic retrieval, then choose one of the downstream workflows below.
+SciScholar is CLI-first: you can start with one command, inspect the saved artifacts, and then move into larger research workflows. If you are new, run help once, try a basic retrieval, then choose one of the downstream workflows below.
 
-Documentation: [📚 SciNet Documentation](http://scinet.openkg.cn/api/docs/). Use it to check API setup, CLI commands, parameter meanings, and runnable examples.
+Documentation: [📚 SciScholar Documentation](http://scinet.openkg.cn/api/docs/). Use it to check API setup, CLI commands, parameter meanings, and runnable examples.
 
 ### Help
 
 ```bash
-scinet -h
-scinet search-papers -h
-scinet literature-review -h
-scinet skill -h
+scischolar -h
+scischolar search-papers -h
+scischolar literature-review -h
+scischolar skill -h
 ```
 
 ### Input Styles
 
-SciNet supports two input styles. For formal runs, prefer expert parameters because every field is explicit and easier to reproduce. Natural-language input is useful for quick trials or exploratory use.
+SciScholar supports two input styles. For formal runs, prefer expert parameters because every field is explicit and easier to reproduce. Natural-language input is useful for quick trials or exploratory use.
 
 #### Recommended: expert parameters
 
 ```bash
-scinet --timeout 900 search-papers \
+scischolar --timeout 900 search-papers \
   --retrieval-mode hybrid \
   --query "open world agent" \
   --domain "artificial intelligence" \
@@ -352,10 +352,10 @@ scinet --timeout 900 search-papers \
 
 #### Compatible: natural-language input
 
-Use `--text` when you want SciNet to parse the request from a short instruction. You can still add structured hints such as `keyword[high]: ...` in the text.
+Use `--text` when you want SciScholar to parse the request from a short instruction. You can still add structured hints such as `keyword[high]: ...` in the text.
 
 ```bash
-scinet --timeout 900 search-papers \
+scischolar --timeout 900 search-papers \
   --retrieval-mode hybrid \
   --text "Find papers related to open world agent in artificial intelligence since 2020. Return 3 papers.
 
@@ -371,7 +371,7 @@ keyword[high]: open world agent" \
 Use this when you want a quick, evidence-backed paper list for one topic.
 
 ```bash
-scinet search-papers \
+scischolar search-papers \
   --query "open world agent" \
   --domain "artificial intelligence" \
   --time-range 2020-2024 \
@@ -391,7 +391,7 @@ Each workflow prints a concise terminal summary and saves full artifacts under `
 Build an initial reading list and get evidence for writing a literature review.
 
 ```bash
-scinet literature-review \
+scischolar literature-review \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -404,7 +404,7 @@ scinet literature-review \
 Check whether a proposed research idea is novel, feasible, and well supported by existing work.
 
 ```bash
-scinet idea-evaluate \
+scischolar idea-evaluate \
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -418,7 +418,7 @@ scinet idea-evaluate \
 Explore promising topic combinations and generate candidate research directions.
 
 ```bash
-scinet idea-generate \
+scischolar idea-generate \
   --query "knowledge editing for large language models" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -433,7 +433,7 @@ scinet idea-generate \
 Trace how a topic has developed and identify representative works along the way.
 
 ```bash
-scinet trend-report \
+scischolar trend-report \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -447,7 +447,7 @@ scinet trend-report \
 Summarize a researcher's publication trajectory and representative papers.
 
 ```bash
-scinet researcher-review \
+scischolar researcher-review \
   --author "Yoshua Bengio" \
   --limit 10 \
   --no-abstract
@@ -462,7 +462,7 @@ scinet researcher-review \
 | `title` | Title-anchor retrieval | Known paper titles |
 | `hybrid` | Keyword + semantic + title + graph walk | Default and recommended |
 
-If `--retrieval-mode` is omitted, SciNet uses `hybrid`.
+If `--retrieval-mode` is omitted, SciScholar uses `hybrid`.
 
 ### Expert Anchors
 
@@ -502,19 +502,19 @@ Recommended safe defaults:
 
 ## 🧰 Editable Skills
 
-SciNet skills are JSON presets for downstream research workflows. They make complex workflows easier to inspect, reuse, and customize.
+SciScholar skills are JSON presets for downstream research workflows. They make complex workflows easier to inspect, reuse, and customize.
 
 ```bash
-scinet skill list
-scinet skill show literature-review
-scinet skill run literature-review --query "open world agent" --keyword "high:open world agent"
-scinet skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent"
+scischolar skill list
+scischolar skill show literature-review
+scischolar skill run literature-review --query "open world agent" --keyword "high:open world agent"
+scischolar skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent"
 ```
 
 Create a custom skill:
 
 ```bash
-scinet skill init my-review --from literature-review
+scischolar skill init my-review --from literature-review
 ```
 
 This creates:
@@ -526,47 +526,47 @@ This creates:
 Edit it, then run:
 
 ```bash
-scinet skill run my-review --query "your topic"
+scischolar skill run my-review --query "your topic"
 ```
 
 User-defined skills are loaded from:
 
 1. `./skills/*.json`
-2. `~/.scinet/skills/*.json`
-3. directories specified by `SCINET_SKILLS_DIR`
+2. `~/.scischolar/skills/*.json`
+3. directories specified by `SCISCHOLAR_SKILLS_DIR`
 
 User-defined skills can override built-in skills with the same name.
 
 ---
 
-## Agent Skill
+## 🖊Agent Skill
 
-SciNet also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs; they are reusable skill packs that teach tools such as Codex, Claude Code, and other coding agents how to choose and run SciNet workflows, pass reliable parameters, and read saved artifacts.
+SciScholar also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs or simple command aliases. They are downstream task playbooks that teach tools such as Codex, Claude Code, and other coding agents how to start from SciScholar's base `search-papers` retrieval capability, read saved artifacts, and complete a research goal.
 
 Included skills:
 
-| Skill | Workflow | Use case |
+| Skill | Retrieval base | Downstream use case |
 |---|---|---|
-| `scinet-literature-review` | `literature-review` | Reading lists and related-work reports |
-| `scinet-idea-grounding` | `idea-grounding` | Prior-art grounding for research ideas |
-| `scinet-idea-evaluate` | `idea-evaluate` | Novelty, feasibility, and soundness checks |
-| `scinet-idea-generate` | `idea-generate` | Literature-grounded idea seeds |
-| `scinet-trend-report` | `trend-report` | Timeline and trend analysis |
-| `scinet-researcher-review` | `researcher-review` | Researcher profiles and representative works |
-| `scinet-quick-paper-search` | `paper-search` | Fast paper candidate lookup |
+| `scischolar-quick-paper-search` | `search-papers` | Small evidence seed and downstream routing |
+| `scischolar-literature-review` | `search-papers` | Reading lists and related-work reports |
+| `scischolar-idea-grounding` | `search-papers` | Prior-art grounding for research ideas |
+| `scischolar-idea-evaluate` | `search-papers` | Novelty, feasibility, and soundness checks |
+| `scischolar-idea-generate` | `search-papers` | Literature-grounded idea seeds |
+| `scischolar-trend-report` | `search-papers` | Timeline and trend analysis |
+| `scischolar-researcher-review` | `search-papers` plus author seed lookup | Researcher profiles and representative works |
 
-To use one locally, copy its directory into the skill directory supported by your agent tool, then restart or refresh that tool. For Codex, that is usually `~/.codex/skills` or `%USERPROFILE%\.codex\skills`. The CLI presets remain in `scinet/src/scinet/builtin_skills.json`; the Agent Skill pack is the agent-facing layer on top.
+To use one locally, copy its directory into the skill directory supported by your agent tool, then restart or refresh that tool. For Codex, that is usually `~/.codex/skills` or `%USERPROFILE%\.codex\skills`. The CLI commands remain the retrieval/execution layer; the Agent Skill pack is the downstream reasoning layer on top.
 
 ---
 
 ## 🐍 Python SDK
 
-SciNet also provides a lightweight Python client.
+SciScholar also provides a lightweight Python client.
 
 ```python
-from scinet import SciNetClient
+from scischolar import SciScholarClient
 
-client = SciNetClient()
+client = SciScholarClient()
 
 print(client.health())
 
@@ -582,11 +582,11 @@ print(result)
 You can also pass credentials directly:
 
 ```python
-from scinet import SciNetClient
+from scischolar import SciScholarClient
 
-client = SciNetClient(
+client = SciScholarClient(
     base_url="http://scinet.openkg.cn",
-    api_key="your-personal-scinet-token",
+    api_key="your-personal-scischolar-token",
 )
 
 print(client.token_status())
@@ -605,7 +605,7 @@ Common artifacts:
 | File | Description |
 |---|---|
 | `plan.json` | Structured search plan |
-| `request.json` | Full request sent to SciNet API |
+| `request.json` | Full request sent to SciScholar API |
 | `response.json` | Raw backend response |
 | `summary.txt` | Short summary |
 | `report.md` | User-facing Markdown report |
@@ -618,15 +618,15 @@ Common artifacts:
 The tree below highlights the main user-facing areas of the repository. Generated outputs and local cache folders are omitted.
 
 ```text
-SciNet/
+SciScholar/
   README.md / README_zh.md       # project documentation
   .env.example                   # root runtime configuration template
   requirements.txt
-  run_scinet.py                  # lightweight local runner
+  run_scischolar.py                  # lightweight local runner
   agent-skill/                   # portable Agent Skill pack
   docs/api/                      # unified static API and CLI documentation site
   imgs/                          # README figures
-  scinet/                        # pip-installable SciNet client package
+  scinet/                        # pip-installable SciScholar client package
     pyproject.toml
     src/scinet/                  # packaged CLI, client, config, and skills
     core/ search/ tasks/         # retrieval planning and workflow logic
@@ -640,19 +640,19 @@ SciNet/
 
 ## 🧯 Troubleshooting
 
-### `scinet health` works but `search-papers` returns 401
+### `scischolar health` works but `search-papers` returns 401
 
 Your token is missing or invalid.
 
 ```bash
-echo $SCINET_API_KEY
-export SCINET_API_KEY="your-personal-scinet-token"
+echo $SCISCHOLAR_API_KEY
+export SCISCHOLAR_API_KEY="your-personal-scischolar-token"
 ```
 
 Windows CMD:
 
 ```bat
-set SCINET_API_KEY=your-personal-scinet-token
+set SCISCHOLAR_API_KEY=your-personal-scischolar-token
 ```
 
 ### No email verification code
@@ -671,12 +671,12 @@ Use lightweight settings:
 --bias-exploration low
 ```
 
-### `scinet` command is not found on Windows
+### `scischolar` command is not found on Windows
 
 Use the virtual environment executable directly:
 
 ```bat
-.venv\Scripts\scinet.exe -h
+.venv\Scripts\scischolar.exe -h
 ```
 
 or reinstall:
@@ -692,14 +692,15 @@ or reinstall:
 - [ ] **CLI Tools.** Add more user-facing CLI capabilities so downstream users and AI agents can invoke retrieval workflows without touching database internals.
 - [x] **Portable Agent Skill pack.** Package reusable agent skills for common scientific discovery workflows and expose best practices as easier-to-load components.
 - [ ] **More Knowledge.** Integrate more knowledge forms beyond paper-centric entities, such as datasets, code, standards, theorems, and experimental experience.
-- [ ] **Benchmark and Evaluation.** Build dedicated benchmarks and evaluation protocols for downstream scientific research tasks supported by SciNet.
-- [ ] **Dynamic Update** Improve dynamic knowledge updates toward a more systematic and frequent refresh mechanism.
+- [ ] **Benchmark and Evaluation.** Build dedicated benchmarks and evaluation protocols for downstream scientific research tasks supported by SciScholar.
+- [ ] **Dynamic Update**Improve dynamic knowledge updates toward a more systematic and frequent refresh mechanism.
+
 
 ---
 
 ## ✍️ Citation
 
-If you find SciNet helpful, please cite:
+If you find SciScholar helpful, please cite:
 
 ```
 

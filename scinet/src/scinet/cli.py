@@ -38,11 +38,11 @@ from typing import Any
 
 
 
-DEFAULT_BASE_URL = os.environ.get("SCINET_API_BASE_URL") or os.environ.get("KG2API_BASE_URL", "http://scinet.openkg.cn")
+DEFAULT_BASE_URL = os.environ.get("SCISCHOLAR_API_BASE_URL") or os.environ.get("SCINET_API_BASE_URL") or os.environ.get("KG2API_BASE_URL", "http://scinet.openkg.cn")
 
-DEFAULT_API_KEY = os.environ.get("SCINET_API_KEY") or os.environ.get("KG2API_API_KEY", "")
+DEFAULT_API_KEY = os.environ.get("SCISCHOLAR_API_KEY") or os.environ.get("SCINET_API_KEY") or os.environ.get("KG2API_API_KEY", "")
 
-DEFAULT_RUNS_DIR = os.environ.get("SCINET_RUNS_DIR") or os.environ.get("SCINET_SKILL_RUNS_DIR") or str(Path.cwd() / "runs")
+DEFAULT_RUNS_DIR = os.environ.get("SCISCHOLAR_RUNS_DIR") or os.environ.get("SCINET_RUNS_DIR") or os.environ.get("SCISCHOLAR_SKILL_RUNS_DIR") or os.environ.get("SCINET_SKILL_RUNS_DIR") or str(Path.cwd() / "runs")
 
 
 
@@ -198,7 +198,9 @@ class Spinner:
 
     def __init__(self, message: str, *, enabled: bool = True) -> None:
         self.message = message
-        self.enabled = enabled and sys.stderr.isatty() and not os.environ.get("SCINET_NO_SPINNER")
+        self.enabled = enabled and sys.stderr.isatty() and not (
+            os.environ.get("SCISCHOLAR_NO_SPINNER") or os.environ.get("SCINET_NO_SPINNER")
+        )
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
 
@@ -575,7 +577,7 @@ def _render_channel_view(channel_view: dict[str, Any]) -> list[str]:
 def render_user_output(payload: dict[str, Any]) -> str:
     """Render concise user-facing output as colored text tables."""
     ok = bool(payload.get("ok"))
-    command = payload.get("command", "scinet")
+    command = payload.get("command", "scischolar")
     query = payload.get("query")
     elapsed = payload.get("elapsed_seconds")
 
@@ -592,7 +594,7 @@ def render_user_output(payload: dict[str, Any]) -> str:
         "trend-report": "📈 Trend Report",
         "researcher-review": "👤 Researcher Review",
     }
-    display_title = channel_titles.get(command, "SciNet")
+    display_title = channel_titles.get(command, "SciScholar")
 
     lines: list[str] = []
 
@@ -756,7 +758,7 @@ def request_json(
 
                 "error_type": "MissingApiKey",
 
-                "error": "This endpoint requires SCINET_API_KEY or --api-key.",
+                "error": "This endpoint requires SCISCHOLAR_API_KEY or --api-key.",
 
             }
 
@@ -779,7 +781,7 @@ def request_json(
 
 
 
-    spinner_message = "Contacting the SciNet backend. Please wait; complex graph retrieval may take several seconds"
+    spinner_message = "Contacting the SciScholar backend. Please wait; complex graph retrieval may take several seconds"
     show_spinner = payload is not None and endpoint.rstrip("/") != "/healthz"
 
     try:
@@ -1791,6 +1793,7 @@ def _missing_or_placeholder(value: str | None) -> bool:
         "replace-me",
         "your-token",
         "your-api-key",
+        "your-personal-scischolar-token",
         "your-personal-scinet-token",
         "your-model-name",
     } or any(token in normalized for token in placeholder_tokens)
@@ -1836,15 +1839,15 @@ def _parse_llm_extra_headers(value: str) -> dict[str, str]:
 
 
 def _optional_llm_config() -> dict[str, Any] | None:
-    provider = (_env_first("LLM_PROVIDER", "SCINET_LLM_PROVIDER") or "chat_completions").lower()
+    provider = (_env_first("LLM_PROVIDER", "SCISCHOLAR_LLM_PROVIDER", "SCINET_LLM_PROVIDER") or "chat_completions").lower()
     if provider in {"0", "false", "none", "off", "disabled"}:
         return None
-    api_key = _env_first("LLM_API_KEY", "SCINET_LLM_API_KEY", "OPENAI_API_KEY")
-    base_url = _env_first("LLM_BASE_URL", "SCINET_LLM_BASE_URL", "OPENAI_BASE_URL")
-    full_url = _env_first("LLM_CHAT_COMPLETIONS_URL", "SCINET_LLM_CHAT_COMPLETIONS_URL", "OPENAI_CHAT_COMPLETIONS_URL")
-    auth_header = _env_first("LLM_AUTH_HEADER", "SCINET_LLM_AUTH_HEADER")
-    extra_headers = _env_first("LLM_HTTP_HEADERS", "SCINET_LLM_HTTP_HEADERS")
-    model = _env_first("LLM_MODEL", "SCINET_LLM_MODEL", "OPENAI_MODEL")
+    api_key = _env_first("LLM_API_KEY", "SCISCHOLAR_LLM_API_KEY", "SCINET_LLM_API_KEY", "OPENAI_API_KEY")
+    base_url = _env_first("LLM_BASE_URL", "SCISCHOLAR_LLM_BASE_URL", "SCINET_LLM_BASE_URL", "OPENAI_BASE_URL")
+    full_url = _env_first("LLM_CHAT_COMPLETIONS_URL", "SCISCHOLAR_LLM_CHAT_COMPLETIONS_URL", "SCINET_LLM_CHAT_COMPLETIONS_URL", "OPENAI_CHAT_COMPLETIONS_URL")
+    auth_header = _env_first("LLM_AUTH_HEADER", "SCISCHOLAR_LLM_AUTH_HEADER", "SCINET_LLM_AUTH_HEADER")
+    extra_headers = _env_first("LLM_HTTP_HEADERS", "SCISCHOLAR_LLM_HTTP_HEADERS", "SCINET_LLM_HTTP_HEADERS")
+    model = _env_first("LLM_MODEL", "SCISCHOLAR_LLM_MODEL", "SCINET_LLM_MODEL", "OPENAI_MODEL")
     endpoint = _chat_completions_url(base_url, full_url)
     if _missing_or_placeholder(endpoint) or _missing_or_placeholder(model):
         return None
@@ -1859,9 +1862,9 @@ def _optional_llm_config() -> dict[str, Any] | None:
         "chat_completions_url": endpoint,
         "headers": headers,
         "model": model,
-        "timeout": int(os.environ.get("SCINET_LLM_TIMEOUT") or os.environ.get("LLM_TIMEOUT") or 30),
-        "temperature": float(os.environ.get("SCINET_LLM_TEMPERATURE") or os.environ.get("LLM_TEMPERATURE") or 0),
-        "max_tokens": int(os.environ.get("SCINET_LLM_MAX_TOKENS") or os.environ.get("LLM_MAX_TOKENS") or 512),
+        "timeout": int(os.environ.get("SCISCHOLAR_LLM_TIMEOUT") or os.environ.get("SCINET_LLM_TIMEOUT") or os.environ.get("LLM_TIMEOUT") or 30),
+        "temperature": float(os.environ.get("SCISCHOLAR_LLM_TEMPERATURE") or os.environ.get("SCINET_LLM_TEMPERATURE") or os.environ.get("LLM_TEMPERATURE") or 0),
+        "max_tokens": int(os.environ.get("SCISCHOLAR_LLM_MAX_TOKENS") or os.environ.get("SCINET_LLM_MAX_TOKENS") or os.environ.get("LLM_MAX_TOKENS") or 512),
     }
 
 
@@ -1943,9 +1946,9 @@ def extract_keywords_with_optional_llm(text: str, *, top_keywords: int = 8) -> l
 def optional_provider_config_status() -> dict[str, Any]:
     return {
         "llm_keyword_extraction_enabled": _optional_llm_config() is not None,
-        "openalex_configured": not _missing_or_placeholder(_env_first("OA_API_KEY", "OPENALEX_API_KEY", "SCINET_OPENALEX_API_KEY")),
-        "openalex_mailto_configured": not _missing_or_placeholder(_env_first("OPENALEX_MAILTO", "OPENALEX_EMAIL", "SCINET_OPENALEX_MAILTO")),
-        "grobid_configured": not _missing_or_placeholder(_env_first("GROBID_BASE_URL", "SCINET_GROBID_BASE_URL")),
+        "openalex_configured": not _missing_or_placeholder(_env_first("OA_API_KEY", "OPENALEX_API_KEY", "SCISCHOLAR_OPENALEX_API_KEY", "SCINET_OPENALEX_API_KEY")),
+        "openalex_mailto_configured": not _missing_or_placeholder(_env_first("OPENALEX_MAILTO", "OPENALEX_EMAIL", "SCISCHOLAR_OPENALEX_MAILTO", "SCINET_OPENALEX_MAILTO")),
+        "grobid_configured": not _missing_or_placeholder(_env_first("GROBID_BASE_URL", "SCISCHOLAR_GROBID_BASE_URL", "SCINET_GROBID_BASE_URL")),
     }
 
 
@@ -3575,7 +3578,7 @@ def _report_header(command: str, title: str, now: str, query_text: str, response
     reference_titles = ctx.get("reference_titles") or []
 
     lines = [
-        f"# SciNet Downstream Channel Report: {command}",
+        f"# SciScholar Downstream Channel Report: {command}",
         "",
         f"> {title}",
         "",
@@ -3869,7 +3872,7 @@ def render_generic_markdown_report(*, command: str, request: dict[str, Any], res
     options = ctx["options"]
 
     lines: list[str] = []
-    lines.append("# SciNet / KG2API Retrieval Report")
+    lines.append("# SciScholar / KG2API Retrieval Report")
     lines.append("")
     lines.append("## 1. Basic Information")
     lines.append("")
@@ -4184,7 +4187,7 @@ def cmd_config(args: argparse.Namespace) -> int:
 
             "ok": True,
 
-            "skill": "scinet-cli-skill",
+            "skill": "scischolar-cli-skill",
 
             "base_url": args.base_url,
 
@@ -4303,8 +4306,11 @@ def _apply_channel_hint_to_report(report_path: str | None, command: str) -> None
     try:
         original = path.read_text(encoding="utf-8")
         hint = DOWNSTREAM_CHANNEL_HINTS[command]
-        header = f"# SciNet Downstream Channel Report: {command}\n\n> {hint}\n\n"
-        if not original.startswith("# SciNet Downstream Channel Report"):
+        header = f"# SciScholar Downstream Channel Report: {command}\n\n> {hint}\n\n"
+        if not (
+            original.startswith("# SciScholar Downstream Channel Report")
+            or original.startswith("# SciNet Downstream Channel Report")
+        ):
             path.write_text(header + original, encoding="utf-8")
     except Exception:
         pass
@@ -5447,9 +5453,9 @@ def add_researcher_review_args(parser: argparse.ArgumentParser) -> None:
 def build_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
-        prog="scinet",
-        usage="scinet [global-options] <command> [command-options]",
-        description="SciNet CLI: scientific knowledge-graph retrieval and downstream research workflows.",
+        prog="scischolar",
+        usage="scischolar [global-options] <command> [command-options]",
+        description="SciScholar CLI: scientific knowledge-graph retrieval and downstream research workflows.",
         epilog="""commands:
   health                 Check KG2API backend health
   config                 Show current CLI configuration
@@ -5470,12 +5476,12 @@ Skill system:\n  skill list             List editable downstream skills\n  skill
   researcher-review      Researcher background review
 
 examples:
-  scinet health
-  scinet config
-  scinet paper-search --text "open world agent" --mode vector --field title --top-k 3
-  scinet search-papers --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
-  scinet literature-review --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
-  scinet idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
+  scischolar health
+  scischolar config
+  scischolar paper-search --text "open world agent" --mode vector --field title --top-k 3
+  scischolar search-papers --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
+  scischolar literature-review --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
+  scischolar idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
 
 input:
   --query TEXT                      expert query text
@@ -5490,7 +5496,7 @@ input:
   --ranking-profile PROFILE         precision | balanced | discovery | impact
 
 tips:
-  scinet <command> -h               show command-specific help
+  scischolar <command> -h               show command-specific help
   export KG2API_BASE_URL="http://127.0.0.1:8000" for local server testing
   reports are saved under runs/<run_id>/report.md""",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -5513,7 +5519,7 @@ tips:
         required=True,
         metavar="<command>",
         title="commands",
-        description="Use 'scinet <command> -h' for command-specific options.",
+        description="Use 'scischolar <command> -h' for command-specific options.",
     )
 
 
@@ -5616,7 +5622,7 @@ tips:
 
 
 
-    # Downstream user channels from the SciNet paper.
+    # Downstream user channels from the SciScholar paper.
     p = sub.add_parser("literature-review", help="Downstream channel: literature review material generation.")
     add_downstream_search_args(p)
     p.set_defaults(
@@ -5732,12 +5738,12 @@ tips:
     # ============================================================
     # Keep top-level help concise, conda/python style.
     parser.epilog = """examples:
-  scinet health
-  scinet config
-  scinet paper-search --text "open world agent" --mode vector --field title --top-k 3
-  scinet search-papers --retrieval-mode hybrid --query "open world agent" --keyword "high:open world agent" --top-k 3
-  scinet literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3
-  scinet idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
+  scischolar health
+  scischolar config
+  scischolar paper-search --text "open world agent" --mode vector --field title --top-k 3
+  scischolar search-papers --retrieval-mode hybrid --query "open world agent" --keyword "high:open world agent" --top-k 3
+  scischolar literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3
+  scischolar idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
 
 input:
   --query TEXT                         expert query text
@@ -5754,69 +5760,69 @@ retrieval:
   --bias-*                             graph retrieval bias controls
 
 tips:
-  scinet <command> -h                  show command-specific help
+  scischolar <command> -h                  show command-specific help
   export KG2API_BASE_URL="http://127.0.0.1:8000" for local server testing
   reports are saved under runs/<run_id>/report.md"""
 
     # Make sub-command help look like mainstream CLIs:
-    #   usage: scinet literature-review [options]
+    #   usage: scischolar literature-review [options]
     # rather than:
-    #   usage: scinet [global-options] <command> [command-options] literature-review ...
+    #   usage: scischolar [global-options] <command> [command-options] literature-review ...
     for _cmd_name, _sub_parser in sub.choices.items():
-        _sub_parser.prog = f"scinet {_cmd_name}"
-        _sub_parser.usage = f"scinet {_cmd_name} [options]"
+        _sub_parser.prog = f"scischolar {_cmd_name}"
+        _sub_parser.usage = f"scischolar {_cmd_name} [options]"
         _sub_parser.formatter_class = argparse.RawDescriptionHelpFormatter
 
     _examples = {
         "search-papers": """examples:
-  scinet search-papers --retrieval-mode hybrid --query "open world agent" --keyword "high:open world agent" --top-k 3
-  scinet search-papers --retrieval-mode semantic --query "idea evaluation" --top-k 3
-  scinet search-papers --retrieval-mode title --title "high:Voyager: An Open-Ended Embodied Agent with Large Language Models" --top-k 3
+  scischolar search-papers --retrieval-mode hybrid --query "open world agent" --keyword "high:open world agent" --top-k 3
+  scischolar search-papers --retrieval-mode semantic --query "idea evaluation" --top-k 3
+  scischolar search-papers --retrieval-mode title --title "high:Voyager: An Open-Ended Embodied Agent with Large Language Models" --top-k 3
 
 purpose:
   Retrieve papers with keyword, semantic, title, or hybrid KG retrieval.""",
 
         "literature-review": """examples:
-  scinet literature-review --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
-  scinet literature-review --query "retrieval augmented generation for scientific discovery" --keyword "high:retrieval augmented generation" --keyword "middle:knowledge graph" --top-k 5
+  scischolar literature-review --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
+  scischolar literature-review --query "retrieval augmented generation for scientific discovery" --keyword "high:retrieval augmented generation" --keyword "middle:knowledge graph" --top-k 5
 
 purpose:
   Retrieve core papers and generate a review-oriented report with paper pool,
   timeline view, representative works, and writing suggestions.""",
 
         "idea-grounding": """examples:
-  scinet idea-grounding --idea "Communication-efficient multi-agent collaboration for long-horizon Minecraft construction tasks" --keyword "high:multi-agent collaboration" --top-k 3
-  scinet idea-grounding --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
+  scischolar idea-grounding --idea "Communication-efficient multi-agent collaboration for long-horizon Minecraft construction tasks" --keyword "high:multi-agent collaboration" --top-k 3
+  scischolar idea-grounding --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
 
 purpose:
   Ground a research idea against related papers and collect evidence for
   similarity, difference, motivation, methodology, and evaluation design.""",
 
         "idea-evaluate": """examples:
-  scinet idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
-  scinet idea-evaluate --idea "Federated and privacy-preserving knowledge editing for large language models" --keyword "high:knowledge editing" --keyword "middle:federated learning" --top-k 3
+  scischolar idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
+  scischolar idea-evaluate --idea "Federated and privacy-preserving knowledge editing for large language models" --keyword "high:knowledge editing" --keyword "middle:federated learning" --top-k 3
 
 purpose:
   Collect KG evidence for novelty, feasibility, soundness, and differentiation.
   Current version does not use LLM judging.""",
 
         "idea-generate": """examples:
-  scinet idea-generate --query "knowledge editing for large language models" --keyword "high:knowledge editing" --top-k 5
-  scinet idea-generate --query "scientific idea evaluation and automated research" --keyword "high:idea evaluation" --keyword "middle:LLM as a judge" --top-k 5
+  scischolar idea-generate --query "knowledge editing for large language models" --keyword "high:knowledge editing" --top-k 5
+  scischolar idea-generate --query "scientific idea evaluation and automated research" --keyword "high:idea evaluation" --keyword "middle:LLM as a judge" --top-k 5
 
 purpose:
   Use exploratory KG retrieval to discover possible idea seeds and topic combinations.""",
 
         "trend-report": """examples:
-  scinet trend-report --query "open world agent" --time-range 2018-2025 --keyword "high:open world agent" --top-k 5
-  scinet trend-report --query "retrieval augmented generation" --keyword "high:retrieval augmented generation" --top-k 5
+  scischolar trend-report --query "open world agent" --time-range 2018-2025 --keyword "high:open world agent" --top-k 5
+  scischolar trend-report --query "retrieval augmented generation" --keyword "high:retrieval augmented generation" --top-k 5
 
 purpose:
   Retrieve influential papers and organize evidence for research trend analysis.""",
 
         "researcher-review": """examples:
-  scinet researcher-review --author "Yoshua Bengio" --limit 10 --no-abstract
-  scinet researcher-review --query "papers by Geoffrey Hinton" --limit 10 --no-abstract
+  scischolar researcher-review --author "Yoshua Bengio" --limit 10 --no-abstract
+  scischolar researcher-review --query "papers by Geoffrey Hinton" --limit 10 --no-abstract
 
 purpose:
   Run a full KG retrieval path for researcher background review. The command first
@@ -5824,28 +5830,28 @@ purpose:
   KG retrieval to produce a richer background-review oriented report.""",
 
         "related-authors": """examples:
-  scinet related-authors --query "open world agent" --keyword "high:open world agent" --top-k 5
-  scinet related-authors --query "idea evaluation" --keyword "high:idea evaluation" --top-k 5
+  scischolar related-authors --query "open world agent" --keyword "high:open world agent" --top-k 5
+  scischolar related-authors --query "idea evaluation" --keyword "high:idea evaluation" --top-k 5
 
 purpose:
   Find authors related to a research direction.""",
 
         "author-papers": """examples:
-  scinet author-papers --text "author: Yoshua Bengio" --limit 10 --no-abstract
-  scinet author-papers --text "papers by Geoffrey Hinton" --limit 10 --no-abstract
+  scischolar author-papers --text "author: Yoshua Bengio" --limit 10 --no-abstract
+  scischolar author-papers --text "papers by Geoffrey Hinton" --limit 10 --no-abstract
 
 purpose:
   Retrieve papers written by a specified author.""",
 
         "support-papers": """examples:
-  scinet support-papers --text "Query topic: open world agents and embodied AI. Candidate authors: Yoshua Bengio, Pieter Abbeel." --top-k-per-author 1 --no-author-stats
+  scischolar support-papers --text "Query topic: open world agents and embodied AI. Candidate authors: Yoshua Bengio, Pieter Abbeel." --top-k-per-author 1 --no-author-stats
 
 purpose:
   For each candidate author, find supporting papers related to the query topic.""",
 
         "paper-search": """examples:
-  scinet paper-search --text "open world agent" --mode vector --field title --top-k 3
-  scinet paper-search --text "idea evaluation" --mode vector --field abstract --top-k 3
+  scischolar paper-search --text "open world agent" --mode vector --field title --top-k 3
+  scischolar paper-search --text "idea evaluation" --mode vector --field abstract --top-k 3
 
 purpose:
   Lightweight low-level paper search for fast testing.""",

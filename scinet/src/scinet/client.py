@@ -9,7 +9,7 @@ from .config import SciNetConfig, load_config
 
 
 class SciNetClient:
-    """Small Python client for the hosted SciNet / KG2API service."""
+    """Small Python client for the hosted SciScholar / KG2API service."""
 
     def __init__(
         self,
@@ -33,7 +33,7 @@ class SciNetClient:
 
         if endpoint.rstrip("/") != "/healthz":
             if not self.config.api_key:
-                raise RuntimeError("SCINET_API_KEY is required for this endpoint.")
+                raise RuntimeError("SCISCHOLAR_API_KEY is required for this endpoint.")
             headers["Authorization"] = f"Bearer {self.config.api_key}"
             headers["X-API-Key"] = self.config.api_key
 
@@ -54,7 +54,7 @@ class SciNetClient:
                 detail = json.loads(raw)
             except json.JSONDecodeError:
                 detail = raw
-            raise RuntimeError(f"SciNet API error {exc.code}: {detail}") from exc
+            raise RuntimeError(f"SciScholar API error {exc.code}: {detail}") from exc
 
     def health(self) -> Any:
         return self.request("GET", "/healthz")

@@ -1,23 +1,25 @@
-# SciNet Agent Skill Pack
+# SciScholar Agent Skill Pack
 
-This folder packages SciNet workflows as a portable agent-skill pack. These are project assets for coding and research agents: each skill has a `SKILL.md` instruction file, with optional tool-specific UI metadata under `agents/`, so tools such as Codex, Claude Code, and other SKILL.md-aware agents can load or adapt the same workflow guidance.
+This folder packages SciScholar workflows as a portable agent-skill pack. Each skill migrates SciScholar's base `search-papers` retrieval capability into an end-to-end downstream task: plan the search, run SciScholar, read generated artifacts, and complete the user's research goal.
 
-They complement the SciNet CLI presets in `scinet/src/scinet/builtin_skills.json`:
+These are project assets for coding and research agents. Each skill has a `SKILL.md` instruction file, with optional tool-specific UI metadata under `agents/`, so tools such as Codex, Claude Code, and other SKILL.md-aware agents can load or adapt the same workflow guidance.
 
-- CLI presets make workflows runnable with `scinet skill run ...`.
-- The Agent Skill layer teaches an agent when and how to use those workflows, which parameters to prefer, and where to read generated artifacts.
+They complement SciScholar's CLI retrieval layer:
+
+- CLI commands make retrieval runnable from the terminal.
+- The Agent Skill layer teaches an agent how to migrate retrieval into a downstream task deliverable.
 
 ## Included Skills
 
-| Skill | SciNet workflow | Best for |
+| Skill | Retrieval base | Downstream goal |
 |---|---|---|
-| `scinet-literature-review` | `literature-review` | Evidence-backed reading lists and related-work reports |
-| `scinet-idea-grounding` | `idea-grounding` | Comparing a research idea with prior work |
-| `scinet-idea-evaluate` | `idea-evaluate` | Checking novelty, feasibility, soundness, and differentiation |
-| `scinet-idea-generate` | `idea-generate` | Generating literature-grounded research idea seeds |
-| `scinet-trend-report` | `trend-report` | Tracing topic evolution and representative papers over time |
-| `scinet-researcher-review` | `researcher-review` | Profiling a researcher and representative works |
-| `scinet-quick-paper-search` | `paper-search` | Fast paper candidate lookup before deeper workflows |
+| `scischolar-quick-paper-search` | `search-papers` | Small evidence seed and downstream routing |
+| `scischolar-literature-review` | `search-papers` | Evidence-backed reading lists and related-work reports |
+| `scischolar-idea-grounding` | `search-papers` | Comparing a research idea with prior work |
+| `scischolar-idea-evaluate` | `search-papers` | Checking novelty, feasibility, soundness, and differentiation |
+| `scischolar-idea-generate` | `search-papers` | Generating literature-grounded research idea seeds |
+| `scischolar-trend-report` | `search-papers` | Tracing topic evolution and representative papers over time |
+| `scischolar-researcher-review` | `search-papers` plus author seed lookup | Profiling a researcher and representative works |
 
 ## Use
 
@@ -26,22 +28,22 @@ Copy any skill directory into the skill directory supported by your agent tool, 
 Codex example on Windows PowerShell:
 
 ```powershell
-Copy-Item -Recurse .\agent-skill\scinet-literature-review "$env:USERPROFILE\.codex\skills\"
+Copy-Item -Recurse .\agent-skill\scischolar-literature-review "$env:USERPROFILE\.codex\skills\"
 ```
 
 Codex example on macOS/Linux:
 
 ```bash
-cp -R ./agent-skill/scinet-literature-review ~/.codex/skills/
+cp -R ./agent-skill/scischolar-literature-review ~/.codex/skills/
 ```
 
 Claude Code and other agent tools can use the same `SKILL.md` folders when their skill/plugin loader supports filesystem skills. If a tool uses a different metadata filename, keep `SKILL.md` as the source of truth and adapt the `agents/` metadata as needed.
 
-The skills expect the SciNet CLI to be installed or available from this repository. Configure `SCINET_API_BASE_URL` and `SCINET_API_KEY` before running hosted SciNet tasks.
+The skills expect the SciScholar CLI to be installed or available from this repository. Use the `scischolar` executable and configure `SCISCHOLAR_API_BASE_URL` and `SCISCHOLAR_API_KEY` before running hosted SciScholar tasks.
 
 ## Design Notes
 
 - Keep each skill small enough to load quickly.
-- Keep operational defaults aligned with `builtin_skills.json`.
+- Keep operational defaults aligned with `search-papers` and the downstream channel commands.
 - Do not put API tokens or run artifacts in this folder.
 - Use `runs/<run_id>/summary.txt`, `report.md`, `request.json`, and `response.json` as the evidence trail after each workflow run.

@@ -32,7 +32,7 @@ from .tasks.dispatcher import execute_request
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run SciNet workflows and emit JSON + Markdown results.")
+    parser = argparse.ArgumentParser(description="Run SciScholar workflows and emit JSON + Markdown results.")
     parser.add_argument("--task-type", choices=SUPPORTED_TASK_TYPES, default=None, help="Task type to run.")
     parser.add_argument(
         "--idea-text",
@@ -52,7 +52,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--author-name", default=None, help=f"Author name input for {TASK_AUTHOR_PROFILE}.")
     parser.add_argument("--params-file", default=None, help="Path to a JSON file with task params overrides.")
     parser.add_argument("--params-json", default=None, help="Inline JSON object for task params overrides.")
-    parser.add_argument("--api-timeout-default", type=float, default=None, help="Default SciNet API read timeout in seconds.")
+    parser.add_argument("--api-timeout-default", type=float, default=None, help="Default SciScholar API read timeout in seconds.")
     parser.add_argument("--api-timeout-search", type=float, default=None, help="Read timeout in seconds for /v1/search.")
     parser.add_argument(
         "--api-timeout-authors-related",
@@ -72,9 +72,9 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Read timeout in seconds for /v1/authors/support-papers.",
     )
-    parser.add_argument("--output-root", default=str(DEFAULT_RUN_ROOT), help="Root folder for SciNet runs.")
+    parser.add_argument("--output-root", default=str(DEFAULT_RUN_ROOT), help="Root folder for SciScholar runs.")
     parser.add_argument("--run-id", default=None, help="Optional run id.")
-    parser.add_argument("--env", default=str(DEFAULT_ENV_PATH), help="Path to the SciNet .env file.")
+    parser.add_argument("--env", default=str(DEFAULT_ENV_PATH), help="Path to the SciScholar .env file.")
     parser.add_argument("--pretty", action="store_true", help="Pretty-print final JSON to stdout.")
     return parser
 

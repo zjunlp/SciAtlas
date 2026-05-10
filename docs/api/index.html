@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SciNet API & CLI Documentation</title>
+<title>SciScholar API & CLI Documentation</title>
 <style>
 :root{
   --bg:#f5f8f7;
@@ -509,9 +509,9 @@ pre code{
 </head>
 <body>
 <nav class="topbar">
-  <a class="brand" href="#overview" aria-label="SciNet API and CLI Documentation">
+  <a class="brand" href="#overview" aria-label="SciScholar API and CLI Documentation">
     <span class="brand-mark">S</span>
-    <span>SciNet Docs</span>
+    <span>SciScholar Docs</span>
   </a>
   <div class="top-actions">
     <a class="pill" href="http://scinet.openkg.cn" data-i18n="homeLink">Home</a>
@@ -526,8 +526,8 @@ pre code{
   <div class="hero-inner">
     <div>
       <p class="eyebrow" data-i18n="eyebrow">Hosted API + CLI Manual</p>
-      <h1 data-i18n="heroTitle">SciNet API & CLI Documentation</h1>
-      <p class="hero-copy" data-i18n="heroCopy">Use this page when you want to run SciNet from the terminal: install the CLI, configure your token, choose a command, understand every parameter, and copy a ready-to-run example.</p>
+      <h1 data-i18n="heroTitle">SciScholar API & CLI Documentation</h1>
+      <p class="hero-copy" data-i18n="heroCopy">Use this page when you want to run SciScholar from the terminal: install the CLI, configure your token, choose a command, understand every parameter, and copy a ready-to-run example.</p>
       <div class="hero-links">
         <a class="button-link primary" href="#quickstart" data-i18n="startLink">Start with CLI</a>
         <a class="button-link" href="#api-config" data-i18n="apiConfigLink">API Setup</a>
@@ -538,12 +538,12 @@ pre code{
     <aside class="quick-panel">
       <h2 data-i18n="quickTitle">CLI at a glance</h2>
       <ul class="quick-list">
-        <li><b>scinet health</b><span data-i18n="quickHealth">Check whether the hosted service is reachable.</span></li>
-        <li><b><code>SCINET_API_KEY</code></b><span data-i18n="quickApiKey">Configure once, then reuse in every command.</span></li>
-        <li><b>scinet &lt;command&gt; -h</b><span data-i18n="quickHelp">Show the exact options for one command.</span></li>
-        <li><b>scinet search-papers</b><span data-i18n="quickSearch">Retrieve papers with expert anchors or natural language.</span></li>
-        <li><b>scinet literature-review</b><span data-i18n="quickWorkflow">Generate downstream reports from KG evidence.</span></li>
-        <li><b>scinet skill run</b><span data-i18n="quickSkill">Reuse editable workflow presets.</span></li>
+        <li><b>scischolar health</b><span data-i18n="quickHealth">Check whether the hosted service is reachable.</span></li>
+        <li><b><code>SCISCHOLAR_API_KEY</code></b><span data-i18n="quickApiKey">Configure once, then reuse in every command.</span></li>
+        <li><b>scischolar &lt;command&gt; -h</b><span data-i18n="quickHelp">Show the exact options for one command.</span></li>
+        <li><b>scischolar search-papers</b><span data-i18n="quickSearch">Retrieve papers with expert anchors or natural language.</span></li>
+        <li><b>scischolar literature-review</b><span data-i18n="quickWorkflow">Generate downstream reports from KG evidence.</span></li>
+        <li><b>scischolar skill run</b><span data-i18n="quickSkill">Reuse editable workflow presets.</span></li>
       </ul>
     </aside>
   </div>
@@ -566,18 +566,18 @@ pre code{
   <main>
     <section class="section" id="overview">
       <h2 data-i18n="overviewTitle">Overview</h2>
-      <p class="section-lead" data-i18n="overviewP1">SciNet is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciNet knowledge-graph backend, and saves reproducible artifacts under a run directory.</p>
+      <p class="section-lead" data-i18n="overviewP1">SciScholar is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciScholar knowledge-graph backend, and saves reproducible artifacts under a run directory.</p>
       <p data-i18n="overviewP2">Most users do not need to write JSON by hand. Start with expert parameters for stable results, or use natural-language input for fast exploration.</p>
       <div class="feature-grid">
         <div class="feature"><b data-i18n="featurePlanTitle">Structured but friendly</b><p data-i18n="featurePlanText">Use flags such as --query, --keyword, --time-range, and --top-k instead of hand-writing API payloads.</p></div>
         <div class="feature"><b data-i18n="featureReportsTitle">Report-ready outputs</b><p data-i18n="featureReportsText">Every workflow can save request, response, metadata, and Markdown reports for review or reproduction.</p></div>
-        <div class="feature"><b data-i18n="featureSafeTitle">Optional LLM help</b><p data-i18n="featureSafeText">If you configure your own LLM provider, SciNet can improve keyword extraction. If not, it keeps running with deterministic extraction.</p></div>
+        <div class="feature"><b data-i18n="featureSafeTitle">Optional LLM help</b><p data-i18n="featureSafeText">If you configure your own LLM provider, SciScholar can improve keyword extraction. If not, it keeps running with deterministic extraction.</p></div>
       </div>
     </section>
 
     <section class="section" id="api-config">
       <h2 data-i18n="apiConfigTitle">API Configuration</h2>
-      <p class="section-lead" data-i18n="apiConfigIntro">The CLI is the recommended entry point, but it still calls the hosted SciNet API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.</p>
+      <p class="section-lead" data-i18n="apiConfigIntro">The CLI is the recommended entry point, but it still calls the hosted SciScholar API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.</p>
       <h3 data-i18n="directLinksTitle">Direct Links</h3>
       <div class="link-grid" id="directLinks"></div>
 
@@ -585,19 +585,19 @@ pre code{
       <div class="table-scroll"><table class="compact-table" id="apiConfigTable"></table></div>
 
       <h3 data-i18n="authHeadersTitle">Authentication Headers</h3>
-      <p data-i18n="authHeadersText">Most hosted endpoints require a valid SciNet token. The CLI sends both headers for compatibility.</p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>Authorization: Bearer YOUR_SCINET_TOKEN
-X-API-Key: YOUR_SCINET_TOKEN</code></pre>
+      <p data-i18n="authHeadersText">Most hosted endpoints require a valid SciScholar token. The CLI sends both headers for compatibility.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>Authorization: Bearer YOUR_SCISCHOLAR_TOKEN
+X-API-Key: YOUR_SCISCHOLAR_TOKEN</code></pre>
 
       <h3 data-i18n="browserTokenTitle">Browser Registration</h3>
       <p data-i18n="browserTokenText">Open the registration page, complete email verification, and copy the returned scinet_xxx token. The token is shown only once, so store it securely.</p>
       <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>http://scinet.openkg.cn/register</code></pre>
 
       <h3 data-i18n="tokenCheckTitle">Token Status and Usage</h3>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>curl -H "Authorization: Bearer $SCINET_API_KEY" \
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
   http://scinet.openkg.cn/v1/auth/token/status
 
-curl -H "Authorization: Bearer $SCINET_API_KEY" \
+curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
   "http://scinet.openkg.cn/v1/auth/usage?days=7"</code></pre>
 
       <h3 data-i18n="publicEndpointsTitle">Useful API Routes</h3>
@@ -610,7 +610,7 @@ curl -H "Authorization: Bearer $SCINET_API_KEY" \
 
     <section class="section" id="workflow">
       <h2 data-i18n="workflowTitle">How the CLI Works</h2>
-      <p data-i18n="workflowIntro">A SciNet command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.</p>
+      <p data-i18n="workflowIntro">A SciScholar command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.</p>
       <div class="callout" data-i18n="workflowCallout">Mental model: use expert parameters when the topic matters, use natural language when you are still exploring, and use command-specific help when you are unsure about one command.</div>
     </section>
 
@@ -622,17 +622,17 @@ source .venv/bin/activate
 pip install -U pip
 pip install -e ./scinet</code></pre>
       <h3 data-i18n="tokenTitle">2. Configure your token</h3>
-      <p data-i18n="tokenText">Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciNet backend.</p>
+      <p data-i18n="tokenText">Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciScholar backend.</p>
       <p><a class="inline-link" href="http://scinet.openkg.cn/register" data-i18n="tokenRegisterLink">Open token registration</a></p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>export SCINET_API_BASE_URL="http://scinet.openkg.cn"
-export SCINET_API_KEY="your-personal-scinet-token"</code></pre>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>export SCISCHOLAR_API_BASE_URL="http://scinet.openkg.cn"
+export SCISCHOLAR_API_KEY="your-personal-scischolar-token"</code></pre>
       <h3 data-i18n="checkTitle">3. Check the setup</h3>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet health
-scinet config
-scinet search-papers -h</code></pre>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scischolar health
+scischolar config
+scischolar search-papers -h</code></pre>
       <h3 data-i18n="firstRunTitle">4. Run a first retrieval</h3>
       <p data-i18n="firstRunText">Start with a small result set. Once the topic and anchors look right, increase --top-k or adjust ranking preferences.</p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet search-papers \
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scischolar search-papers \
   --query "open world agent" \
   --domain "artificial intelligence" \
   --time-range 2020-2024 \
@@ -642,7 +642,7 @@ scinet search-papers -h</code></pre>
   --max-titles 0 \
   --max-refs 0</code></pre>
       <p data-i18n="artifactText">After the command finishes, check the new folder under runs/. It keeps the request, response, metadata, and report so the result can be shared or reproduced.</p>
-      <div class="callout" data-i18n="quickCallout">Windows PowerShell users can use setx or $env:SCINET_API_KEY="..." for the current session.</div>
+      <div class="callout" data-i18n="quickCallout">Windows PowerShell users can use setx or $env:SCISCHOLAR_API_KEY="..." for the current session.</div>
     </section>
 
     <section class="section" id="input-styles">
@@ -654,14 +654,14 @@ scinet search-papers -h</code></pre>
         </div>
         <div class="mode">
           <b data-i18n="naturalTitle">Compatible: natural language</b>
-          <p data-i18n="naturalText">Best for quick exploration. Put your intent in --text; SciNet extracts a plan and can also read structured hints inside the text.</p>
+          <p data-i18n="naturalText">Best for quick exploration. Put your intent in --text; SciScholar extracts a plan and can also read structured hints inside the text.</p>
         </div>
       </div>
       <h3 data-i18n="anchorTitle">Anchor Levels</h3>
-      <p data-i18n="anchorIntro">Anchors tell SciNet which signals should pull the graph closer to your real intent. Use high for must-match ideas, middle for helpful context, and low for weak hints.</p>
+      <p data-i18n="anchorIntro">Anchors tell SciScholar which signals should pull the graph closer to your real intent. Use high for must-match ideas, middle for helpful context, and low for weak hints.</p>
       <div class="table-scroll"><table class="compact-table" id="anchorGuide"></table></div>
       <h3 data-i18n="expertExampleTitle">Expert example</h3>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet --timeout 900 search-papers \
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scischolar --timeout 900 search-papers \
   --retrieval-mode hybrid \
   --query "open world agent" \
   --domain "artificial intelligence" \
@@ -680,7 +680,7 @@ scinet search-papers -h</code></pre>
   --ranking-profile precision \
   --report-max-items 5</code></pre>
       <h3 data-i18n="naturalExampleTitle">Natural-language example</h3>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scinet --timeout 900 search-papers \
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>scischolar --timeout 900 search-papers \
   --retrieval-mode hybrid \
   --text "Find papers about open world agent in artificial intelligence after 2020. Return 3 papers.
 
@@ -693,7 +693,7 @@ Keywords[high]: open world agent" \
 
     <section class="section" id="parameters">
       <h2 data-i18n="paramsTitle">Parameter Guide</h2>
-      <p data-i18n="paramsIntro">These parameter groups are reused by most SciNet commands. Command-specific parameters are listed in the command cards below.</p>
+      <p data-i18n="paramsIntro">These parameter groups are reused by most SciScholar commands. Command-specific parameters are listed in the command cards below.</p>
 
       <h3 data-i18n="globalParamsTitle">Global options</h3>
       <div class="table-scroll"><table class="compact-table" id="globalParams"></table></div>
@@ -748,32 +748,32 @@ Keywords[high]: open world agent" \
 const I18N = {
   en: {
     homeLink:"Home", getToken:"Get API Token", healthLink:"Health Check", eyebrow:"Hosted API + CLI Manual",
-    heroTitle:"SciNet API & CLI Documentation",
-    heroCopy:"A compact guide for configuring SciNet API access and running the CLI: get a token, choose a workflow, understand the parameters, and copy a working command.",
+    heroTitle:"SciScholar API & CLI Documentation",
+    heroCopy:"A compact guide for configuring SciScholar API access and running the CLI: get a token, choose a workflow, understand the parameters, and copy a working command.",
     startLink:"Start with CLI", apiConfigLink:"API Setup", commandsLink:"Browse Commands", paramsLink:"Parameter Guide",
     quickTitle:"Start here", quickHealth:"Check whether the hosted service is reachable.", quickApiKey:"Configure once, then reuse in every command.", quickHelp:"Show the exact options for one command.", quickSearch:"Retrieve papers with expert anchors or natural language.", quickWorkflow:"Generate downstream reports from KG evidence.", quickSkill:"Reuse editable workflow presets.",
     tocTitle:"Contents", navOverview:"Overview", navApiConfig:"API Setup", navWorkflow:"Workflow", navQuickstart:"Quick Start", navInput:"Input Styles", navParameters:"Parameters", navCommands:"Commands", navRecipes:"Examples",
-    overviewTitle:"Overview", overviewP1:"SciNet is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciNet knowledge-graph backend, and saves reproducible artifacts under a run directory.",
+    overviewTitle:"Overview", overviewP1:"SciScholar is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciScholar knowledge-graph backend, and saves reproducible artifacts under a run directory.",
     overviewP2:"Most users do not need to write JSON by hand. Start with expert parameters for stable results, or use natural-language input for fast exploration.",
     featurePlanTitle:"Structured but friendly", featurePlanText:"Use flags such as --query, --keyword, --time-range, and --top-k instead of hand-writing API payloads.",
     featureReportsTitle:"Report-ready outputs", featureReportsText:"Every workflow can save request, response, metadata, and Markdown reports for review or reproduction.",
-    featureSafeTitle:"Optional LLM help", featureSafeText:"If you configure your own LLM provider, SciNet can improve keyword extraction. If not, it keeps running with deterministic extraction.",
-    apiConfigTitle:"API Configuration", apiConfigIntro:"The CLI is the recommended entry point, but it still calls the hosted SciNet API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.",
+    featureSafeTitle:"Optional LLM help", featureSafeText:"If you configure your own LLM provider, SciScholar can improve keyword extraction. If not, it keeps running with deterministic extraction.",
+    apiConfigTitle:"API Configuration", apiConfigIntro:"The CLI is the recommended entry point, but it still calls the hosted SciScholar API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.",
     directLinksTitle:"Direct Links",
-    apiBaseTitle:"Base URL and Runtime Variables", authHeadersTitle:"Authentication Headers", authHeadersText:"Most hosted endpoints require a valid SciNet token. The CLI sends both headers for compatibility.",
+    apiBaseTitle:"Base URL and Runtime Variables", authHeadersTitle:"Authentication Headers", authHeadersText:"Most hosted endpoints require a valid SciScholar token. The CLI sends both headers for compatibility.",
     browserTokenTitle:"Browser Registration", browserTokenText:"Open the registration page, complete email verification, and copy the returned scinet_xxx token. The token is shown only once, so store it securely.",
     tokenCheckTitle:"Token Status and Usage", publicEndpointsTitle:"Useful API Routes", errorLimitsTitle:"Errors and Limits", errorLimitsIntro:"Errors use regular HTTP status codes plus a short error type in the response body. Each personal token has a daily quota; heavier retrieval routes may consume more units than status checks.",
-    workflowTitle:"How the CLI Works", workflowIntro:"A SciNet command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.",
+    workflowTitle:"How the CLI Works", workflowIntro:"A SciScholar command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.",
     workflowCallout:"Mental model: use expert parameters when the topic matters, use natural language when you are still exploring, and use command-specific help when you are unsure about one command.",
-    quickstartTitle:"Quick Start", installTitle:"1. Install", tokenTitle:"2. Configure your token", tokenText:"Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciNet backend.", tokenRegisterLink:"Open token registration",
+    quickstartTitle:"Quick Start", installTitle:"1. Install", tokenTitle:"2. Configure your token", tokenText:"Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciScholar backend.", tokenRegisterLink:"Open token registration",
     checkTitle:"3. Check the setup", firstRunTitle:"4. Run a first retrieval", firstRunText:"Start with a small result set. Once the topic and anchors look right, increase --top-k or adjust ranking preferences.",
     artifactText:"After the command finishes, check the new folder under runs/. It keeps the request, response, metadata, and report so the result can be shared or reproduced.",
-    quickCallout:"Windows PowerShell users can use setx or $env:SCINET_API_KEY=\"...\" for the current session.",
+    quickCallout:"Windows PowerShell users can use setx or $env:SCISCHOLAR_API_KEY=\"...\" for the current session.",
     inputTitle:"Input Styles", expertTitle:"Recommended: expert parameters", expertText:"Best for formal use. You state the topic, domain, time range, keywords, title anchors, and ranking preference explicitly.",
-    naturalTitle:"Compatible: natural language", naturalText:"Best for quick exploration. Put your intent in --text; SciNet extracts a plan and can also read structured hints inside the text.",
-    anchorTitle:"Anchor Levels", anchorIntro:"Anchors tell SciNet which signals should pull the graph closer to your real intent. Use high for must-match ideas, middle for helpful context, and low for weak hints.",
+    naturalTitle:"Compatible: natural language", naturalText:"Best for quick exploration. Put your intent in --text; SciScholar extracts a plan and can also read structured hints inside the text.",
+    anchorTitle:"Anchor Levels", anchorIntro:"Anchors tell SciScholar which signals should pull the graph closer to your real intent. Use high for must-match ideas, middle for helpful context, and low for weak hints.",
     expertExampleTitle:"Expert example", naturalExampleTitle:"Natural-language example",
-    paramsTitle:"Parameter Guide", paramsIntro:"These parameter groups are reused by most SciNet commands. Command-specific parameters are listed in the command cards below.",
+    paramsTitle:"Parameter Guide", paramsIntro:"These parameter groups are reused by most SciScholar commands. Command-specific parameters are listed in the command cards below.",
     globalParamsTitle:"Global options", inputParamsTitle:"Input options", planParamsTitle:"Plan and anchor options", retrievalParamsTitle:"Retrieval options", rankingTitle:"Retrieval and Ranking Choices", outputParamsTitle:"Output options",
     commandsTitle:"Command Reference", commandsIntro:"Use the search box to find a workflow or parameter. Each card includes what the command does, the parameter groups it accepts, command-specific options, and a working example.",
     commandMapTitle:"Command Map", commandMapIntro:"Use this table when you know the task but are not sure which command to start from.",
@@ -786,32 +786,32 @@ const I18N = {
   },
   zh: {
     homeLink:"首页", getToken:"获取 API Token", healthLink:"健康检查", eyebrow:"托管 API + CLI 使用手册",
-    heroTitle:"SciNet API 与 CLI 使用文档",
-    heroCopy:"一份紧凑的 SciNet 使用指南：配置 API 访问、获取 Token、选择 CLI 工作流、理解参数，并复制可运行命令。",
+    heroTitle:"SciScholar API 与 CLI 使用文档",
+    heroCopy:"一份紧凑的 SciScholar 使用指南：配置 API 访问、获取 Token、选择 CLI 工作流、理解参数，并复制可运行命令。",
     startLink:"从 CLI 开始", apiConfigLink:"API 配置", commandsLink:"查看命令", paramsLink:"参数说明",
     quickTitle:"从这里开始", quickHealth:"检查托管服务是否可访问。", quickApiKey:"配置一次，所有命令都能复用。", quickHelp:"查看某个命令的精确参数。", quickSearch:"用专家锚点或自然语言检索论文。", quickWorkflow:"基于知识图谱证据生成下游报告。", quickSkill:"复用可编辑的工作流预设。",
     tocTitle:"目录", navOverview:"概览", navApiConfig:"API 配置", navWorkflow:"运行流程", navQuickstart:"快速开始", navInput:"输入方式", navParameters:"参数说明", navCommands:"命令参考", navRecipes:"使用样例",
-    overviewTitle:"概览", overviewP1:"SciNet 以命令行为优先使用方式。CLI 会把你的主题、研究想法、作者、关键词锚点、论文标题锚点和检索偏好整理成结构化请求，调用托管的 SciNet 知识图谱后端，并把可复现的运行文件保存到本地目录。",
+    overviewTitle:"概览", overviewP1:"SciScholar 以命令行为优先使用方式。CLI 会把你的主题、研究想法、作者、关键词锚点、论文标题锚点和检索偏好整理成结构化请求，调用托管的 SciScholar 知识图谱后端，并把可复现的运行文件保存到本地目录。",
     overviewP2:"大多数用户不需要手写 JSON。正式使用推荐专家参数输入；快速探索时可以用自然语言输入。",
     featurePlanTitle:"结构化但不生硬", featurePlanText:"用 --query、--keyword、--time-range、--top-k 等参数表达需求，不必手写 API 请求体。",
     featureReportsTitle:"直接生成报告材料", featureReportsText:"每个工作流都可以保存 request、response、metadata 和 Markdown 报告，便于复查和复现。",
-    featureSafeTitle:"LLM 可选增强", featureSafeText:"如果配置自己的 LLM 服务，SciNet 可优化关键词抽取；不配置时会继续使用确定性抽取逻辑。",
-    apiConfigTitle:"API 配置说明", apiConfigIntro:"CLI 是推荐入口，但它背后仍然调用托管 SciNet API。先配置基础地址和个人 Token，之后所有 CLI 命令和客户端代码都可以复用。",
+    featureSafeTitle:"LLM 可选增强", featureSafeText:"如果配置自己的 LLM 服务，SciScholar 可优化关键词抽取；不配置时会继续使用确定性抽取逻辑。",
+    apiConfigTitle:"API 配置说明", apiConfigIntro:"CLI 是推荐入口，但它背后仍然调用托管 SciScholar API。先配置基础地址和个人 Token，之后所有 CLI 命令和客户端代码都可以复用。",
     directLinksTitle:"直接跳转",
-    apiBaseTitle:"基础地址与运行时变量", authHeadersTitle:"认证请求头", authHeadersText:"多数托管端点需要有效 SciNet Token。CLI 会同时发送两个请求头，以兼容不同调用方式。",
+    apiBaseTitle:"基础地址与运行时变量", authHeadersTitle:"认证请求头", authHeadersText:"多数托管端点需要有效 SciScholar Token。CLI 会同时发送两个请求头，以兼容不同调用方式。",
     browserTokenTitle:"浏览器注册", browserTokenText:"打开注册页，完成邮箱验证，并复制返回的 scinet_xxx Token。Token 只显示一次，请妥善保存。",
     tokenCheckTitle:"Token 状态与用量", publicEndpointsTitle:"常用 API 路径", errorLimitsTitle:"错误与限额", errorLimitsIntro:"错误使用常规 HTTP 状态码，并在响应体中返回简短错误类型。每个个人 Token 都有每日配额，较重的检索路径可能比状态检查消耗更多额度。",
-    workflowTitle:"CLI 是怎么工作的", workflowIntro:"一条 SciNet 命令通常由四部分组成：全局连接参数、一个任务命令、输入或锚点参数、输出控制。CLI 会先生成检索计划，再调用对应后端路线，最后把结果文件写到本地，方便复查。",
-    workflowCallout:"使用思路：主题很明确时用专家参数；还在探索时用自然语言；只拿不准某个命令时，用 scinet <command> -h 看该命令的专属帮助。",
-    quickstartTitle:"快速开始", installTitle:"1. 安装", tokenTitle:"2. 配置 Token", tokenText:"先注册个人 Token，再暴露给 CLI。CLI 调用托管 SciNet 后端时，会自动把 Token 放入 Authorization 和 X-API-Key 请求头。", tokenRegisterLink:"打开 Token 注册网站",
+    workflowTitle:"CLI 是怎么工作的", workflowIntro:"一条 SciScholar 命令通常由四部分组成：全局连接参数、一个任务命令、输入或锚点参数、输出控制。CLI 会先生成检索计划，再调用对应后端路线，最后把结果文件写到本地，方便复查。",
+    workflowCallout:"使用思路：主题很明确时用专家参数；还在探索时用自然语言；只拿不准某个命令时，用 scischolar <command> -h 看该命令的专属帮助。",
+    quickstartTitle:"快速开始", installTitle:"1. 安装", tokenTitle:"2. 配置 Token", tokenText:"先注册个人 Token，再暴露给 CLI。CLI 调用托管 SciScholar 后端时，会自动把 Token 放入 Authorization 和 X-API-Key 请求头。", tokenRegisterLink:"打开 Token 注册网站",
     checkTitle:"3. 检查配置", firstRunTitle:"4. 跑一次最小检索", firstRunText:"第一次建议先返回少量结果。确认主题和锚点方向正确后，再增加 --top-k 或调整排序偏好。",
     artifactText:"命令完成后，查看 runs/ 下新生成的目录。里面会保存 request、response、metadata 和 report，便于分享、排查和复现。",
-    quickCallout:"Windows PowerShell 用户可使用 setx，或在当前会话中使用 $env:SCINET_API_KEY=\"...\"。",
+    quickCallout:"Windows PowerShell 用户可使用 setx，或在当前会话中使用 $env:SCISCHOLAR_API_KEY=\"...\"。",
     inputTitle:"输入方式", expertTitle:"推荐：专家参数输入", expertText:"适合正式使用。主题、领域、时间范围、关键词、标题锚点和排序偏好都写得更清楚，结果也更稳定。",
-    naturalTitle:"兼容：自然语言输入", naturalText:"适合快速试跑。把意图写入 --text，SciNet 会抽取检索计划，也能读取文本里的结构化提示。",
-    anchorTitle:"锚点强度怎么填", anchorIntro:"锚点告诉 SciNet 哪些信号应当更贴近你的真实意图。high 用于必须命中的核心概念，middle 用于有帮助的上下文，low 用于较弱线索。",
+    naturalTitle:"兼容：自然语言输入", naturalText:"适合快速试跑。把意图写入 --text，SciScholar 会抽取检索计划，也能读取文本里的结构化提示。",
+    anchorTitle:"锚点强度怎么填", anchorIntro:"锚点告诉 SciScholar 哪些信号应当更贴近你的真实意图。high 用于必须命中的核心概念，middle 用于有帮助的上下文，low 用于较弱线索。",
     expertExampleTitle:"专家参数示例", naturalExampleTitle:"自然语言示例",
-    paramsTitle:"参数说明", paramsIntro:"这些参数组会被多个 SciNet 命令复用。命令自己的专属参数会在下方命令卡片中单独列出。",
+    paramsTitle:"参数说明", paramsIntro:"这些参数组会被多个 SciScholar 命令复用。命令自己的专属参数会在下方命令卡片中单独列出。",
     globalParamsTitle:"全局参数", inputParamsTitle:"输入参数", planParamsTitle:"计划与锚点参数", retrievalParamsTitle:"检索参数", rankingTitle:"检索与排序怎么选", outputParamsTitle:"输出参数",
     commandsTitle:"命令参考", commandsIntro:"可以用搜索框查找工作流或参数。每张卡片都包含功能说明、可用参数组、专属参数和可运行示例。",
     commandMapTitle:"命令选择表", commandMapIntro:"已经知道任务，但不确定从哪个命令开始时，先看这张表。",
@@ -827,13 +827,13 @@ const I18N = {
 const apiSetupGuide = [
   {
     title:{en:"Hosted service",zh:"托管服务"},
-    body:{en:"Default base URL is `http://scinet.openkg.cn`. Use `SCINET_API_BASE_URL` or the global `--base-url` flag only when you need a different deployment.",
-      zh:"默认基础地址是 `http://scinet.openkg.cn`。只有切换部署时，才需要设置 `SCINET_API_BASE_URL` 或全局 `--base-url`。"}
+    body:{en:"Default base URL is `http://scinet.openkg.cn`. Use `SCISCHOLAR_API_BASE_URL` or the global `--base-url` flag only when you need a different deployment.",
+      zh:"默认基础地址是 `http://scinet.openkg.cn`。只有切换部署时，才需要设置 `SCISCHOLAR_API_BASE_URL` 或全局 `--base-url`。"}
   },
   {
     title:{en:"Personal token",zh:"个人 Token"},
-    body:{en:"Register in the browser and store the returned `scinet_xxx` token in `SCINET_API_KEY`. Avoid pasting long-lived tokens directly into shared commands.",
-      zh:"在浏览器完成注册，把返回的 `scinet_xxx` Token 保存到 `SCINET_API_KEY`。不建议把长期 Token 直接写进可分享命令。"}
+    body:{en:"Register in the browser and store the returned `scinet_xxx` token in `SCISCHOLAR_API_KEY`. Avoid pasting long-lived tokens directly into shared commands.",
+      zh:"在浏览器完成注册，把返回的 `scinet_xxx` Token 保存到 `SCISCHOLAR_API_KEY`。不建议把长期 Token 直接写进可分享命令。"}
   },
   {
     title:{en:"CLI and raw API share the same auth",zh:"CLI 与原始 API 共用认证"},
@@ -866,11 +866,11 @@ const directLinks = [
 ];
 
 const apiConfigRows = [
-  ["SCINET_API_BASE_URL", "CLI and Python client", "Hosted SciNet API base URL. Default: http://scinet.openkg.cn", "CLI 与 Python 客户端", "托管 SciNet API 基础地址。默认：http://scinet.openkg.cn"],
-  ["SCINET_API_KEY", "CLI and Python client", "Personal SciNet token. Sent as Authorization and X-API-Key.", "CLI 与 Python 客户端", "个人 SciNet Token，会作为 Authorization 和 X-API-Key 发送。"],
+  ["SCISCHOLAR_API_BASE_URL", "CLI and Python client", "Hosted SciScholar API base URL. Default: http://scinet.openkg.cn", "CLI 与 Python 客户端", "托管 SciScholar API 基础地址。默认：http://scinet.openkg.cn"],
+  ["SCISCHOLAR_API_KEY", "CLI and Python client", "Personal SciScholar token. Sent as Authorization and X-API-Key.", "CLI 与 Python 客户端", "个人 SciScholar Token，会作为 Authorization 和 X-API-Key 发送。"],
   ["--base-url", "CLI global option", "Temporary override for one command.", "CLI 全局参数", "只对当前命令临时覆盖后端地址。"],
-  ["--api-key", "CLI global option", "Temporary token override. Prefer SCINET_API_KEY for daily use.", "CLI 全局参数", "只对当前命令临时覆盖 Token。日常更推荐 SCINET_API_KEY。"],
-  ["SCINET_RUNS_DIR", "CLI output", "Optional default directory for run artifacts.", "CLI 输出目录", "可选。设置默认运行结果保存目录。"]
+  ["--api-key", "CLI global option", "Temporary token override. Prefer SCISCHOLAR_API_KEY for daily use.", "CLI 全局参数", "只对当前命令临时覆盖 Token。日常更推荐 SCISCHOLAR_API_KEY。"],
+  ["SCISCHOLAR_RUNS_DIR", "CLI output", "Optional default directory for run artifacts.", "CLI 输出目录", "可选。设置默认运行结果保存目录。"]
 ];
 
 const apiRouteRows = [
@@ -895,8 +895,8 @@ const workflowGuide = [
     body:{en:"Start from the task, not from the API route. Use search-papers for papers, related-authors for authors, and downstream workflows when you want a report-oriented result.",
       zh:"先从任务出发，而不是从接口出发。查论文用 search-papers，找作者用 related-authors，需要报告型结果时用下游工作流。"},
     bullets:[
-      {en:"Use `scinet <command> -h` to see only that command's options.",zh:"用 `scinet <command> -h` 只查看该命令的参数。"},
-      {en:"Use `scinet config` before a long run to confirm token and base URL.",zh:"长任务前先跑 `scinet config`，确认 Token 和后端地址。"}
+      {en:"Use `scischolar <command> -h` to see only that command's options.",zh:"用 `scischolar <command> -h` 只查看该命令的参数。"},
+      {en:"Use `scischolar config` before a long run to confirm token and base URL.",zh:"长任务前先跑 `scischolar config`，确认 Token 和后端地址。"}
     ]
   },
   {
@@ -936,8 +936,8 @@ const inputGuide = [
   },
   {
     title:{en:"Use natural language for fast exploration",zh:"快速摸索时，用自然语言"},
-    body:{en:"Natural language is convenient when the user has not decided exact keywords yet. If an LLM provider is configured, keyword extraction may be better; otherwise SciNet falls back to deterministic local extraction.",
-      zh:"当用户还没确定关键词时，自然语言更方便。如果配置了 LLM 服务，关键词抽取会更好；没有配置时，SciNet 会自动退回本地确定性抽取。"}
+    body:{en:"Natural language is convenient when the user has not decided exact keywords yet. If an LLM provider is configured, keyword extraction may be better; otherwise SciScholar falls back to deterministic local extraction.",
+      zh:"当用户还没确定关键词时，自然语言更方便。如果配置了 LLM 服务，关键词抽取会更好；没有配置时，SciScholar 会自动退回本地确定性抽取。"}
   },
   {
     title:{en:"Prefer --domain before --target-field",zh:"优先用 --domain，而不是一上来锁死字段"},
@@ -960,8 +960,8 @@ const anchorRows = [
 const paramPlaybook = [
   {
     title:{en:"Connection options",zh:"连接参数"},
-    body:{en:"--base-url and --api-key decide which SciNet backend you call. In normal use, configure SCINET_API_BASE_URL and SCINET_API_KEY once, then omit these flags from daily commands.",
-      zh:"--base-url 和 --api-key 决定调用哪个 SciNet 后端。日常使用建议先配置 SCINET_API_BASE_URL 和 SCINET_API_KEY，之后命令里不用每次都写。"}
+    body:{en:"--base-url and --api-key decide which SciScholar backend you call. In normal use, configure SCISCHOLAR_API_BASE_URL and SCISCHOLAR_API_KEY once, then omit these flags from daily commands.",
+      zh:"--base-url 和 --api-key 决定调用哪个 SciScholar 后端。日常使用建议先配置 SCISCHOLAR_API_BASE_URL 和 SCISCHOLAR_API_KEY，之后命令里不用每次都写。"}
   },
   {
     title:{en:"Input options",zh:"输入参数"},
@@ -1005,8 +1005,8 @@ const rankingGuide = [
 
 const paramGroups = {
   global: [
-    ["--base-url", "no", "SCINET_API_BASE_URL or http://scinet.openkg.cn", "Hosted SciNet backend URL.", "托管 SciNet 后端地址。"],
-    ["--api-key", "yes for hosted calls", "SCINET_API_KEY", "Personal SciNet token. Prefer environment variables over typing it into shell history.", "个人 SciNet Token。推荐用环境变量，不建议长期写在命令历史里。"],
+    ["--base-url", "no", "SCISCHOLAR_API_BASE_URL or http://scinet.openkg.cn", "Hosted SciScholar backend URL.", "托管 SciScholar 后端地址。"],
+    ["--api-key", "yes for hosted calls", "SCISCHOLAR_API_KEY", "Personal SciScholar token. Prefer environment variables over typing it into shell history.", "个人 SciScholar Token。推荐用环境变量，不建议长期写在命令历史里。"],
     ["--timeout", "no", "600", "HTTP timeout in seconds. Use 900 or higher for heavier graph retrieval.", "HTTP 超时时间，单位秒。复杂图检索可设为 900 或更高。"],
     ["--runs-dir", "no", "./runs", "Directory for saved plans, responses, metadata, and reports.", "保存 plan、响应、元数据和报告的目录。"]
   ],
@@ -1050,15 +1050,15 @@ const paramGroups = {
 };
 
 const commands = [
-  {id:"health", group:"utility", badge:{en:"utility",zh:"工具"}, name:"health", desc:{en:"Check whether the hosted SciNet backend is reachable.", zh:"检查托管 SciNet 后端是否可访问。"}, groups:["global"], specific:[], example:"scinet health"},
-  {id:"config", group:"utility", badge:{en:"utility",zh:"工具"}, name:"config", desc:{en:"Show base URL, token status, optional provider status, runs directory, and available commands.", zh:"查看后端地址、Token 是否已配置、可选服务状态、运行目录和可用命令。"}, groups:["global"], specific:[], example:"scinet config"},
-  {id:"build-plan", group:"core", badge:{en:"plan",zh:"计划"}, name:"build-plan", desc:{en:"Build a structured search plan locally without calling the retrieval backend.", zh:"在本地生成结构化检索计划，不调用检索后端。"}, groups:["global","input","plan","output"], specific:[], example:`scinet build-plan \\
+  {id:"health", group:"utility", badge:{en:"utility",zh:"工具"}, name:"health", desc:{en:"Check whether the hosted SciScholar backend is reachable.", zh:"检查托管 SciScholar 后端是否可访问。"}, groups:["global"], specific:[], example:"scischolar health"},
+  {id:"config", group:"utility", badge:{en:"utility",zh:"工具"}, name:"config", desc:{en:"Show base URL, token status, optional provider status, runs directory, and available commands.", zh:"查看后端地址、Token 是否已配置、可选服务状态、运行目录和可用命令。"}, groups:["global"], specific:[], example:"scischolar config"},
+  {id:"build-plan", group:"core", badge:{en:"plan",zh:"计划"}, name:"build-plan", desc:{en:"Build a structured search plan locally without calling the retrieval backend.", zh:"在本地生成结构化检索计划，不调用检索后端。"}, groups:["global","input","plan","output"], specific:[], example:`scischolar build-plan \\
   --query "open world agent" \\
   --domain "artificial intelligence" \\
   --keyword "high:open world agent" \\
   --top-keywords 0 \\
   --max-titles 0`},
-  {id:"search-papers", group:"core", badge:{en:"core",zh:"核心"}, name:"search-papers", desc:{en:"Search related papers with keyword, semantic, title, reference, and graph signals.", zh:"结合关键词、语义、标题、参考文献和图关系检索相关论文。"}, groups:["global","input","plan","retrieval","output"], specific:[], example:`scinet --timeout 900 search-papers \\
+  {id:"search-papers", group:"core", badge:{en:"core",zh:"核心"}, name:"search-papers", desc:{en:"Search related papers with keyword, semantic, title, reference, and graph signals.", zh:"结合关键词、语义、标题、参考文献和图关系检索相关论文。"}, groups:["global","input","plan","retrieval","output"], specific:[], example:`scischolar --timeout 900 search-papers \\
   --retrieval-mode hybrid \\
   --query "open world agent" \\
   --domain "artificial intelligence" \\
@@ -1068,40 +1068,40 @@ const commands = [
   --max-titles 0 \\
   --max-refs 0 \\
   --top-k 5`},
-  {id:"literature-review", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"literature-review", desc:{en:"Collect papers and evidence for a first-pass literature review report.", zh:"为文献综述收集论文清单和证据材料。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","balanced retrieval, low exploration, report_max_items=8","默认 balanced 检索、低探索、报告最多 8 项"]], example:`scinet literature-review \\
+  {id:"literature-review", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"literature-review", desc:{en:"Collect papers and evidence for a first-pass literature review report.", zh:"为文献综述收集论文清单和证据材料。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","balanced retrieval, low exploration, report_max_items=8","默认 balanced 检索、低探索、报告最多 8 项"]], example:`scischolar literature-review \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:retrieval augmented generation" \\
   --top-k 10`},
-  {id:"idea-grounding", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-grounding", desc:{en:"Retrieve related and supporting papers for grounding a research idea.", zh:"为研究想法检索相关和支撑论文。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`scinet idea-grounding \\
+  {id:"idea-grounding", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-grounding", desc:{en:"Retrieve related and supporting papers for grounding a research idea.", zh:"为研究想法检索相关和支撑论文。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`scischolar idea-grounding \\
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \\
   --domain "artificial intelligence" \\
   --keyword "high:idea evaluation" \\
   --keyword "middle:LLM as a judge" \\
   --top-k 5`},
-  {id:"idea-evaluate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-evaluate", desc:{en:"Collect KG evidence for evaluating novelty, feasibility, and related-work support.", zh:"为 idea 的新颖性、可行性和文献支撑收集知识图谱证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`scinet idea-evaluate \\
+  {id:"idea-evaluate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-evaluate", desc:{en:"Collect KG evidence for evaluating novelty, feasibility, and related-work support.", zh:"为 idea 的新颖性、可行性和文献支撑收集知识图谱证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`scischolar idea-evaluate \\
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:idea evaluation" \\
   --keyword "middle:LLM as a judge" \\
   --top-k 10`},
-  {id:"idea-generate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-generate", desc:{en:"Use broader graph discovery settings to find idea seeds and cross-topic opportunities.", zh:"用更发散的图探索设置寻找 idea 种子和跨主题机会。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","discovery ranking, high related/cooccurrence/exploration bias","默认 discovery 排序，并提高相关、共现和探索偏好"]], example:`scinet idea-generate \\
+  {id:"idea-generate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-generate", desc:{en:"Use broader graph discovery settings to find idea seeds and cross-topic opportunities.", zh:"用更发散的图探索设置寻找 idea 种子和跨主题机会。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","discovery ranking, high related/cooccurrence/exploration bias","默认 discovery 排序，并提高相关、共现和探索偏好"]], example:`scischolar idea-generate \\
   --query "knowledge editing for large language models" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:knowledge editing" \\
   --keyword "middle:large language models" \\
   --top-k 10`},
-  {id:"trend-report", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"trend-report", desc:{en:"Collect timeline and citation-aware evidence for topic trend analysis.", zh:"为主题趋势分析收集时间线和引用影响证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","impact ranking, high citation bias, medium exploration","默认 impact 排序、高引用偏好、中等探索"]], example:`scinet trend-report \\
+  {id:"trend-report", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"trend-report", desc:{en:"Collect timeline and citation-aware evidence for topic trend analysis.", zh:"为主题趋势分析收集时间线和引用影响证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","impact ranking, high citation bias, medium exploration","默认 impact 排序、高引用偏好、中等探索"]], example:`scischolar trend-report \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:retrieval augmented generation" \\
   --keyword "middle:knowledge graph" \\
   --top-k 10`},
-  {id:"related-authors", group:"author", badge:{en:"author",zh:"作者"}, name:"related-authors", desc:{en:"Find authors related to a research direction or structured plan.", zh:"根据研究方向或结构化 plan 检索相关作者。"}, groups:["global","input","plan","retrieval","output"], specific:[], example:`scinet related-authors \\
+  {id:"related-authors", group:"author", badge:{en:"author",zh:"作者"}, name:"related-authors", desc:{en:"Find authors related to a research direction or structured plan.", zh:"根据研究方向或结构化 plan 检索相关作者。"}, groups:["global","input","plan","retrieval","output"], specific:[], example:`scischolar related-authors \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
   --keyword "high:retrieval augmented generation" \\
@@ -1112,7 +1112,7 @@ const commands = [
     ["--no-dedupe-papers","Do not deduplicate papers.","不对论文去重。"],
     ["--no-abstract","Do not return abstracts.","不返回摘要。"],
     ["--include-embeddings","Return embeddings if supported by backend.","后端支持时返回 embedding。"]
-  ], example:`scinet author-papers \\
+  ], example:`scischolar author-papers \\
   --query "papers by Yoshua Bengio" \\
   --limit 10 \\
   --no-abstract`},
@@ -1120,7 +1120,7 @@ const commands = [
     ["--top-k-per-author","Support papers returned for each author.","每位作者返回的支撑论文数量。"],
     ["--no-author-stats","Do not fetch author statistics.","不获取作者统计信息。"],
     ["--author-search-fallback","Author lookup fallback strategy.","作者检索失败时的回退策略。", "id_then_name, name_then_id, none"]
-  ], example:`scinet support-papers \\
+  ], example:`scischolar support-papers \\
   --text "Candidate authors: Yoshua Bengio, Geoffrey Hinton. Query topic: deep learning representation learning" \\
   --top-k-per-author 3`},
   {id:"researcher-review", group:"author", badge:{en:"author",zh:"作者"}, name:"researcher-review", desc:{en:"Review a researcher's background using author lookup plus KG retrieval from seed papers.", zh:"结合作者论文查询和知识图谱检索，快速整理研究者背景。"}, groups:["global","input","output"], specific:[
@@ -1129,7 +1129,7 @@ const commands = [
     ["--no-merge-same-name-authors","Do not merge same-name authors.","不合并同名作者。"],
     ["--no-dedupe-papers","Do not deduplicate papers.","不对论文去重。"],
     ["--no-abstract","Do not return abstracts in the seed lookup.","种子查询阶段不返回摘要。"]
-  ], example:`scinet researcher-review \\
+  ], example:`scischolar researcher-review \\
   --author "Yoshua Bengio" \\
   --limit 10 \\
   --report-max-items 10`},
@@ -1137,7 +1137,7 @@ const commands = [
     ["--mode","Low-level search mode.","底层搜索模式。"],
     ["--field","Low-level search field, often title.","底层搜索字段，常用 title。"],
     ["--top-k","Number of returned papers.","返回论文数量。"]
-  ], example:`scinet paper-search \\
+  ], example:`scischolar paper-search \\
   --query "retrieval augmented generation" \\
   --mode vector \\
   --field title \\
@@ -1146,7 +1146,7 @@ const commands = [
     ["--request-json","Path to saved request.json.","已保存 request.json 路径。"],
     ["--response-json","Path to saved response.json.","已保存 response.json 路径。"],
     ["--command-name","Command name displayed in the report.","报告中展示的命令名称。"]
-  ], example:`scinet make-report \\
+  ], example:`scischolar make-report \\
   --request-json runs/search_papers/request.json \\
   --response-json runs/search_papers/response.json \\
   --command-name search-papers`},
@@ -1156,10 +1156,10 @@ const commands = [
     ["run <name> [extra args...]","Run a skill and forward extra arguments to its underlying command.","运行某个 skill，并把额外参数转交给底层命令。"],
     ["init <name> [--from SOURCE] [--output PATH]","Create an editable skill JSON file.","创建可编辑的 skill JSON 文件。"],
     ["where","Show skill directories.","显示 skill 搜索目录。"]
-  ], example:`scinet skill list
-scinet skill show literature-review
-scinet skill run literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3
-scinet skill init my-review --from literature-review`}
+  ], example:`scischolar skill list
+scischolar skill show literature-review
+scischolar skill run literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3
+scischolar skill init my-review --from literature-review`}
 ];
 
 const commandDetails = {
@@ -1241,7 +1241,7 @@ const commandDetails = {
   "skill": {
     when:{en:"Use this when repeated workflows should become reusable presets.",zh:"当某类工作流需要反复使用时，把它做成可复用预设。"},
     output:{en:"Skill lists, skill definitions, generated JSON files, or the expanded command that will run.",zh:"输出 skill 列表、定义、生成的 JSON 文件，或展开后的实际命令。"},
-    tip:{en:"Use `scinet skill run --dry-run <name> ...` to inspect the expanded command before executing it.",zh:"执行前可用 `scinet skill run --dry-run <name> ...` 查看展开后的命令。"}
+    tip:{en:"Use `scischolar skill run --dry-run <name> ...` to inspect the expanded command before executing it.",zh:"执行前可用 `scischolar skill run --dry-run <name> ...` 查看展开后的命令。"}
   }
 };
 
@@ -1263,7 +1263,7 @@ const commandMatrixRows = [
 ];
 
 const recipes = [
-  {id:"precision", title:{en:"High-precision paper search",zh:"高精度论文检索"}, body:`scinet --timeout 900 search-papers \\
+  {id:"precision", title:{en:"High-precision paper search",zh:"高精度论文检索"}, body:`scischolar --timeout 900 search-papers \\
   --query "open world agent" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2024 \\
@@ -1277,24 +1277,24 @@ const recipes = [
   --bias-exploration low \\
   --ranking-profile precision \\
   --top-k 5`},
-  {id:"review", title:{en:"Literature review starter",zh:"文献综述起步"}, body:`scinet literature-review \\
+  {id:"review", title:{en:"Literature review starter",zh:"文献综述起步"}, body:`scischolar literature-review \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:retrieval augmented generation" \\
   --top-k 10 \\
   --report-max-items 8`},
-  {id:"author", title:{en:"Researcher background review",zh:"研究者背景整理"}, body:`scinet researcher-review \\
+  {id:"author", title:{en:"Researcher background review",zh:"研究者背景整理"}, body:`scischolar researcher-review \\
   --author "Yoshua Bengio" \\
   --limit 10 \\
   --report-max-items 10`},
-  {id:"natural", title:{en:"Natural-language quick run",zh:"自然语言快速试跑"}, body:`scinet search-papers \\
+  {id:"natural", title:{en:"Natural-language quick run",zh:"自然语言快速试跑"}, body:`scischolar search-papers \\
   --text "Find three papers about open world agent in artificial intelligence after 2020. Keywords[high]: open world agent" \\
   --top-k 3 \\
   --top-keywords 1 \\
   --max-titles 0 \\
   --max-refs 0`},
-  {id:"trend", title:{en:"Trend-oriented topic analysis",zh:"主题趋势分析"}, body:`scinet trend-report \\
+  {id:"trend", title:{en:"Trend-oriented topic analysis",zh:"主题趋势分析"}, body:`scischolar trend-report \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
@@ -1302,17 +1302,17 @@ const recipes = [
   --keyword "middle:knowledge graph" \\
   --top-k 10 \\
   --report-max-items 10`},
-  {id:"relatedAuthors", title:{en:"Find related researchers",zh:"查找相关研究者"}, body:`scinet related-authors \\
+  {id:"relatedAuthors", title:{en:"Find related researchers",zh:"查找相关研究者"}, body:`scischolar related-authors \\
   --query "open world agent" \\
   --domain "artificial intelligence" \\
   --keyword "high:open world agent" \\
   --top-k 10`},
-  {id:"support", title:{en:"Support papers for candidate authors",zh:"候选作者支撑论文"}, body:`scinet support-papers \\
+  {id:"support", title:{en:"Support papers for candidate authors",zh:"候选作者支撑论文"}, body:`scischolar support-papers \\
   --text "Query topic: open world agents and embodied AI. Candidate authors: Yoshua Bengio, Pieter Abbeel." \\
   --top-k-per-author 3 \\
   --no-author-stats`},
-  {id:"skillDryRun", title:{en:"Check a reusable preset before running",zh:"运行前检查可复用预设"}, body:`scinet skill list
-scinet skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3`}
+  {id:"skillDryRun", title:{en:"Check a reusable preset before running",zh:"运行前检查可复用预设"}, body:`scischolar skill list
+scischolar skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3`}
 ];
 
 const recipeNotes = {
@@ -1487,7 +1487,7 @@ function renderCommands(){
         <div>
           <div class="command-title">
             <span class="badge ${cmd.group}">${escapeHtml(textFor(cmd.badge))}</span>
-            <h3><code>scinet ${escapeHtml(cmd.name)}</code></h3>
+            <h3><code>scischolar ${escapeHtml(cmd.name)}</code></h3>
           </div>
           <p class="command-desc">${escapeHtml(textFor(cmd.desc))}</p>
         </div>
