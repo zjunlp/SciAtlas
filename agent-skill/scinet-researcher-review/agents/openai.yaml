@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciNet Researcher Review"
+  short_description: "Profile researchers using SciNet"
+  default_prompt: "Use $scinet-researcher-review to summarize Yoshua Bengio's research trajectory."

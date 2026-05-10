@@ -4,6 +4,8 @@ A lightweight pip-installable client and CLI for the hosted SciNet / KG2API serv
 
 SciNet provides scientific knowledge-graph retrieval for paper search, related-author discovery, author-paper lookup, literature review, idea grounding/evaluation, idea generation, trend analysis, and researcher review.
 
+The repository also includes a portable Agent Skill pack in `../agent-skill/`, which wraps these workflows for tools such as Codex, Claude Code, and other coding agents.
+
 Documentation: http://scinet.openkg.cn/api/docs/
 
 ## Installation

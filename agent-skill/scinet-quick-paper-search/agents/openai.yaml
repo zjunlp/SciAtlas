@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciNet Quick Paper Search"
+  short_description: "Run fast paper search with SciNet"
+  default_prompt: "Use $scinet-quick-paper-search to quickly find papers about open world agents."

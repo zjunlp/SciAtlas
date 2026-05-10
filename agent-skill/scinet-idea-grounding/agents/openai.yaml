@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciNet Idea Grounding"
+  short_description: "Ground research ideas against prior work"
+  default_prompt: "Use $scinet-idea-grounding to ground this research idea against related papers."

@@ -16,3 +16,5 @@ User-defined skills are loaded from:
 3. paths in `SCINET_SKILLS_DIR`
 
 User skills override builtin skills with the same name.
+
+The portable Agent Skill pack is packaged separately in `../agent-skill/`. Those folders are repository assets for tools such as Codex, Claude Code, and other coding agents; this CLI loader only reads JSON presets from the locations above.
