@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciScholar Trend Report"
+  short_description: "Build a trend report from SciScholar retrieval"
+  default_prompt: "Use $scischolar-trend-report to retrieve representative papers and map trends in retrieval augmented generation."

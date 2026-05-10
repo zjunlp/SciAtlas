@@ -1,5 +1,5 @@
-<div align="center">
-  <h1>SciNet: 面向自动化科学研究的大规模知识图谱</h1>
+﻿<div align="center">
+  <h1>SciScholar: 面向自动化科学研究的大规模知识图谱</h1>
 </div>
 
 <p align="center">
@@ -7,11 +7,11 @@
 </p>
 
 <p align="center">
-  <a href="http://scinet.openkg.cn/api/docs/?lang=zh">📚 SciNet 文档网站</a>
+  <a href="http://scinet.openkg.cn/api/docs/?lang=zh">📚 SciScholar 文档网站</a>
 </p>
 
 <p align="center">
-  一个可通过 pip 安装的 SciNet 客户端与命令行工具，用于调用托管 SciNet API 完成文献驱动的科研工作流。
+  一个可通过 pip 安装的 SciScholar 客户端与命令行工具，用于调用托管 SciScholar API 完成文献驱动的科研工作流。
 </p>
 
 <p align="center">
@@ -26,35 +26,35 @@
 
 ## ✨ 项目概览
 
-你可以把 SciNet 理解成一张面向科研的“知识地图”。输入一个研究主题、一个 idea、一位作者，或一条论文线索，SciNet 会帮你检索相关文献、沿着知识图谱寻找证据，并把结果整理成易读报告和可复现的 JSON 产物。
+你可以把 SciScholar 理解成一张面向科研的“知识地图”。输入一个研究主题、一个 idea、一位作者，或一条论文线索，SciScholar 会帮你检索相关文献、沿着知识图谱寻找证据，并把结果整理成易读报告和可复现的 JSON 产物。
 
-这张图谱不只是论文列表。它把论文、作者、机构、期刊会议、关键词、引用关系，以及从 Domain 到 Topic 的四级学科体系连接起来。因此，SciNet 的检索不只是在匹配关键词，也可以顺着研究领域、概念、人物和论文之间的关系继续探索。
+这张图谱不只是论文列表。它把论文、作者、机构、期刊会议、关键词、引用关系，以及从 Domain 到 Topic 的四级学科体系连接起来。因此，SciScholar 的检索不只是在匹配关键词，也可以顺着研究领域、概念、人物和论文之间的关系继续探索。
 
-本仓库提供的是面向用户的轻量级 **SciNet 客户端包**。新用户只需要通过 `pip` 安装、注册 API Token，就可以在本地运行文献检索和科研工作流；无需自己部署 Neo4j、维护图数据库，也不用关心后端基础设施。
+本仓库提供的是面向用户的轻量级 **SciScholar 客户端包**。新用户只需要通过 `pip` 安装、注册 API Token，就可以在本地运行文献检索和科研工作流；无需自己部署 Neo4j、维护图数据库，也不用关心后端基础设施。
 
 <p align="center">
-  <img src="imgs/field_distribution_pie.png" alt="SciNet 各学科领域分布" width="92%">
+  <img src="imgs/field_distribution_pie.png" alt="SciScholar 各学科领域分布" width="92%">
 </p>
 
 <p align="center">
-  <em>SciNet 覆盖医学、社会科学、工程、计算机科学、材料科学、数学等多个学科领域，适合跨学科科研探索。</em>
+  <em>SciScholar 覆盖医学、社会科学、工程、计算机科学、材料科学、数学等多个学科领域，适合跨学科科研探索。</em>
 </p>
 
 <p align="center">
-  <img src="imgs/schema.png" alt="SciNet 知识图谱结构" width="92%">
+  <img src="imgs/schema.png" alt="SciScholar 知识图谱结构" width="92%">
 </p>
 
 <p align="center">
   <em>图谱把论文与作者、机构、来源、关键词、引用、相关工作，以及 Domain-Field-Subfield-Topic 层级连接起来。</em>
 </p>
 
-通过这个客户端，SciNet 可以直接服务于这些场景：
+通过这个客户端，SciScholar 可以直接服务于这些场景：
 
 - **图谱增强论文检索**：结合关键词、语义、标题锚点、参考文献和图传播，不局限于普通关键词匹配；
 - **科研工作流自动化**：运行文献综述、idea grounding、idea evaluation、idea generation、趋势分析、相关作者检索和研究者画像；
 - **Agent 友好的输出**：保留 `request.json`、`response.json` 等机器可读产物，同时生成面向用户的 `summary.txt` 和 `report.md`；
 - **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill；
-- **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 提供可插拔技能包，让 Codex、Claude Code 等工具型 Agent 按推荐参数调用 SciNet 工作流，并读取可复现运行产物。
+- **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 把基础 `search-papers` 检索能力迁移成端到端下游任务技能，让 Codex、Claude Code 等工具型 Agent 从检索一路完成科研目标。
 
 ---
 
@@ -63,15 +63,41 @@
 - [✨ 项目概览](#-项目概览)
 - [📑 目录](#-目录)
 - [🚀 快速开始](#-快速开始)
+  - [1. 安装](#1-安装)
+  - [2. 注册 API Token](#2-注册-api-token)
+  - [3. 配置](#3-配置)
+  - [4. 测试](#4-测试)
+  - [5. 运行论文检索](#5-运行论文检索)
 - [🔑 API Token](#-api-token)
+  - [浏览器注册](#浏览器注册)
+  - [查询 Token 状态](#查询-token-状态)
+  - [查询用量](#查询用量)
 - [🧩 支持任务](#-支持任务)
 - [🛠️ CLI 优先工作流](#️-cli-优先工作流)
+  - [帮助](#帮助)
+  - [输入方式](#输入方式)
+    - [推荐：专家参数输入](#推荐专家参数输入)
+    - [兼容：自然语言输入](#兼容自然语言输入)
+  - [基础检索](#基础检索)
+  - [五种下游工作流](#五种下游工作流)
+    - [文献综述](#文献综述)
+    - [Idea Evaluation](#idea-evaluation)
+    - [Idea Generation](#idea-generation)
+    - [Trend Report](#trend-report)
+    - [Researcher Review](#researcher-review)
+  - [检索模式](#检索模式)
+  - [专家锚点](#专家锚点)
+  - [图检索偏好](#图检索偏好)
 - [🧰 可编辑 Skills](#-可编辑-skills)
-- [Agent Skill](#agent-skill)
+- [🖊Agent Skill](#agent-skill)
 - [🐍 Python SDK](#-python-sdk)
 - [📦 输出与运行产物](#-输出与运行产物)
 - [📂 仓库结构](#-仓库结构)
 - [🧯 常见问题](#-常见问题)
+  - [`scischolar health` 成功，但 `search-papers` 返回 401](#scischolar-health-成功但-search-papers-返回-401)
+  - [没有收到邮箱验证码](#没有收到邮箱验证码)
+  - [检索很慢或超时](#检索很慢或超时)
+  - [Windows 上找不到 `scischolar` 命令](#windows-上找不到-scischolar-命令)
 - [📝 TODO](#-todo)
 - [✍️ Citation](#️-citation)
 - [📄 License](#-license)
@@ -83,18 +109,18 @@
 
 从 GitHub 直接安装：
 ```bash
-pip install "git+https://github.com/zjunlp/SciNet.git#subdirectory=scinet"
+pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
 ```
 
 如果只希望隔离安装 CLI：
 ```bash
-pipx install "git+https://github.com/zjunlp/SciNet.git#subdirectory=scinet"
+pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
 ```
 
 安装后检查：
 
 ```bash
-scinet -h
+scischolar -h
 ```
 
 ### 2. 注册 API Token
@@ -110,32 +136,32 @@ http://scinet.openkg.cn/register
 
 ### 3. 配置
 
-最少需要配置托管 SciNet API 地址和你的个人 Token。
+最少需要配置托管 SciScholar API 地址和你的个人 Token。
 
 Linux / macOS：
 ```bash
-export SCINET_API_BASE_URL="http://scinet.openkg.cn"
-export SCINET_API_KEY="your-personal-scinet-token"
-export SCINET_TIMEOUT=900
-export SCINET_RUNS_DIR="./runs"
+export SCISCHOLAR_API_BASE_URL="http://scinet.openkg.cn"
+export SCISCHOLAR_API_KEY="your-personal-scischolar-token"
+export SCISCHOLAR_TIMEOUT=900
+export SCISCHOLAR_RUNS_DIR="./runs"
 ```
 
 Windows CMD：
 ```bat
-set SCINET_API_BASE_URL=http://scinet.openkg.cn
-set SCINET_API_KEY=your-personal-scinet-token
-set SCINET_TIMEOUT=900
-set SCINET_RUNS_DIR=.\runs
+set SCISCHOLAR_API_BASE_URL=http://scinet.openkg.cn
+set SCISCHOLAR_API_KEY=your-personal-scischolar-token
+set SCISCHOLAR_TIMEOUT=900
+set SCISCHOLAR_RUNS_DIR=.\runs
 ```
 
 兼容旧变量：
 
 ```env
 KG2API_BASE_URL=http://scinet.openkg.cn
-KG2API_API_KEY=your-personal-scinet-token
+KG2API_API_KEY=your-personal-scischolar-token
 ```
 
-新用户推荐使用 `SCINET_*`。
+新用户推荐使用 `SCISCHOLAR_*`。
 
 
 
@@ -149,16 +175,16 @@ export LLM_MODEL="your-model-name"
 # 如果服务商使用特殊接口地址或鉴权头，可按需打开：
 # export LLM_CHAT_COMPLETIONS_URL="https://your-provider-or-gateway.example/v1/chat/completions"
 # export LLM_AUTH_HEADER="x-api-key: your-provider-api-key"
-export SCINET_LLM_TIMEOUT=30
-export SCINET_LLM_TEMPERATURE=0
-export SCINET_LLM_MAX_TOKENS=512
+export SCISCHOLAR_LLM_TIMEOUT=30
+export SCISCHOLAR_LLM_TEMPERATURE=0
+export SCISCHOLAR_LLM_MAX_TOKENS=512
 ```
 
-这是可选项。只有当你希望 SciNet 在检索前，用你的 LLM API 从自然语言输入中提炼更好的关键词时，才需要配置。
+这是可选项。只有当你希望 SciScholar 在检索前，用你的 LLM API 从自然语言输入中提炼更好的关键词时，才需要配置。
 
 `LLM_PROVIDER` 保持 `chat_completions`，然后把 `LLM_API_KEY`、`LLM_BASE_URL` 和 `LLM_MODEL` 换成你的服务商参数。若服务商直接给出完整 chat-completions 接口地址，填写 `LLM_CHAT_COMPLETIONS_URL`；若需要自定义鉴权头，填写 `LLM_AUTH_HEADER`。
 
-不需要 LLM 时可以全部留空。SciNet 会自动使用内置关键词抽取，论文检索、文献综述、idea、趋势分析和研究者画像等流程都能正常运行。
+不需要 LLM 时可以全部留空。SciScholar 会自动使用内置关键词抽取，论文检索、文献综述、idea、趋势分析和研究者画像等流程都能正常运行。
 
 用户需要编辑的配置模板：[.env.example](.env.example#L7-L19)。只有需要 LLM 辅助关键词抽取时，才填写这些变量。
 
@@ -169,7 +195,7 @@ export OA_API_KEY=""
 export OPENALEX_MAILTO=""
 ```
 
-OpenAlex 主要用于补充元数据或辅助 PDF 相关流程。README 中的常用 CLI 示例不依赖它。即使不填写这些变量，普通 SciNet 检索也可以正常运行。
+OpenAlex 主要用于补充元数据或辅助 PDF 相关流程。README 中的常用 CLI 示例不依赖它。即使不填写这些变量，普通 SciScholar 检索也可以正常运行。
 
 用户需要编辑的配置模板：[.env.example](.env.example#L24-L26)。只有需要 OpenAlex 辅助元数据支持时才填写。
 
@@ -203,8 +229,8 @@ set GROBID_BASE_URL=http://127.0.0.1:8070
 
 | 变量 | 所需场景 | 说明 |
 |---|---|---|
-| `SCINET_API_BASE_URL` | 所有托管 SciNet 任务 | 托管 SciNet API 基础 URL。 |
-| `SCINET_API_KEY` | 所有托管 SciNet 任务 | 作为 `X-API-Key` 和 `Authorization: Bearer` 发送。 |
+| `SCISCHOLAR_API_BASE_URL` | 所有托管 SciScholar 任务 | 托管 SciScholar API 基础 URL。 |
+| `SCISCHOLAR_API_KEY` | 所有托管 SciScholar 任务 | 作为 `X-API-Key` 和 `Authorization: Bearer` 发送。 |
 | `LLM_PROVIDER` | 可选前端增强 | 保持为 `chat_completions`。 |
 | `LLM_API_KEY` | 可选前端增强 | 你的服务商密钥；本地或无鉴权服务可留空。 |
 | `LLM_BASE_URL` | 可选前端增强 | 服务商基础 URL，通常以 `/v1` 结尾。 |
@@ -219,13 +245,13 @@ set GROBID_BASE_URL=http://127.0.0.1:8070
 ### 4. 测试
 
 ```bash
-scinet health
-scinet config
+scischolar health
+scischolar config
 ```
 
 ### 5. 运行论文检索
 ```bash
-scinet search-papers \
+scischolar search-papers \
   --query "open world agent" \
   --keyword "high:open world agent" \
   --top-k 10
@@ -235,7 +261,7 @@ scinet search-papers \
 
 ## 🔑 API Token
 
-SciNet 对公开用户使用个人 API Token。
+SciScholar 对公开用户使用个人 API Token。
 
 ### 浏览器注册
 
@@ -250,20 +276,20 @@ http://scinet.openkg.cn/register
 2. 点击 **Send code**；
 3. 查收邮箱验证码；
 4. 输入验证码并创建 Token；
-5. 复制返回的 `scinet_xxx` Token。
+5. 复制返回的 `scischolar_xxx` Token。
 
 Token 只显示一次，请妥善保存。
 
 ### 查询 Token 状态
 ```bash
-curl -H "Authorization: Bearer $SCINET_API_KEY" \
+curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
   http://scinet.openkg.cn/v1/auth/token/status
 ```
 
 ### 查询用量
 
 ```bash
-curl -H "Authorization: Bearer $SCINET_API_KEY" \
+curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
   "http://scinet.openkg.cn/v1/auth/usage?days=7"
 ```
 
@@ -273,44 +299,44 @@ curl -H "Authorization: Bearer $SCINET_API_KEY" \
 
 | 命令 | 场景 | 主要输出 |
 |---|---|---|
-| `scinet search-papers` | 论文检索 | 相关论文和 Markdown 报告 |
-| `scinet related-authors` | 相关作者发现 | 候选作者与分数 |
-| `scinet author-papers` | 作者论文查询 | 指定作者论文 |
-| `scinet support-papers` | 支撑论文检索 | 候选作者的相关证据论文 |
-| `scinet paper-search` | 轻量底层论文检索 | 快速论文候选 |
-| `scinet literature-review` | 文献综述 | 核心论文池、时间线、写作提示 |
-| `scinet idea-grounding` | idea 定位 | 相似工作和差异化证据 |
-| `scinet idea-evaluate` | idea 评估 | 新颖性、可行性、可靠性证据 |
-| `scinet idea-generate` | idea 生成 | 主题组合和 idea seeds |
-| `scinet trend-report` | 趋势分析 | 发展脉络和代表工作 |
-| `scinet researcher-review` | 研究者背景综述 | 研究轨迹与代表论文 |
-| `scinet skill` | 可编辑 skill 注册表 | 可复用工作流预设 |
+| `scischolar search-papers` | 论文检索 | 相关论文和 Markdown 报告 |
+| `scischolar related-authors` | 相关作者发现 | 候选作者与分数 |
+| `scischolar author-papers` | 作者论文查询 | 指定作者论文 |
+| `scischolar support-papers` | 支撑论文检索 | 候选作者的相关证据论文 |
+| `scischolar paper-search` | 轻量底层论文检索 | 快速论文候选 |
+| `scischolar literature-review` | 文献综述 | 核心论文池、时间线、写作提示 |
+| `scischolar idea-grounding` | idea 定位 | 相似工作和差异化证据 |
+| `scischolar idea-evaluate` | idea 评估 | 新颖性、可行性、可靠性证据 |
+| `scischolar idea-generate` | idea 生成 | 主题组合和 idea seeds |
+| `scischolar trend-report` | 趋势分析 | 发展脉络和代表工作 |
+| `scischolar researcher-review` | 研究者背景综述 | 研究轨迹与代表论文 |
+| `scischolar skill` | 可编辑 skill 注册表 | 可复用工作流预设 |
 
 ---
 
 ## 🛠️ CLI 优先工作流
 
-SciNet 以 CLI 为优先界面。新用户可以先查看帮助，再跑一次基础检索，最后按任务选择下游工作流；每次运行都会保存完整结果，方便复现、调试和交给 AI Agent 继续处理。
+SciScholar 以 CLI 为优先界面。新用户可以先查看帮助，再跑一次基础检索，最后按任务选择下游工作流；每次运行都会保存完整结果，方便复现、调试和交给 AI Agent 继续处理。
 
-文档网站：[📚 SciNet 文档网站](http://scinet.openkg.cn/api/docs/?lang=zh)。用于查看 API 配置、CLI 命令、参数含义和可运行示例。
+文档网站：[📚 SciScholar 文档网站](http://scinet.openkg.cn/api/docs/?lang=zh)。用于查看 API 配置、CLI 命令、参数含义和可运行示例。
 
 ### 帮助
 
 ```bash
-scinet -h
-scinet search-papers -h
-scinet literature-review -h
-scinet skill -h
+scischolar -h
+scischolar search-papers -h
+scischolar literature-review -h
+scischolar skill -h
 ```
 
 ### 输入方式
 
-SciNet 支持两种输入方式：专家参数输入和自然语言输入。正式使用时，推荐优先使用专家参数，因为每个检索条件都写得清楚，结果也更容易复现；自然语言输入更适合快速试跑和探索。
+SciScholar 支持两种输入方式：专家参数输入和自然语言输入。正式使用时，推荐优先使用专家参数，因为每个检索条件都写得清楚，结果也更容易复现；自然语言输入更适合快速试跑和探索。
 
 #### 推荐：专家参数输入
 
 ```bash
-scinet --timeout 900 search-papers \
+scischolar --timeout 900 search-papers \
   --retrieval-mode hybrid \
   --query "open world agent" \
   --domain "artificial intelligence" \
@@ -334,10 +360,10 @@ scinet --timeout 900 search-papers \
 
 #### 兼容：自然语言输入
 
-使用 `--text` 时，SciNet 会从一段说明中解析检索意图。你也可以在文本里加入 `关键词[high]：...` 这类结构化提示，让关键词更稳定。
+使用 `--text` 时，SciScholar 会从一段说明中解析检索意图。你也可以在文本里加入 `关键词[high]：...` 这类结构化提示，让关键词更稳定。
 
 ```bash
-scinet --timeout 900 search-papers \
+scischolar --timeout 900 search-papers \
   --retrieval-mode hybrid \
   --text "检索 open world agent 相关论文，领域是 artificial intelligence，从 2020 年以后，返回 3 篇。
 
@@ -353,7 +379,7 @@ scinet --timeout 900 search-papers \
 适合快速围绕一个主题获取有证据支撑的论文列表。
 
 ```bash
-scinet search-papers \
+scischolar search-papers \
   --query "open world agent" \
   --domain "artificial intelligence" \
   --time-range 2020-2024 \
@@ -373,7 +399,7 @@ scinet search-papers \
 用于快速形成初始阅读清单，并收集写作文献综述所需的核心证据。
 
 ```bash
-scinet literature-review \
+scischolar literature-review \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -386,7 +412,7 @@ scinet literature-review \
 用于评估一个研究想法的新颖性、可行性和已有文献支撑。
 
 ```bash
-scinet idea-evaluate \
+scischolar idea-evaluate \
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -400,7 +426,7 @@ scinet idea-evaluate \
 用于探索潜在主题组合，生成可继续扩展的研究方向。
 
 ```bash
-scinet idea-generate \
+scischolar idea-generate \
   --query "knowledge editing for large language models" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -415,7 +441,7 @@ scinet idea-generate \
 用于梳理一个研究主题的发展脉络，找出代表性论文和阶段性变化。
 
 ```bash
-scinet trend-report \
+scischolar trend-report \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -429,7 +455,7 @@ scinet trend-report \
 用于快速了解一位研究者的研究轨迹、代表论文和相关方向。
 
 ```bash
-scinet researcher-review \
+scischolar researcher-review \
   --author "Yoshua Bengio" \
   --limit 10 \
   --no-abstract
@@ -483,17 +509,17 @@ scinet researcher-review \
 
 ## 🧰 可编辑 Skills
 
-SciNet skills 是下游科研工作流的 JSON 预设，方便用户查看、复用和自定义。
+SciScholar skills 是下游科研工作流的 JSON 预设，方便用户查看、复用和自定义。
 ```bash
-scinet skill list
-scinet skill show literature-review
-scinet skill run literature-review --query "open world agent" --keyword "high:open world agent"
-scinet skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent"
+scischolar skill list
+scischolar skill show literature-review
+scischolar skill run literature-review --query "open world agent" --keyword "high:open world agent"
+scischolar skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent"
 ```
 
 创建自定义 skill：
 ```bash
-scinet skill init my-review --from literature-review
+scischolar skill init my-review --from literature-review
 ```
 
 它会生成：
@@ -504,37 +530,37 @@ scinet skill init my-review --from literature-review
 用户可以直接修改 JSON，然后运行：
 
 ```bash
-scinet skill run my-review --query "your topic"
+scischolar skill run my-review --query "your topic"
 ```
 
 ---
 
-## Agent Skill
+## 🖊Agent Skill
 
-SciNet 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。这些目录不是运行产物，而是面向 Codex、Claude Code 等工具型 Agent 的可复用技能包：它们会告诉 Agent 什么时候选择哪个 SciNet 工作流、如何传入稳定参数，以及运行后应该读取哪些 `runs/<run_id>/` 产物。
+SciScholar 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。这些目录不是运行产物，也不是简单命令别名，而是面向 Codex、Claude Code 等工具型 Agent 的下游任务 playbook：它们会指导 Agent 从 SciScholar 基础 `search-papers` 检索出发，读取 `runs/<run_id>/` 证据产物，并完成具体科研目标。
 
 已包含的技能：
 
-| Skill | 对应工作流 | 适用场景 |
+| Skill | 检索基础 | 下游目标 |
 |---|---|---|
-| `scinet-literature-review` | `literature-review` | 阅读清单与 related work 报告 |
-| `scinet-idea-grounding` | `idea-grounding` | 为研究想法检索相似工作和差异化证据 |
-| `scinet-idea-evaluate` | `idea-evaluate` | 评估新颖性、可行性和可靠性 |
-| `scinet-idea-generate` | `idea-generate` | 生成有文献依据的研究 idea seeds |
-| `scinet-trend-report` | `trend-report` | 梳理主题演化、时间线和代表性论文 |
-| `scinet-researcher-review` | `researcher-review` | 研究者画像与代表作梳理 |
-| `scinet-quick-paper-search` | `paper-search` | 快速检索候选论文 |
+| `scischolar-quick-paper-search` | `search-papers` | 快速证据种子与下游任务分流 |
+| `scischolar-literature-review` | `search-papers` | 阅读清单与 related work 报告 |
+| `scischolar-idea-grounding` | `search-papers` | 为研究想法检索相似工作和差异化证据 |
+| `scischolar-idea-evaluate` | `search-papers` | 评估新颖性、可行性和可靠性 |
+| `scischolar-idea-generate` | `search-papers` | 生成有文献依据的研究 idea seeds |
+| `scischolar-trend-report` | `search-papers` | 梳理主题演化、时间线和代表性论文 |
+| `scischolar-researcher-review` | `search-papers` 加作者种子检索 | 研究者画像与代表作梳理 |
 
-使用时，将需要的 skill 目录复制到你的 Agent 工具支持的技能目录，然后重启或刷新该工具。例如 Codex 通常使用 `~/.codex/skills` 或 `%USERPROFILE%\.codex\skills`。CLI 预设仍位于 `scinet/src/scinet/builtin_skills.json`；`agent-skill/` 是其上的 Agent 调用层。
+使用时，将需要的 skill 目录复制到你的 Agent 工具支持的技能目录，然后重启或刷新该工具。例如 Codex 通常使用 `~/.codex/skills` 或 `%USERPROFILE%\.codex\skills`。CLI 命令仍是检索和执行层；`agent-skill/` 是其上的下游推理层。
 
 ---
 
 ## 🐍 Python SDK
 
 ```python
-from scinet import SciNetClient
+from scischolar import SciScholarClient
 
-client = SciNetClient()
+client = SciScholarClient()
 print(client.health())
 
 result = client.search_papers(
@@ -548,9 +574,9 @@ print(result)
 也可以直接传入配置：
 
 ```python
-client = SciNetClient(
+client = SciScholarClient(
     base_url="http://scinet.openkg.cn",
-    api_key="your-personal-scinet-token",
+    api_key="your-personal-scischolar-token",
 )
 ```
 
@@ -565,7 +591,7 @@ runs/<run_id>/
 | 文件 | 说明 |
 |---|---|
 | `plan.json` | 结构化检索计划 |
-| `request.json` | 发送给 SciNet API 的完整请求 |
+| `request.json` | 发送给 SciScholar API 的完整请求 |
 | `response.json` | 后端原始响应 |
 | `summary.txt` | 简短摘要 |
 | `report.md` | 面向用户的 Markdown 报告 |
@@ -578,15 +604,15 @@ runs/<run_id>/
 下面只保留仓库展示和新用户上手最需要的主入口，已省略生成产物、虚拟环境和缓存目录。
 
 ```text
-SciNet/
+SciScholar/
   README.md / README_zh.md       # 项目文档
   .env.example                   # 根目录运行配置模板
   requirements.txt
-  run_scinet.py                  # 轻量本地运行入口
+  run_scischolar.py                  # 轻量本地运行入口
   agent-skill/                   # 通用 Agent Skill 包
   docs/api/                      # 统一静态 API 与 CLI 文档网站
   imgs/                          # README 图片资源
-  scinet/                        # 可 pip 安装的 SciNet 客户端包
+  scinet/                        # 可 pip 安装的 SciScholar 客户端包
     pyproject.toml
     src/scinet/                  # 打包发布的 CLI、client、config、skills
     core/ search/ tasks/         # 检索规划与科研工作流逻辑
@@ -600,17 +626,17 @@ SciNet/
 
 ## 🧯 常见问题
 
-### `scinet health` 成功，但 `search-papers` 返回 401
+### `scischolar health` 成功，但 `search-papers` 返回 401
 
 说明 Token 缺失或无效。
 ```bash
-echo $SCINET_API_KEY
-export SCINET_API_KEY="your-personal-scinet-token"
+echo $SCISCHOLAR_API_KEY
+export SCISCHOLAR_API_KEY="your-personal-scischolar-token"
 ```
 
 Windows CMD：
 ```bat
-set SCINET_API_KEY=your-personal-scinet-token
+set SCISCHOLAR_API_KEY=your-personal-scischolar-token
 ```
 
 ### 没有收到邮箱验证码
@@ -628,10 +654,10 @@ set SCINET_API_KEY=your-personal-scinet-token
 --bias-exploration low
 ```
 
-### Windows 上找不到 `scinet` 命令
+### Windows 上找不到 `scischolar` 命令
 
 ```bat
-.venv\Scripts\scinet.exe -h
+.venv\Scripts\scischolar.exe -h
 ```
 
 或重新安装：
@@ -647,15 +673,14 @@ set SCINET_API_KEY=your-personal-scinet-token
 - [ ] **命令行工具。** 增加更多面向用户的命令行功能，以便下游用户和 AI 代理无需接触数据库内部即可调用检索工作流。
 - [x] **通用 Agent Skill 包。** 为常见的科学发现工作流打包可重用的代理技能，并将最佳实践作为更易于加载的组件提供。
 - [ ] **更多知识。** 整合超越以论文为中心的实体之外的更多知识形式，例如数据集、代码、标准、定理和实验经验。
-- [ ] **基准测试与评估。** 为 SciNet 支持的下游科学研究任务构建专用基准测试和评估协议。
+- [ ] **基准测试与评估。** 为 SciScholar 支持的下游科学研究任务构建专用基准测试和评估协议。
 - [ ] **动态更新** 改进动态知识更新机制，使其更加系统化并提高刷新频率。
-- [ ] **动态更新。** 改进动态知识更新机制，使其更加系统化并提高刷新频率。
 
 ---
 
 ## ✍️ Citation
 
-如果 SciNet 对你的研究有帮助，请引用：
+如果 SciScholar 对你的研究有帮助，请引用：
 ```
 
 ```

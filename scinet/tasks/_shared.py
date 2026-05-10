@@ -778,7 +778,7 @@ def execute_related_authors(request: SciNetRequest, run_dir: Path, client: SciNe
 
     supporting_papers = _build_supporting_papers(authors)
     summary = (
-        f"Returned {len(authors)} related authors using SciNet API author recall."
+        f"Returned {len(authors)} related authors using SciScholar API author recall."
         if authors
         else "No related authors were returned."
     )

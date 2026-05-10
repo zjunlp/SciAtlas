@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciScholar Idea Evaluate"
+  short_description: "Evaluate an idea from retrieved evidence"
+  default_prompt: "Use $scischolar-idea-evaluate to retrieve evidence and assess this research idea for novelty, feasibility, and soundness."

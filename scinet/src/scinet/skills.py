@@ -18,8 +18,8 @@ def _builtin_skills() -> dict[str, dict[str, Any]]:
 
 
 def _dirs() -> list[Path]:
-    dirs = [Path.cwd() / "skills", Path.home() / ".scinet" / "skills"]
-    extra = os.getenv("SCINET_SKILLS_DIR", "")
+    dirs = [Path.cwd() / "skills", Path.home() / ".scischolar" / "skills", Path.home() / ".scinet" / "skills"]
+    extra = os.getenv("SCISCHOLAR_SKILLS_DIR") or os.getenv("SCINET_SKILLS_DIR", "")
     dirs += [Path(x).expanduser() for x in extra.split(os.pathsep) if x.strip()]
     return dirs
 
@@ -124,7 +124,7 @@ def cmd_init(skills: dict[str, dict[str, Any]], name: str, source: str | None, o
         obj = {
             "name": name,
             "aliases": [],
-            "description": "Custom SciNet skill.",
+            "description": "Custom SciScholar skill.",
             "command": "search-papers",
             "defaults": {
                 "retrieval_mode": "hybrid",
@@ -134,7 +134,7 @@ def cmd_init(skills: dict[str, dict[str, Any]], name: str, source: str | None, o
                 "max_refs": 0,
                 "report_max_items": 3
             },
-            "examples": [f"scinet skill run {name} --query \"open world agent\" --keyword \"high:open world agent\""]
+            "examples": [f"scischolar skill run {name} --query \"open world agent\" --keyword \"high:open world agent\""]
         }
     path = Path(output).expanduser() if output else Path.cwd() / "skills" / f"{name}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -147,7 +147,7 @@ def cmd_init(skills: dict[str, dict[str, Any]], name: str, source: str | None, o
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="scinet skill", description="Editable downstream skills for SciNet CLI.")
+    p = argparse.ArgumentParser(prog="scischolar skill", description="Editable downstream skills for SciScholar CLI.")
     sub = p.add_subparsers(dest="action", required=True)
     sub.add_parser("list", help="List skills.")
     sp = sub.add_parser("show", help="Show skill definition.")
@@ -182,11 +182,11 @@ def dispatch_skill_cli(argv: list[str]) -> int | list[str]:
     if args.action == "run":
         if args.name not in skills:
             print(f"Unknown skill: {args.name}")
-            print("Use `scinet skill list`.")
+            print("Use `scischolar skill list`.")
             return 2
         expanded = expand_skill(skills[args.name], list(args.extra or []))
         if args.dry_run:
-            print("scinet " + " ".join(expanded))
+            print("scischolar " + " ".join(expanded))
             return 0
         return expanded
     return 0

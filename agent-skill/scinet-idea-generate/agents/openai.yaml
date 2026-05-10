@@ -1,4 +1,0 @@
-interface:
-  display_name: "SciNet Idea Generate"
-  short_description: "Generate research idea seeds with SciNet"
-  default_prompt: "Use $scinet-idea-generate to explore idea seeds for knowledge editing."

@@ -18,7 +18,7 @@
       "report_max_items": 5
     },
     "examples": [
-      "scinet skill run literature-review --query \"open world agent\" --keyword \"high:open world agent\""
+      "scischolar skill run literature-review --query \"open world agent\" --keyword \"high:open world agent\""
     ]
   },
   {
@@ -42,7 +42,7 @@
       "report_max_items": 5
     },
     "examples": [
-      "scinet skill run idea-grounding --idea \"LLM-based idea evaluation\" --keyword \"high:idea evaluation\""
+      "scischolar skill run idea-grounding --idea \"LLM-based idea evaluation\" --keyword \"high:idea evaluation\""
     ]
   },
   {
@@ -67,7 +67,7 @@
       "report_max_items": 5
     },
     "examples": [
-      "scinet skill run idea-evaluate --idea \"Federated knowledge editing for LLMs\" --keyword \"high:knowledge editing\""
+      "scischolar skill run idea-evaluate --idea \"Federated knowledge editing for LLMs\" --keyword \"high:knowledge editing\""
     ]
   },
   {
@@ -90,7 +90,7 @@
       "report_max_items": 8
     },
     "examples": [
-      "scinet skill run idea-generate --query \"automated scientific research\" --keyword \"high:idea evaluation\""
+      "scischolar skill run idea-generate --query \"automated scientific research\" --keyword \"high:idea evaluation\""
     ]
   },
   {
@@ -112,7 +112,7 @@
       "report_max_items": 8
     },
     "examples": [
-      "scinet skill run trend --query \"open world agent\" --time-range 2018-2025"
+      "scischolar skill run trend --query \"open world agent\" --time-range 2018-2025"
     ]
   },
   {
@@ -129,7 +129,7 @@
       "report_max_items": 10
     },
     "examples": [
-      "scinet skill run researcher-review --author \"Yoshua Bengio\""
+      "scischolar skill run researcher-review --author \"Yoshua Bengio\""
     ]
   },
   {
@@ -146,7 +146,7 @@
       "report_max_items": 3
     },
     "examples": [
-      "scinet skill run quick --text \"open world agent\""
+      "scischolar skill run quick --text \"open world agent\""
     ]
   }
 ]

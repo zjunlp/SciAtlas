@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciScholar Quick Paper Search"
+  short_description: "Seed downstream tasks with quick SciScholar retrieval"
+  default_prompt: "Use $scischolar-quick-paper-search to retrieve a small evidence seed about open world agents and suggest the next downstream skill."

@@ -1,4 +1,0 @@
-interface:
-  display_name: "SciNet Trend Report"
-  short_description: "Trace research trends with SciNet"
-  default_prompt: "Use $scinet-trend-report to map trends in retrieval augmented generation."
