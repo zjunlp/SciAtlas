@@ -96,13 +96,13 @@ With the client, SciScholar becomes a practical research assistant for:
 Install directly from GitHub:
 
 ```bash
-pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
+pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scischolar"
 ```
 
 For isolated CLI usage:
 
 ```bash
-pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
+pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scischolar"
 ```
 
 After installation:
@@ -541,7 +541,7 @@ User-defined skills can override built-in skills with the same name.
 
 ## 🖊Agent Skill
 
-SciScholar also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs or simple command aliases. They are downstream task playbooks that teach tools such as Codex, Claude Code, and other coding agents how to start from SciScholar's base `search-papers` retrieval capability, read saved artifacts, and complete a research goal.
+SciScholar also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs or simple command aliases. They are downstream task playbooks that teach tools such as Codex, Claude Code, and other coding agents how to bootstrap a new user's environment, obtain/configure the API token with user feedback when needed, run only SciScholar's base `search-papers` command, read saved artifacts, and complete a research goal.
 
 Included skills:
 
@@ -553,9 +553,9 @@ Included skills:
 | `scischolar-idea-evaluate` | `search-papers` | Novelty, feasibility, and soundness checks |
 | `scischolar-idea-generate` | `search-papers` | Literature-grounded idea seeds |
 | `scischolar-trend-report` | `search-papers` | Timeline and trend analysis |
-| `scischolar-researcher-review` | `search-papers` plus author seed lookup | Researcher profiles and representative works |
+| `scischolar-researcher-review` | `search-papers` only | Researcher profiles from retrieved paper evidence |
 
-To use one locally, copy its directory into the skill directory supported by your agent tool, then restart or refresh that tool. For Codex, that is usually `~/.codex/skills` or `%USERPROFILE%\.codex\skills`. The CLI commands remain the retrieval/execution layer; the Agent Skill pack is the downstream reasoning layer on top.
+To use one locally, copy its directory into the skill directory supported by your agent tool, then restart or refresh that tool. For Codex, that is usually `~/.codex/skills` or `%USERPROFILE%\.codex\skills`. Inside these Agent Skills, `search-papers` is the only SciScholar retrieval primitive; the downstream review, idea, trend, or researcher result is produced by the agent reading `runs/<run_id>/` artifacts and synthesizing evidence.
 
 ---
 
@@ -626,9 +626,9 @@ SciScholar/
   agent-skill/                   # portable Agent Skill pack
   docs/api/                      # unified static API and CLI documentation site
   imgs/                          # README figures
-  scinet/                        # pip-installable SciScholar client package
+  scischolar/                        # pip-installable SciScholar client package
     pyproject.toml
-    src/scinet/                  # packaged CLI, client, config, and skills
+    src/scischolar/                  # packaged CLI, client, config, and skills
     core/ search/ tasks/         # retrieval planning and workflow logic
     evidence/ llm/ renderers/    # PDF evidence, optional LLM, report rendering
     examples/ tests/

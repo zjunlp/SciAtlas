@@ -590,7 +590,7 @@ pre code{
 X-API-Key: YOUR_SCISCHOLAR_TOKEN</code></pre>
 
       <h3 data-i18n="browserTokenTitle">Browser Registration</h3>
-      <p data-i18n="browserTokenText">Open the registration page, complete email verification, and copy the returned scinet_xxx token. The token is shown only once, so store it securely.</p>
+      <p data-i18n="browserTokenText">Open the registration page, complete email verification, and copy the returned scischolar_xxx token. The token is shown only once, so store it securely.</p>
       <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>http://scinet.openkg.cn/register</code></pre>
 
       <h3 data-i18n="tokenCheckTitle">Token Status and Usage</h3>
@@ -620,7 +620,7 @@ curl -H "Authorization: Bearer $SCISCHOLAR_API_KEY" \
       <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>python -m venv .venv
 source .venv/bin/activate
 pip install -U pip
-pip install -e ./scinet</code></pre>
+pip install -e ./scischolar</code></pre>
       <h3 data-i18n="tokenTitle">2. Configure your token</h3>
       <p data-i18n="tokenText">Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciScholar backend.</p>
       <p><a class="inline-link" href="http://scinet.openkg.cn/register" data-i18n="tokenRegisterLink">Open token registration</a></p>
@@ -761,7 +761,7 @@ const I18N = {
     apiConfigTitle:"API Configuration", apiConfigIntro:"The CLI is the recommended entry point, but it still calls the hosted SciScholar API. Configure the base URL and your personal token once, then reuse them across all CLI commands and client code.",
     directLinksTitle:"Direct Links",
     apiBaseTitle:"Base URL and Runtime Variables", authHeadersTitle:"Authentication Headers", authHeadersText:"Most hosted endpoints require a valid SciScholar token. The CLI sends both headers for compatibility.",
-    browserTokenTitle:"Browser Registration", browserTokenText:"Open the registration page, complete email verification, and copy the returned scinet_xxx token. The token is shown only once, so store it securely.",
+    browserTokenTitle:"Browser Registration", browserTokenText:"Open the registration page, complete email verification, and copy the returned scischolar_xxx token. The token is shown only once, so store it securely.",
     tokenCheckTitle:"Token Status and Usage", publicEndpointsTitle:"Useful API Routes", errorLimitsTitle:"Errors and Limits", errorLimitsIntro:"Errors use regular HTTP status codes plus a short error type in the response body. Each personal token has a daily quota; heavier retrieval routes may consume more units than status checks.",
     workflowTitle:"How the CLI Works", workflowIntro:"A SciScholar command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.",
     workflowCallout:"Mental model: use expert parameters when the topic matters, use natural language when you are still exploring, and use command-specific help when you are unsure about one command.",
@@ -799,7 +799,7 @@ const I18N = {
     apiConfigTitle:"API 配置说明", apiConfigIntro:"CLI 是推荐入口，但它背后仍然调用托管 SciScholar API。先配置基础地址和个人 Token，之后所有 CLI 命令和客户端代码都可以复用。",
     directLinksTitle:"直接跳转",
     apiBaseTitle:"基础地址与运行时变量", authHeadersTitle:"认证请求头", authHeadersText:"多数托管端点需要有效 SciScholar Token。CLI 会同时发送两个请求头，以兼容不同调用方式。",
-    browserTokenTitle:"浏览器注册", browserTokenText:"打开注册页，完成邮箱验证，并复制返回的 scinet_xxx Token。Token 只显示一次，请妥善保存。",
+    browserTokenTitle:"浏览器注册", browserTokenText:"打开注册页，完成邮箱验证，并复制返回的 scischolar_xxx Token。Token 只显示一次，请妥善保存。",
     tokenCheckTitle:"Token 状态与用量", publicEndpointsTitle:"常用 API 路径", errorLimitsTitle:"错误与限额", errorLimitsIntro:"错误使用常规 HTTP 状态码，并在响应体中返回简短错误类型。每个个人 Token 都有每日配额，较重的检索路径可能比状态检查消耗更多额度。",
     workflowTitle:"CLI 是怎么工作的", workflowIntro:"一条 SciScholar 命令通常由四部分组成：全局连接参数、一个任务命令、输入或锚点参数、输出控制。CLI 会先生成检索计划，再调用对应后端路线，最后把结果文件写到本地，方便复查。",
     workflowCallout:"使用思路：主题很明确时用专家参数；还在探索时用自然语言；只拿不准某个命令时，用 scischolar <command> -h 看该命令的专属帮助。",
@@ -832,8 +832,8 @@ const apiSetupGuide = [
   },
   {
     title:{en:"Personal token",zh:"个人 Token"},
-    body:{en:"Register in the browser and store the returned `scinet_xxx` token in `SCISCHOLAR_API_KEY`. Avoid pasting long-lived tokens directly into shared commands.",
-      zh:"在浏览器完成注册，把返回的 `scinet_xxx` Token 保存到 `SCISCHOLAR_API_KEY`。不建议把长期 Token 直接写进可分享命令。"}
+    body:{en:"Register in the browser and store the returned `scischolar_xxx` token in `SCISCHOLAR_API_KEY`. Avoid pasting long-lived tokens directly into shared commands.",
+      zh:"在浏览器完成注册，把返回的 `scischolar_xxx` Token 保存到 `SCISCHOLAR_API_KEY`。不建议把长期 Token 直接写进可分享命令。"}
   },
   {
     title:{en:"CLI and raw API share the same auth",zh:"CLI 与原始 API 共用认证"},

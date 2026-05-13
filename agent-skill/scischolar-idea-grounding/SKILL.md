@@ -1,46 +1,93 @@
 ---
 name: scischolar-idea-grounding
-description: Use SciScholar search-papers as the retrieval base to ground a research idea against prior work. Trigger when the user gives an idea and asks for similar work, differentiation evidence, prior-art positioning, motivation support, or literature-grounded refinement.
+description: Use only SciScholar search-papers to take a novice user from zero setup to prior-art grounding for a research idea. Trigger when the user gives an idea and asks for similar work, differentiation evidence, related work, motivation support, or literature-grounded refinement.
 ---
 
 # SciScholar Idea Grounding
 
-This skill turns `search-papers` retrieval into an idea-grounding workflow. The goal is to move from a proposed idea to prior-work evidence, overlap analysis, and concrete positioning.
+Use this skill to position a research idea against prior work using only `scischolar search-papers`.
 
-## End-to-End Workflow
+## Operating Contract
 
-1. Rewrite the idea into retrieval anchors.
-   - Full idea -> `--idea` or `--query`
-   - Core method/task -> `--keyword "high:<term>"`
-   - Application, evaluation, or setting -> `--keyword "middle:<term>"`
-   - Known baselines -> `--title` or `--reference`
-2. Run the idea-grounding channel:
+- Do not call any SciScholar downstream command. The only SciScholar retrieval command allowed is `search-papers`.
+- Ask the user only for human-only setup values: email, verification code, token, or one concise clarification about the idea.
+- Complete setup, run `search-papers`, inspect artifacts, and produce a grounded positioning memo.
+- Do not reveal the full API token in final output.
 
-```bash
-scischolar idea-grounding --idea "LLM-based multi-perspective evaluation for scientific research ideas" --domain "artificial intelligence" --time-range "2020-2025" --keyword "high:idea evaluation" --keyword "middle:LLM as a judge" --top-k 5
+## Zero-Start Bootstrap
+
+1. Check whether the `scischolar` executable exists without invoking a SciScholar command: use `Get-Command scischolar -ErrorAction SilentlyContinue` on Windows PowerShell or `command -v scischolar` on macOS/Linux. If missing, install with `python -m pip install -e ./scischolar` in this repo or `python -m pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scischolar"`.
+2. If `SCISCHOLAR_API_KEY` is absent, guide the user to `http://scinet.openkg.cn/register`.
+3. Ask for the email verification code only when needed. Ask for the returned `scischolar_xxx` token after registration.
+4. Configure:
+
+```powershell
+$env:SCISCHOLAR_API_BASE_URL = "http://scinet.openkg.cn"
+$env:SCISCHOLAR_API_KEY = "<token>"
+setx SCISCHOLAR_API_BASE_URL "http://scinet.openkg.cn"
+setx SCISCHOLAR_API_KEY "<token>"
 ```
 
-3. If the downstream command is unavailable, use `search-papers` with the idea as the query:
-
 ```bash
-scischolar search-papers --retrieval-mode hybrid --query "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --keyword "middle:LLM as a judge" --top-k 5 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-keyword high --bias-related high --bias-citation low --bias-exploration low --ranking-profile precision --report-max-items 5
+export SCISCHOLAR_API_BASE_URL="http://scinet.openkg.cn"
+export SCISCHOLAR_API_KEY="<token>"
 ```
 
-4. Read `runs/<run_id>/summary.txt`, `report.md`, `request.json`, and `response.json`.
-5. Compare the user's idea with retrieved works and finish with a positioning answer.
+5. If token validity is uncertain, test with a one-result `search-papers` query, not `health` or `config`.
+
+## Idea Parsing
+
+Before searching, decompose the idea into:
+
+- Problem: what pain or research question it attacks.
+- Proposed mechanism: the technical novelty the user claims.
+- Target domain: where it applies.
+- Evaluation target: what would prove it works.
+- Neighboring literatures: 2-4 adjacent concepts.
+
+If any of these are missing, infer reasonable defaults. Ask one short question only when the idea is too vague to search.
+
+## Search Plan
+
+Run only `search-papers`. Use at least one close-prior-art pass:
+
+```bash
+scischolar search-papers --retrieval-mode hybrid --query "<full idea in one sentence>" --keyword "high:<core mechanism>" --keyword "middle:<target domain>" --top-k 8 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-keyword high --bias-related high --bias-citation low --bias-exploration low --ranking-profile precision --report-max-items 8
+```
+
+If results are sparse, run a second pass around the problem rather than the mechanism:
+
+```bash
+scischolar search-papers --retrieval-mode hybrid --query "<problem statement>" --keyword "high:<problem>" --keyword "middle:<neighbor concept>" --top-k 8 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-related high --ranking-profile balanced --report-max-items 8
+```
+
+## Reading Artifacts
+
+Read `summary.txt`, `report.md`, `request.json`, and `response.json`. Build a prior-art matrix:
+
+- Paper.
+- Overlap with user idea: problem, mechanism, domain, evaluation, or data.
+- Difference from user idea.
+- Threat level: direct prior, partial prior, background, or weakly related.
+- Evidence phrase from abstract/report.
+
+## Grounding Method
+
+1. Restate the idea as a testable claim.
+2. Identify the closest prior work first, even if it weakens novelty.
+3. Separate overlap types. A paper can share the problem but not the mechanism, or share the method but not the domain.
+4. Explain the differentiator only after showing the evidence.
+5. Mark unsupported novelty claims. Use "not established by this search" rather than "novel" when evidence is insufficient.
+6. Refine the idea into a sharper version that avoids the closest prior art.
+7. Suggest the next `search-papers` query to test the weakest point.
 
 ## Deliverable
 
 Return:
 
-- Closest related works and what they appear to cover.
-- Overlap between the user's idea and the evidence.
-- Differentiation opportunities that remain plausible.
-- Missing evidence or weak assumptions.
-- Suggested revised idea statement.
-
-## Evidence Rules
-
-- Do not claim novelty just because no exact match was retrieved.
-- Treat retrieved papers as grounding evidence, not a complete patent-style prior-art search.
-- If the idea has multiple components, run or recommend separate searches for components with weak coverage.
+- Search command(s), with token omitted.
+- Prior-art matrix.
+- Closest prior work summary.
+- Differentiation statement.
+- Risks to novelty and how to refine the idea.
+- Next search query.

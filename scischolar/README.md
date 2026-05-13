@@ -13,13 +13,13 @@ Documentation: http://scinet.openkg.cn/api/docs/
 Install directly from GitHub:
 
 ```bash
-pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
+pip install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scischolar"
 ```
 
 For isolated CLI usage:
 
 ```bash
-pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scinet"
+pipx install "git+https://github.com/zjunlp/SciScholar.git#subdirectory=scischolar"
 ```
 
 After installation:

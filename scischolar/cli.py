@@ -25,7 +25,7 @@ from .core.schemas import (
     TASK_IDEA_GENERATION,
     TASK_RELATED_AUTHORS,
     TASK_TOPIC_TREND_REVIEW,
-    SciNetRequest,
+    SciScholarRequest,
 )
 from .renderers.markdown import render_response_markdown
 from .tasks.dispatcher import execute_request
@@ -95,7 +95,7 @@ def _parse_inline_json(text: str | None) -> dict[str, Any]:
     return payload
 
 
-def _build_request_from_args(args: argparse.Namespace) -> SciNetRequest:
+def _build_request_from_args(args: argparse.Namespace) -> SciScholarRequest:
     if not args.task_type:
         raise ValueError("--task-type is required")
 
@@ -124,17 +124,17 @@ def _build_request_from_args(args: argparse.Namespace) -> SciNetRequest:
     params.update(_load_optional_json(args.params_file))
     params.update(_parse_inline_json(args.params_json))
     cli_timeout_params = {
-        "api_timeout_default": "scinet_api_timeout_default",
-        "api_timeout_search": "scinet_api_timeout_search",
-        "api_timeout_authors_related": "scinet_api_timeout_authors_related",
-        "api_timeout_authors_papers": "scinet_api_timeout_authors_papers",
-        "api_timeout_support_papers": "scinet_api_timeout_support_papers",
+        "api_timeout_default": "scischolar_api_timeout_default",
+        "api_timeout_search": "scischolar_api_timeout_search",
+        "api_timeout_authors_related": "scischolar_api_timeout_authors_related",
+        "api_timeout_authors_papers": "scischolar_api_timeout_authors_papers",
+        "api_timeout_support_papers": "scischolar_api_timeout_support_papers",
     }
     for arg_name, param_name in cli_timeout_params.items():
         value = getattr(args, arg_name, None)
         if value is not None:
             params[param_name] = value
-    return SciNetRequest(
+    return SciScholarRequest(
         task_type=args.task_type,
         input_payload=input_payload,
         params=params,
@@ -144,7 +144,7 @@ def _build_request_from_args(args: argparse.Namespace) -> SciNetRequest:
     )
 
 
-def _build_input_summary_for_run_id(request: SciNetRequest) -> str:
+def _build_input_summary_for_run_id(request: SciScholarRequest) -> str:
     for key in ("idea_text", "topic_text", "author_name", "pdf_path"):
         value = normalize_whitespace(request.input_payload.get(key))
         if value:

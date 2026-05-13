@@ -1,4 +1,4 @@
 interface:
   display_name: "SciScholar Researcher Review"
-  short_description: "Profile a researcher from retrieved papers"
-  default_prompt: "Use $scischolar-researcher-review to retrieve papers and summarize Yoshua Bengio's research trajectory."
+  short_description: "Profile a researcher using search-papers"
+  default_prompt: "Use $scischolar-researcher-review to set up SciScholar if needed, run only search-papers, and summarize Yoshua Bengio's research trajectory from retrieved paper evidence."

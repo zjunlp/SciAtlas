@@ -101,7 +101,7 @@ DEFAULT_TASK_PARAMS: dict[str, dict[str, Any]] = {
 
 
 @dataclass(slots=True)
-class SciNetRequest:
+class SciScholarRequest:
     task_type: str
     input_payload: dict[str, Any]
     params: dict[str, Any] = field(default_factory=dict)

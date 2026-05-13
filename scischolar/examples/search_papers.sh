@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-scinet --timeout 900 search-papers \
+scischolar --timeout 900 search-papers \
   --query "open world agent" \
   --domain "artificial intelligence" \
   --time-range 2020-2024 \

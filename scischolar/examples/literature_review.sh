@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-scinet --timeout 900 literature-review \
+scischolar --timeout 900 literature-review \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \

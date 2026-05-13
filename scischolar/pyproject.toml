@@ -29,7 +29,9 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
-dependencies = []
+dependencies = [
+  "httpx>=0.27,<1"
+]
 
 [project.urls]
 Homepage = "https://github.com/zjunlp/SciScholar"
@@ -38,11 +40,10 @@ API = "http://scinet.openkg.cn"
 Registration = "http://scinet.openkg.cn/register"
 
 [project.scripts]
-scischolar = "scinet.cli:main"
-scinet = "scinet.cli:main"
+scischolar = "scischolar.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-scinet = ["builtin_skills.json"]
+scischolar = ["builtin_skills.json"]

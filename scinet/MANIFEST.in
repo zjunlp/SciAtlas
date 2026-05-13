@@ -1,3 +1,0 @@
-include README.md
-include .env.example
-recursive-include examples *.sh\ninclude src/scinet/builtin_skills.json\ninclude README_skills.md\n

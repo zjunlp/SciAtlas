@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from scinet.cli import build_parser, main
+from scischolar.cli import build_parser, main
 
 __all__ = ["build_parser", "main"]
 
