@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from ..core.api_client import SciNetApiClient, load_scinet_api_settings
+from ..core.api_client import SciScholarApiClient, load_scischolar_api_settings
 from ..core.common import (
     dedupe_preserve_order,
     ensure_dir,
@@ -25,7 +25,7 @@ from ..llm.prompts import (
 from ..search.planner import build_search_plan
 from ..search.reranker import rerank_search_payload
 from ..core.schemas import (
-    SciNetRequest,
+    SciScholarRequest,
     TASK_AUTHOR_PROFILE,
     TASK_GROUNDED_REVIEW,
     TASK_IDEA_GENERATION,
@@ -81,7 +81,7 @@ def _build_search_plan(
 
 def _run_search_via_api(
     *,
-    client: SciNetApiClient,
+    client: SciScholarApiClient,
     plan: dict[str, Any],
     params: dict[str, Any],
     env_path: Path,
@@ -166,8 +166,8 @@ def _apply_grounding_model_env_defaults(params: dict[str, Any], env_path: Path) 
     if not normalize_whitespace(params.get("embedding_model")) and not normalize_whitespace(params.get("embedding_model_path")):
         embedding_model = get_env_value(
             env_values,
-            "SCINET_EMBEDDING_MODEL_PATH",
-            "SCINET_EMBEDDING_MODEL",
+            "SCISCHOLAR_EMBEDDING_MODEL_PATH",
+            "SCISCHOLAR_EMBEDDING_MODEL",
             "GROUNDING_EMBEDDING_MODEL_PATH",
             "GROUNDING_EMBEDDING_MODEL",
         )
@@ -177,8 +177,8 @@ def _apply_grounding_model_env_defaults(params: dict[str, Any], env_path: Path) 
     if not normalize_whitespace(params.get("reranker_model")) and not normalize_whitespace(params.get("reranker_model_path")):
         reranker_model = get_env_value(
             env_values,
-            "SCINET_RERANKER_MODEL_PATH",
-            "SCINET_RERANKER_MODEL",
+            "SCISCHOLAR_RERANKER_MODEL_PATH",
+            "SCISCHOLAR_RERANKER_MODEL",
             "GROUNDING_RERANKER_MODEL_PATH",
             "GROUNDING_RERANKER_MODEL",
         )
@@ -577,7 +577,7 @@ def _build_supporting_papers(authors: list[dict[str, Any]]) -> list[dict[str, An
     return papers
 
 
-def execute_grounded_review(request: SciNetRequest, run_dir: Path, client: SciNetApiClient) -> dict[str, Any]:
+def execute_grounded_review(request: SciScholarRequest, run_dir: Path, client: SciScholarApiClient) -> dict[str, Any]:
     params = merge_task_params(request.task_type, request.params)
     _apply_grounding_model_env_defaults(params, request.env_path)
     artifact_root = ensure_dir(run_dir / "artifacts")
@@ -659,7 +659,7 @@ def execute_grounded_review(request: SciNetRequest, run_dir: Path, client: SciNe
     }
 
 
-def execute_topic_trend_review(request: SciNetRequest, run_dir: Path, client: SciNetApiClient) -> dict[str, Any]:
+def execute_topic_trend_review(request: SciScholarRequest, run_dir: Path, client: SciScholarApiClient) -> dict[str, Any]:
     params = merge_task_params(request.task_type, request.params)
     topic_text = normalize_whitespace(request.input_payload.get("topic_text") or request.input_payload.get("idea_text"))
     if not topic_text:
@@ -720,7 +720,7 @@ def execute_topic_trend_review(request: SciNetRequest, run_dir: Path, client: Sc
     }
 
 
-def execute_related_authors(request: SciNetRequest, run_dir: Path, client: SciNetApiClient) -> dict[str, Any]:
+def execute_related_authors(request: SciScholarRequest, run_dir: Path, client: SciScholarApiClient) -> dict[str, Any]:
     params = merge_task_params(request.task_type, request.params)
     artifacts = ensure_dir(run_dir / "artifacts")
     plan_artifact_dir = ensure_dir(artifacts / "query_plan")
@@ -807,7 +807,7 @@ def execute_related_authors(request: SciNetRequest, run_dir: Path, client: SciNe
     }
 
 
-def execute_author_profile(request: SciNetRequest, run_dir: Path, client: SciNetApiClient) -> dict[str, Any]:
+def execute_author_profile(request: SciScholarRequest, run_dir: Path, client: SciScholarApiClient) -> dict[str, Any]:
     params = merge_task_params(request.task_type, request.params)
     author_name = normalize_whitespace(request.input_payload.get("author_name"))
     if not author_name:
@@ -880,7 +880,7 @@ def execute_author_profile(request: SciNetRequest, run_dir: Path, client: SciNet
     }
 
 
-def execute_idea_generation(request: SciNetRequest, run_dir: Path, client: SciNetApiClient) -> dict[str, Any]:
+def execute_idea_generation(request: SciScholarRequest, run_dir: Path, client: SciScholarApiClient) -> dict[str, Any]:
     params = merge_task_params(request.task_type, request.params)
     topic_text = normalize_whitespace(request.input_payload.get("topic_text") or request.input_payload.get("idea_text"))
     if not topic_text:
@@ -937,9 +937,9 @@ def execute_idea_generation(request: SciNetRequest, run_dir: Path, client: SciNe
     }
 
 
-def execute_request(request: SciNetRequest, run_dir: Path) -> dict[str, Any]:
-    settings = load_scinet_api_settings(request.env_path, request.params)
-    with SciNetApiClient(settings) as client:
+def execute_request(request: SciScholarRequest, run_dir: Path) -> dict[str, Any]:
+    settings = load_scischolar_api_settings(request.env_path, request.params)
+    with SciScholarApiClient(settings) as client:
         if request.task_type == TASK_GROUNDED_REVIEW:
             response = execute_grounded_review(request, run_dir, client)
         elif request.task_type == TASK_TOPIC_TREND_REVIEW:

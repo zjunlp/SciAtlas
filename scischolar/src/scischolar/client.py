@@ -5,10 +5,10 @@ import urllib.error
 import urllib.request
 from typing import Any
 
-from .config import SciNetConfig, load_config
+from .config import SciScholarConfig, load_config
 
 
-class SciNetClient:
+class SciScholarClient:
     """Small Python client for the hosted SciScholar / KG2API service."""
 
     def __init__(
@@ -18,7 +18,7 @@ class SciNetClient:
         base_url: str | None = None,
         timeout: int | None = None,
     ) -> None:
-        self.config: SciNetConfig = load_config(base_url=base_url, api_key=api_key, timeout=timeout)
+        self.config: SciScholarConfig = load_config(base_url=base_url, api_key=api_key, timeout=timeout)
 
     def _url(self, endpoint: str) -> str:
         return self.config.base_url.rstrip("/") + "/" + endpoint.lstrip("/")

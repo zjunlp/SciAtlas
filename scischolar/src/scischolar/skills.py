@@ -10,7 +10,7 @@ from typing import Any
 
 def _builtin_skills() -> dict[str, dict[str, Any]]:
     try:
-        data = resources.files("scinet").joinpath("builtin_skills.json").read_text(encoding="utf-8")
+        data = resources.files("scischolar").joinpath("builtin_skills.json").read_text(encoding="utf-8")
         items = json.loads(data)
     except Exception:
         items = []
@@ -18,8 +18,8 @@ def _builtin_skills() -> dict[str, dict[str, Any]]:
 
 
 def _dirs() -> list[Path]:
-    dirs = [Path.cwd() / "skills", Path.home() / ".scischolar" / "skills", Path.home() / ".scinet" / "skills"]
-    extra = os.getenv("SCISCHOLAR_SKILLS_DIR") or os.getenv("SCINET_SKILLS_DIR", "")
+    dirs = [Path.cwd() / "skills", Path.home() / ".scischolar" / "skills"]
+    extra = os.getenv("SCISCHOLAR_SKILLS_DIR", "")
     dirs += [Path(x).expanduser() for x in extra.split(os.pathsep) if x.strip()]
     return dirs
 

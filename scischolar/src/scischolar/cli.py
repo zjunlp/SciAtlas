@@ -38,11 +38,11 @@ from typing import Any
 
 
 
-DEFAULT_BASE_URL = os.environ.get("SCISCHOLAR_API_BASE_URL") or os.environ.get("SCINET_API_BASE_URL") or os.environ.get("KG2API_BASE_URL", "http://scinet.openkg.cn")
+DEFAULT_BASE_URL = os.environ.get("SCISCHOLAR_API_BASE_URL") or os.environ.get("KG2API_BASE_URL", "http://scinet.openkg.cn")
 
-DEFAULT_API_KEY = os.environ.get("SCISCHOLAR_API_KEY") or os.environ.get("SCINET_API_KEY") or os.environ.get("KG2API_API_KEY", "")
+DEFAULT_API_KEY = os.environ.get("SCISCHOLAR_API_KEY") or os.environ.get("KG2API_API_KEY", "")
 
-DEFAULT_RUNS_DIR = os.environ.get("SCISCHOLAR_RUNS_DIR") or os.environ.get("SCINET_RUNS_DIR") or os.environ.get("SCISCHOLAR_SKILL_RUNS_DIR") or os.environ.get("SCINET_SKILL_RUNS_DIR") or str(Path.cwd() / "runs")
+DEFAULT_RUNS_DIR = os.environ.get("SCISCHOLAR_RUNS_DIR") or os.environ.get("SCISCHOLAR_SKILL_RUNS_DIR") or str(Path.cwd() / "runs")
 
 
 
@@ -199,7 +199,7 @@ class Spinner:
     def __init__(self, message: str, *, enabled: bool = True) -> None:
         self.message = message
         self.enabled = enabled and sys.stderr.isatty() and not (
-            os.environ.get("SCISCHOLAR_NO_SPINNER") or os.environ.get("SCINET_NO_SPINNER")
+            os.environ.get("SCISCHOLAR_NO_SPINNER")
         )
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
@@ -1794,7 +1794,7 @@ def _missing_or_placeholder(value: str | None) -> bool:
         "your-token",
         "your-api-key",
         "your-personal-scischolar-token",
-        "your-personal-scinet-token",
+        "your-personal-scischolar-token",
         "your-model-name",
     } or any(token in normalized for token in placeholder_tokens)
 
@@ -1839,15 +1839,15 @@ def _parse_llm_extra_headers(value: str) -> dict[str, str]:
 
 
 def _optional_llm_config() -> dict[str, Any] | None:
-    provider = (_env_first("LLM_PROVIDER", "SCISCHOLAR_LLM_PROVIDER", "SCINET_LLM_PROVIDER") or "chat_completions").lower()
+    provider = (_env_first("LLM_PROVIDER", "SCISCHOLAR_LLM_PROVIDER") or "chat_completions").lower()
     if provider in {"0", "false", "none", "off", "disabled"}:
         return None
-    api_key = _env_first("LLM_API_KEY", "SCISCHOLAR_LLM_API_KEY", "SCINET_LLM_API_KEY", "OPENAI_API_KEY")
-    base_url = _env_first("LLM_BASE_URL", "SCISCHOLAR_LLM_BASE_URL", "SCINET_LLM_BASE_URL", "OPENAI_BASE_URL")
-    full_url = _env_first("LLM_CHAT_COMPLETIONS_URL", "SCISCHOLAR_LLM_CHAT_COMPLETIONS_URL", "SCINET_LLM_CHAT_COMPLETIONS_URL", "OPENAI_CHAT_COMPLETIONS_URL")
-    auth_header = _env_first("LLM_AUTH_HEADER", "SCISCHOLAR_LLM_AUTH_HEADER", "SCINET_LLM_AUTH_HEADER")
-    extra_headers = _env_first("LLM_HTTP_HEADERS", "SCISCHOLAR_LLM_HTTP_HEADERS", "SCINET_LLM_HTTP_HEADERS")
-    model = _env_first("LLM_MODEL", "SCISCHOLAR_LLM_MODEL", "SCINET_LLM_MODEL", "OPENAI_MODEL")
+    api_key = _env_first("LLM_API_KEY", "SCISCHOLAR_LLM_API_KEY", "OPENAI_API_KEY")
+    base_url = _env_first("LLM_BASE_URL", "SCISCHOLAR_LLM_BASE_URL", "OPENAI_BASE_URL")
+    full_url = _env_first("LLM_CHAT_COMPLETIONS_URL", "SCISCHOLAR_LLM_CHAT_COMPLETIONS_URL", "OPENAI_CHAT_COMPLETIONS_URL")
+    auth_header = _env_first("LLM_AUTH_HEADER", "SCISCHOLAR_LLM_AUTH_HEADER")
+    extra_headers = _env_first("LLM_HTTP_HEADERS", "SCISCHOLAR_LLM_HTTP_HEADERS")
+    model = _env_first("LLM_MODEL", "SCISCHOLAR_LLM_MODEL", "OPENAI_MODEL")
     endpoint = _chat_completions_url(base_url, full_url)
     if _missing_or_placeholder(endpoint) or _missing_or_placeholder(model):
         return None
@@ -1862,9 +1862,9 @@ def _optional_llm_config() -> dict[str, Any] | None:
         "chat_completions_url": endpoint,
         "headers": headers,
         "model": model,
-        "timeout": int(os.environ.get("SCISCHOLAR_LLM_TIMEOUT") or os.environ.get("SCINET_LLM_TIMEOUT") or os.environ.get("LLM_TIMEOUT") or 30),
-        "temperature": float(os.environ.get("SCISCHOLAR_LLM_TEMPERATURE") or os.environ.get("SCINET_LLM_TEMPERATURE") or os.environ.get("LLM_TEMPERATURE") or 0),
-        "max_tokens": int(os.environ.get("SCISCHOLAR_LLM_MAX_TOKENS") or os.environ.get("SCINET_LLM_MAX_TOKENS") or os.environ.get("LLM_MAX_TOKENS") or 512),
+        "timeout": int(os.environ.get("SCISCHOLAR_LLM_TIMEOUT") or os.environ.get("LLM_TIMEOUT") or 30),
+        "temperature": float(os.environ.get("SCISCHOLAR_LLM_TEMPERATURE") or os.environ.get("LLM_TEMPERATURE") or 0),
+        "max_tokens": int(os.environ.get("SCISCHOLAR_LLM_MAX_TOKENS") or os.environ.get("LLM_MAX_TOKENS") or 512),
     }
 
 
@@ -1946,9 +1946,9 @@ def extract_keywords_with_optional_llm(text: str, *, top_keywords: int = 8) -> l
 def optional_provider_config_status() -> dict[str, Any]:
     return {
         "llm_keyword_extraction_enabled": _optional_llm_config() is not None,
-        "openalex_configured": not _missing_or_placeholder(_env_first("OA_API_KEY", "OPENALEX_API_KEY", "SCISCHOLAR_OPENALEX_API_KEY", "SCINET_OPENALEX_API_KEY")),
-        "openalex_mailto_configured": not _missing_or_placeholder(_env_first("OPENALEX_MAILTO", "OPENALEX_EMAIL", "SCISCHOLAR_OPENALEX_MAILTO", "SCINET_OPENALEX_MAILTO")),
-        "grobid_configured": not _missing_or_placeholder(_env_first("GROBID_BASE_URL", "SCISCHOLAR_GROBID_BASE_URL", "SCINET_GROBID_BASE_URL")),
+        "openalex_configured": not _missing_or_placeholder(_env_first("OA_API_KEY", "OPENALEX_API_KEY", "SCISCHOLAR_OPENALEX_API_KEY")),
+        "openalex_mailto_configured": not _missing_or_placeholder(_env_first("OPENALEX_MAILTO", "OPENALEX_EMAIL", "SCISCHOLAR_OPENALEX_MAILTO")),
+        "grobid_configured": not _missing_or_placeholder(_env_first("GROBID_BASE_URL", "SCISCHOLAR_GROBID_BASE_URL")),
     }
 
 
@@ -4309,7 +4309,7 @@ def _apply_channel_hint_to_report(report_path: str | None, command: str) -> None
         header = f"# SciScholar Downstream Channel Report: {command}\n\n> {hint}\n\n"
         if not (
             original.startswith("# SciScholar Downstream Channel Report")
-            or original.startswith("# SciNet Downstream Channel Report")
+            or original.startswith("# SciScholar Downstream Channel Report")
         ):
             path.write_text(header + original, encoding="utf-8")
     except Exception:

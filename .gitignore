@@ -10,4 +10,6 @@ dist/
 build/
 .codex
 tests/
+!scischolar/tests/
+!scischolar/tests/**
 references/search/tests/

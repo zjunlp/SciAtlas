@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..core.api_client import SciNetApiClient, load_scinet_api_settings
+from ..core.api_client import SciScholarApiClient, load_scischolar_api_settings
 from ..core.schemas import (
     TASK_AUTHOR_PROFILE,
     TASK_GROUNDED_REVIEW,
     TASK_IDEA_GENERATION,
     TASK_RELATED_AUTHORS,
     TASK_TOPIC_TREND_REVIEW,
-    SciNetRequest,
+    SciScholarRequest,
 )
 from .author_profile import execute_author_profile
 from .grounded_review import execute_grounded_review
@@ -18,9 +18,9 @@ from .related_authors import execute_related_authors
 from .topic_trend_review import execute_topic_trend_review
 
 
-def execute_request(request: SciNetRequest, run_dir: Path) -> dict[str, object]:
-    settings = load_scinet_api_settings(request.env_path, request.params)
-    with SciNetApiClient(settings) as client:
+def execute_request(request: SciScholarRequest, run_dir: Path) -> dict[str, object]:
+    settings = load_scischolar_api_settings(request.env_path, request.params)
+    with SciScholarApiClient(settings) as client:
         if request.task_type == TASK_GROUNDED_REVIEW:
             response = execute_grounded_review(request, run_dir, client)
         elif request.task_type == TASK_TOPIC_TREND_REVIEW:
