@@ -203,10 +203,13 @@ class Spinner:
         )
         self._stop = threading.Event()
         self._thread: threading.Thread | None = None
+        self._status_width = 0
 
     def __enter__(self):
         if not self.enabled:
             return self
+        sys.stderr.write(self.message + "\n")
+        sys.stderr.flush()
         self._thread = threading.Thread(target=self._spin, daemon=True)
         self._thread.start()
         return self
@@ -217,7 +220,7 @@ class Spinner:
         self._stop.set()
         if self._thread:
             self._thread.join(timeout=0.3)
-        sys.stderr.write("\r" + " " * 100 + "\r")
+        sys.stderr.write("\r" + " " * self._status_width + "\r")
         sys.stderr.flush()
         return False
 
@@ -226,9 +229,11 @@ class Spinner:
         start = time.time()
         while not self._stop.is_set():
             elapsed = int(time.time() - start)
-            sys.stderr.write(f"\r{next(frames)} {self.message} waiting for {elapsed}s")
+            status = f"{next(frames)} waiting {elapsed}s"
+            self._status_width = max(self._status_width, len(status))
+            sys.stderr.write("\r" + status + " " * max(0, self._status_width - len(status)))
             sys.stderr.flush()
-            time.sleep(0.12)
+            time.sleep(0.5)
 
 
 def _plain_len(value: str) -> int:
@@ -781,7 +786,7 @@ def request_json(
 
 
 
-    spinner_message = "Contacting the SciScholar backend. Please wait; complex graph retrieval may take several seconds"
+    spinner_message = "SciScholar retrieval is running. Please wait; complex graph retrieval may take several seconds."
     show_spinner = payload is not None and endpoint.rstrip("/") != "/healthz"
 
     try:
