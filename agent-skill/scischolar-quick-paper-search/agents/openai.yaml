@@ -1,4 +1,0 @@
-interface:
-  display_name: "SciScholar Quick Paper Search"
-  short_description: "Run only search-papers for a quick evidence seed"
-  default_prompt: "Use $scischolar-quick-paper-search to set up SciScholar if needed, run only search-papers about open world agents, and summarize the evidence."

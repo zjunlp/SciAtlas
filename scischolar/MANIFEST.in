@@ -1,5 +1,0 @@
-include README.md
-include .env.example
-recursive-include examples *.sh
-include src/scischolar/builtin_skills.json
-include README_skills.md

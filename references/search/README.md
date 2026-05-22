@@ -2,7 +2,7 @@
 
 `references/search` keeps a standalone copy of the search logic used for InnoEval.
 
-It is not the main runnable entrypoint of this repository. The root workflow is still `run_scischolar.py`. This directory exists so the KG, S2, merge, and reranking logic stays easy to read and can still be run on its own when needed.
+It is not the main runnable entrypoint of this repository. The root workflow is still `run_sciatlas.py`. This directory exists so the KG, S2, merge, and reranking logic stays easy to read and can still be run on its own when needed.
 
 ## What This Directory Is For
 

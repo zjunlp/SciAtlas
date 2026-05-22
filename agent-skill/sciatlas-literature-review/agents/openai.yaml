@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciAtlas Literature Review"
+  short_description: "Build a review from search-papers results"
+  default_prompt: "Use $sciatlas-literature-review to set up SciAtlas if needed, run only search-papers, and synthesize a literature review on retrieval augmented generation."

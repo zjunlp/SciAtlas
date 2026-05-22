@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciAtlas Trend Report"
+  short_description: "Build a trend report from search-papers"
+  default_prompt: "Use $sciatlas-trend-report to set up SciAtlas if needed, run only search-papers, and map trends in retrieval augmented generation."
