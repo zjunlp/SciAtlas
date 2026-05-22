@@ -1,4 +1,0 @@
-interface:
-  display_name: "SciScholar Idea Grounding"
-  short_description: "Ground an idea using only search-papers"
-  default_prompt: "Use $scischolar-idea-grounding to set up SciScholar if needed, run only search-papers, and position this research idea against prior work."

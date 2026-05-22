@@ -1,0 +1,4 @@
+interface:
+  display_name: "SciAtlas Idea Grounding"
+  short_description: "Ground an idea using only search-papers"
+  default_prompt: "Use $sciatlas-idea-grounding to set up SciAtlas if needed, run only search-papers, and position this research idea against prior work."

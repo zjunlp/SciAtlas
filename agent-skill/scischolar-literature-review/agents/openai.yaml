@@ -1,4 +1,0 @@
-interface:
-  display_name: "SciScholar Literature Review"
-  short_description: "Build a review from search-papers results"
-  default_prompt: "Use $scischolar-literature-review to set up SciScholar if needed, run only search-papers, and synthesize a literature review on retrieval augmented generation."

@@ -1,0 +1,152 @@
+[
+  {
+    "name": "literature-review",
+    "aliases": [
+      "review",
+      "lit-review"
+    ],
+    "description": "Core paper pool and literature-review oriented report.",
+    "command": "literature-review",
+    "defaults": {
+      "retrieval_mode": "hybrid",
+      "top_k": 5,
+      "top_keywords": 0,
+      "max_titles": 0,
+      "max_refs": 0,
+      "bias_exploration": "low",
+      "ranking_profile": "balanced",
+      "report_max_items": 5
+    },
+    "examples": [
+      "sciatlas skill run literature-review --query \"open world agent\" --keyword \"high:open world agent\""
+    ]
+  },
+  {
+    "name": "idea-grounding",
+    "aliases": [
+      "ground"
+    ],
+    "description": "Find similar works and supporting evidence for a research idea.",
+    "command": "idea-grounding",
+    "defaults": {
+      "retrieval_mode": "hybrid",
+      "top_k": 5,
+      "top_keywords": 0,
+      "max_titles": 0,
+      "max_refs": 0,
+      "bias_keyword": "high",
+      "bias_related": "high",
+      "bias_citation": "low",
+      "bias_exploration": "low",
+      "ranking_profile": "precision",
+      "report_max_items": 5
+    },
+    "examples": [
+      "sciatlas skill run idea-grounding --idea \"LLM-based idea evaluation\" --keyword \"high:idea evaluation\""
+    ]
+  },
+  {
+    "name": "idea-evaluate",
+    "aliases": [
+      "idea-eval",
+      "eval-idea"
+    ],
+    "description": "Collect KG evidence for novelty, feasibility, soundness, and differentiation.",
+    "command": "idea-evaluate",
+    "defaults": {
+      "retrieval_mode": "hybrid",
+      "top_k": 5,
+      "top_keywords": 0,
+      "max_titles": 0,
+      "max_refs": 0,
+      "bias_keyword": "high",
+      "bias_related": "high",
+      "bias_citation": "low",
+      "bias_exploration": "low",
+      "ranking_profile": "precision",
+      "report_max_items": 5
+    },
+    "examples": [
+      "sciatlas skill run idea-evaluate --idea \"Federated knowledge editing for LLMs\" --keyword \"high:knowledge editing\""
+    ]
+  },
+  {
+    "name": "idea-generate",
+    "aliases": [
+      "ideate"
+    ],
+    "description": "Broader KG exploration for research idea seed discovery.",
+    "command": "idea-generate",
+    "defaults": {
+      "retrieval_mode": "hybrid",
+      "top_k": 8,
+      "top_keywords": 0,
+      "max_titles": 0,
+      "max_refs": 0,
+      "bias_related": "high",
+      "bias_cooccurrence": "high",
+      "bias_exploration": "high",
+      "ranking_profile": "discovery",
+      "report_max_items": 8
+    },
+    "examples": [
+      "sciatlas skill run idea-generate --query \"automated scientific research\" --keyword \"high:idea evaluation\""
+    ]
+  },
+  {
+    "name": "trend-report",
+    "aliases": [
+      "trend"
+    ],
+    "description": "Trend analysis with citation-aware and timeline-oriented retrieval.",
+    "command": "trend-report",
+    "defaults": {
+      "retrieval_mode": "hybrid",
+      "top_k": 8,
+      "top_keywords": 0,
+      "max_titles": 0,
+      "max_refs": 0,
+      "bias_citation": "high",
+      "bias_exploration": "middle",
+      "ranking_profile": "impact",
+      "report_max_items": 8
+    },
+    "examples": [
+      "sciatlas skill run trend --query \"open world agent\" --time-range 2018-2025"
+    ]
+  },
+  {
+    "name": "researcher-review",
+    "aliases": [
+      "researcher",
+      "profile"
+    ],
+    "description": "Researcher background review from author name or OpenAlex author ID.",
+    "command": "researcher-review",
+    "defaults": {
+      "limit": 10,
+      "no_abstract": true,
+      "report_max_items": 10
+    },
+    "examples": [
+      "sciatlas skill run researcher-review --author \"Yoshua Bengio\""
+    ]
+  },
+  {
+    "name": "quick-paper-search",
+    "aliases": [
+      "quick"
+    ],
+    "description": "Lightweight low-level vector title search for fast testing.",
+    "command": "paper-search",
+    "defaults": {
+      "mode": "vector",
+      "field": "title",
+      "top_k": 3,
+      "report_max_items": 3
+    },
+    "examples": [
+      "sciatlas skill run quick --text \"open world agent\""
+    ]
+  }
+]
