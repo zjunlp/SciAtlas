@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2602.14367">📄 arXiv</a>
+  <a href="https://arxiv.org/abs/2605.22878">📄 arXiv</a>
   ·
   <a href="http://scinet.openkg.cn/register">🔑 获取 API Token</a>
   ·
@@ -629,7 +629,7 @@ set SCIATLAS_API_KEY=your-personal-sciatlas-token
 
 ## 📝 TODO
 
-- [ ] **命令行工具。** 增加更多面向用户的命令行功能，以便下游用户和 AI 代理无需接触数据库内部即可调用检索工作流。
+- [x] **命令行工具。** 增加更多面向用户的命令行功能，以便下游用户和 AI 代理无需接触数据库内部即可调用检索工作流。
 - [x] **通用 Agent Skill 包。** 为常见的科学发现工作流打包可重用的代理技能，并将最佳实践作为更易于加载的组件提供。
 - [ ] **更多知识。** 整合超越以论文为中心的实体之外的更多知识形式，例如数据集、代码、标准、定理和实验经验。
 - [ ] **基准测试与评估。** 为 SciAtlas 支持的下游科学研究任务构建专用基准测试和评估协议。
@@ -641,7 +641,15 @@ set SCIATLAS_API_KEY=your-personal-sciatlas-token
 
 如果 SciAtlas 对你的研究有帮助，请引用：
 ```
-
+@misc{qiao2026sciatlaslargescaleknowledgegraph,
+      title={SciAtlas: A Large-Scale Knowledge Graph for Automated Scientific Research}, 
+      author={Shuofei Qiao and Yunxiang Wei and Jiazheng Fan and Bin Wu and Busheng Zhang and Mengru Wang and Yuqi Zhu and Ningyu Zhang and Keyan Ding and Qiang Zhang and Huajun Chen},
+      year={2026},
+      eprint={2605.22878},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2605.22878}, 
+}
 ```
 
 ---
