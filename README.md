@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <a href="https://arxiv.org/abs/2602.14367">📄 arXiv</a>
+  <a href="https://arxiv.org/abs/2605.22878">📄 arXiv</a>
   ·
   <a href="http://scinet.openkg.cn/register">🔑 Get API Token</a>
   ·
@@ -673,7 +673,7 @@ or reinstall:
 
 ## 📝 TODO
 
-- [ ] **CLI Tools.** Add more user-facing CLI capabilities so downstream users and AI agents can invoke retrieval workflows without touching database internals.
+- [x] **CLI Tools.** Add more user-facing CLI capabilities so downstream users and AI agents can invoke retrieval workflows without touching database internals.
 - [x] **Portable Agent Skill pack.** Package reusable agent skills for common scientific discovery workflows and expose best practices as easier-to-load components.
 - [ ] **More Knowledge.** Integrate more knowledge forms beyond paper-centric entities, such as datasets, code, standards, theorems, and experimental experience.
 - [ ] **Benchmark and Evaluation.** Build dedicated benchmarks and evaluation protocols for downstream scientific research tasks supported by SciAtlas.
@@ -687,7 +687,15 @@ or reinstall:
 If you find SciAtlas helpful, please cite:
 
 ```
-
+@misc{qiao2026sciatlaslargescaleknowledgegraph,
+      title={SciAtlas: A Large-Scale Knowledge Graph for Automated Scientific Research}, 
+      author={Shuofei Qiao and Yunxiang Wei and Jiazheng Fan and Bin Wu and Busheng Zhang and Mengru Wang and Yuqi Zhu and Ningyu Zhang and Keyan Ding and Qiang Zhang and Huajun Chen},
+      year={2026},
+      eprint={2605.22878},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2605.22878}, 
+}
 ```
 
 ---
