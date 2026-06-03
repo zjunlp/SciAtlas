@@ -677,7 +677,7 @@ or reinstall:
 - [x] **Portable Agent Skill pack.** Package reusable agent skills for common scientific discovery workflows and expose best practices as easier-to-load components.
 - [ ] **More Knowledge.** Integrate more knowledge forms beyond paper-centric entities, such as datasets, code, standards, theorems, and experimental experience.
 - [ ] **Benchmark and Evaluation.** Build dedicated benchmarks and evaluation protocols for downstream scientific research tasks supported by SciAtlas.
-- [ ] **Dynamic Update**Improve dynamic knowledge updates toward a more systematic and frequent refresh mechanism.
+- [ ] **Dynamic Update.** Improve dynamic knowledge updates toward a more systematic and frequent refresh mechanism.
 
 
 ---
