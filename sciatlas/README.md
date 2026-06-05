@@ -6,9 +6,33 @@ SciAtlas provides scientific knowledge-graph retrieval for paper search, related
 
 The repository also includes a portable Agent Skill pack in `../agent-skill/`, which turns the base `search-papers` retrieval capability into downstream task playbooks for tools such as Codex, Claude Code, and other coding agents.
 
+<p align="center">
+  <img src="../imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
+</p>
+
 Documentation: http://scinet.openkg.cn/api/docs/
 
 ## Installation
+
+Recommended one-command download and install with `uv`:
+
+Linux / macOS:
+
+```bash
+curl -LsSf https://raw.githubusercontent.com/zjunlp/SciAtlas/main/scripts/install-sciatlas-uv.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/zjunlp/SciAtlas/main/scripts/install-sciatlas-uv.ps1 | iex"
+```
+
+The installer downloads the full repository to `~/SciAtlas`, creates a `uv`
+virtual environment, installs the SciAtlas CLI, and also exposes `sciatlas`
+through `uv tool install`.
+
+Package-only alternatives are also supported.
 
 Install directly from GitHub:
 

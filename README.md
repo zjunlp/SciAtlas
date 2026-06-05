@@ -88,6 +88,26 @@ With the client, SciAtlas becomes a practical research assistant for:
 
 ### 1. Install
 
+Recommended one-command download and install with `uv`:
+
+Linux / macOS:
+
+```bash
+curl -LsSf https://raw.githubusercontent.com/zjunlp/SciAtlas/main/scripts/install-sciatlas-uv.sh | sh
+```
+
+Windows PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/zjunlp/SciAtlas/main/scripts/install-sciatlas-uv.ps1 | iex"
+```
+
+The installer downloads the full repository to `~/SciAtlas`, creates a `uv`
+virtual environment, installs the SciAtlas CLI, and also exposes `sciatlas`
+through `uv tool install`.
+
+Package-only alternatives are also supported.
+
 Install directly from GitHub:
 
 ```bash
@@ -526,6 +546,14 @@ User-defined skills can override built-in skills with the same name.
 ## 🖊Agent Skill
 
 SciAtlas also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs or simple command aliases. They are downstream task playbooks that teach tools such as Codex, Claude Code, and other coding agents how to bootstrap a new user's environment, obtain/configure the API token with user feedback when needed, run only SciAtlas's base `search-papers` command, read saved artifacts, and complete a research goal.
+
+<p align="center">
+  <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
+</p>
+
+<p align="center">
+  <em>Agent Skill demo: from a user request to SciAtlas retrieval, artifact reading, and task-specific research output.</em>
+</p>
 
 Included skills:
 
