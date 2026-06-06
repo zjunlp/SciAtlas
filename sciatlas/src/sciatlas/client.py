@@ -75,7 +75,7 @@ class SciAtlasClient:
         keywords: list[dict[str, Any]] | None = None,
         titles: list[dict[str, Any]] | None = None,
         reference_titles: list[str] | None = None,
-        top_k: int = 3,
+        top_k: int = 10,
         retrieval_mode: str = "hybrid",
         **options: Any,
     ) -> Any:
