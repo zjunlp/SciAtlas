@@ -56,6 +56,14 @@
 - **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill；
 - **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 把基础 `search-papers` 检索能力迁移成端到端下游任务技能，让 Codex、Claude Code 等工具型 Agent 从检索一路完成科研目标。
 
+<p align="center">
+  <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill 工作流演示" width="92%">
+</p>
+
+<p align="center">
+  <em>Agent Skill 演示：从用户请求出发，调用 SciAtlas 检索，读取运行产物，并生成面向具体科研任务的结果。</em>
+</p>
+
 ## 📑 目录
 
 - [✨ 项目概览](#-项目概览)
@@ -515,14 +523,6 @@ sciatlas skill run my-review --query "your topic"
 ## 🖊Agent Skill
 
 SciAtlas 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。这些目录不是运行产物，也不是简单命令别名，而是面向 Codex、Claude Code 等工具型 Agent 的下游任务 playbook：它们会指导 Agent 从零开始帮助新用户安装/配置 CLI，在需要时获取邮箱、验证码或 API Token 反馈，只运行 SciAtlas 基础 `search-papers` 命令，读取 `runs/<run_id>/` 证据产物，并完成具体科研目标。
-
-<p align="center">
-  <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill 工作流演示" width="92%">
-</p>
-
-<p align="center">
-  <em>Agent Skill 演示：从用户请求出发，调用 SciAtlas 检索，读取运行产物，并生成面向具体科研任务的结果。</em>
-</p>
 
 已包含的技能：
 
