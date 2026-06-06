@@ -4,6 +4,10 @@ This folder packages SciAtlas workflows as a portable agent-skill pack. Each ski
 
 These are project assets for coding and research agents. Each skill has a `SKILL.md` instruction file, with optional tool-specific UI metadata under `agents/`, so tools such as Codex, Claude Code, and other SKILL.md-aware agents can load or adapt the same workflow guidance.
 
+<p align="center">
+  <img src="../imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
+</p>
+
 They complement SciAtlas's CLI retrieval layer:
 
 - The CLI makes the base `search-papers` retrieval runnable from the terminal.

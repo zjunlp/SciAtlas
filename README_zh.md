@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  一个可通过 pip 安装的 SciAtlas 客户端与命令行工具，用于调用托管 SciAtlas API 完成文献驱动的科研工作流。
+  一个可通过 uv 一键下载/安装，也可通过 pip 安装的 SciAtlas 客户端与命令行工具，用于调用托管 SciAtlas API 完成文献驱动的科研工作流。
 </p>
 
 <p align="center">
@@ -30,7 +30,7 @@
 
 这张图谱不只是论文列表。它把论文、作者、机构、期刊会议、关键词、引用关系，以及从 Domain 到 Topic 的四级学科体系连接起来。因此，SciAtlas 的检索不只是在匹配关键词，也可以顺着研究领域、概念、人物和论文之间的关系继续探索。
 
-本仓库提供的是面向用户的轻量级 **SciAtlas 客户端包**。新用户只需要通过 `pip` 安装、注册 API Token，就可以在本地运行文献检索和科研工作流；无需自己部署 Neo4j、维护图数据库，也不用关心后端基础设施。
+本仓库提供的是面向用户的轻量级 **SciAtlas 客户端包**。新用户可以通过 `uv` 一键下载仓库并安装 CLI，也可以通过 `pip` 安装包；注册 API Token 后，就可以在本地运行文献检索和科研工作流。你无需自己部署 Neo4j、维护图数据库，也不用关心后端基础设施。
 
 <p align="center">
   <img src="imgs/field_distribution_pie.png" alt="SciAtlas 各学科领域分布" width="92%">
@@ -75,6 +75,24 @@
 
 ## 🚀 快速开始
 ### 1. 安装
+
+推荐使用 `uv` 一键下载完整仓库并安装：
+
+Linux / macOS：
+
+```bash
+curl -LsSf https://raw.githubusercontent.com/zjunlp/SciAtlas/main/scripts/install-sciatlas-uv.sh | sh
+```
+
+Windows PowerShell：
+
+```powershell
+powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/zjunlp/SciAtlas/main/scripts/install-sciatlas-uv.ps1 | iex"
+```
+
+安装脚本会把完整仓库下载到 `~/SciAtlas`，创建 `uv` 虚拟环境，安装 SciAtlas CLI，并通过 `uv tool install` 暴露全局 `sciatlas` 命令。
+
+也可以只安装 Python 包：
 
 从 GitHub 直接安装：
 ```bash
@@ -497,6 +515,14 @@ sciatlas skill run my-review --query "your topic"
 ## 🖊Agent Skill
 
 SciAtlas 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。这些目录不是运行产物，也不是简单命令别名，而是面向 Codex、Claude Code 等工具型 Agent 的下游任务 playbook：它们会指导 Agent 从零开始帮助新用户安装/配置 CLI，在需要时获取邮箱、验证码或 API Token 反馈，只运行 SciAtlas 基础 `search-papers` 命令，读取 `runs/<run_id>/` 证据产物，并完成具体科研目标。
+
+<p align="center">
+  <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill 工作流演示" width="92%">
+</p>
+
+<p align="center">
+  <em>Agent Skill 演示：从用户请求出发，调用 SciAtlas 检索，读取运行产物，并生成面向具体科研任务的结果。</em>
+</p>
 
 已包含的技能：
 

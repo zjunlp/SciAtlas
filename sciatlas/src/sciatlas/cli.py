@@ -6,6 +6,8 @@ from __future__ import annotations
 
 import argparse
 
+import copy
+
 import json
 
 import itertools
@@ -43,6 +45,25 @@ DEFAULT_BASE_URL = os.environ.get("SCIATLAS_API_BASE_URL", "http://scinet.openkg
 DEFAULT_API_KEY = os.environ.get("SCIATLAS_API_KEY", "")
 
 DEFAULT_RUNS_DIR = os.environ.get("SCIATLAS_RUNS_DIR") or os.environ.get("SCIATLAS_SKILL_RUNS_DIR") or str(Path.cwd() / "runs")
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.environ.get(name, "").strip() or default)
+    except ValueError:
+        return default
+
+
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float(os.environ.get(name, "").strip() or default)
+    except ValueError:
+        return default
+
+
+DEFAULT_SEARCH_PAPER_TOP_K = _env_int("SCIATLAS_SEARCH_PAPER_TOP_K", 10)
+DEFAULT_RESPONSE_AUTHOR_LIMIT = _env_int("SCIATLAS_RESPONSE_AUTHOR_LIMIT", 30)
+DEFAULT_RESPONSE_MIN_AUTHOR_SCORE = _env_float("SCIATLAS_RESPONSE_MIN_AUTHOR_SCORE", 0.0)
 
 
 
@@ -3963,6 +3984,119 @@ def render_markdown_report(
         return render_researcher_review_report(command=command, request=request, response=response, max_items=max_items, now=now)
 
     return render_generic_markdown_report(command=command, request=request, response=response, max_items=max_items)
+
+
+def _numeric_score(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _prune_scored_authors(
+    authors: list[Any],
+    *,
+    limit: int,
+    min_score: float,
+) -> tuple[list[Any], dict[str, Any] | None]:
+    original_count = len(authors)
+    limit = max(0, int(limit))
+
+    scored: list[tuple[float, int, Any]] = []
+    unscored: list[tuple[int, Any]] = []
+    dropped_low_score = 0
+
+    for index, item in enumerate(authors):
+        if not isinstance(item, dict):
+            unscored.append((index, item))
+            continue
+
+        score = _numeric_score(item.get("score"))
+        if score is None:
+            unscored.append((index, item))
+        elif score > min_score:
+            scored.append((score, index, item))
+        else:
+            dropped_low_score += 1
+
+    scored.sort(key=lambda entry: (-entry[0], entry[1]))
+
+    if scored:
+        kept = [item for _, _, item in scored[:limit]]
+        dropped_unscored = len(unscored)
+    else:
+        kept = [item for _, item in unscored[:limit]]
+        dropped_unscored = max(0, len(unscored) - limit)
+
+    kept_count = len(kept)
+    if kept_count == original_count:
+        return kept, None
+
+    stats = {
+        "original_count": original_count,
+        "kept_count": kept_count,
+        "author_limit": limit,
+        "min_score_exclusive": min_score,
+        "dropped_score_lte_min": dropped_low_score,
+        "dropped_over_limit": max(0, len(scored) - limit),
+        "dropped_unscored": dropped_unscored,
+    }
+    return kept, stats
+
+
+def compact_response_for_artifact(
+    response: dict[str, Any],
+    *,
+    author_limit: int = DEFAULT_RESPONSE_AUTHOR_LIMIT,
+    min_author_score: float = DEFAULT_RESPONSE_MIN_AUTHOR_SCORE,
+) -> dict[str, Any]:
+    """Shrink saved response.json without changing user-facing paper results."""
+    compacted = copy.deepcopy(response)
+    data = compacted.get("data")
+    result = data.get("result") if isinstance(data, dict) else None
+    sources = result.get("sources") if isinstance(result, dict) else None
+    if not isinstance(sources, dict):
+        return compacted
+
+    pruned_sources: list[dict[str, Any]] = []
+    for source_name, source_payload in sources.items():
+        if not isinstance(source_payload, dict):
+            continue
+        authors = source_payload.get("authors")
+        if not isinstance(authors, list):
+            continue
+
+        kept_authors, stats = _prune_scored_authors(
+            authors,
+            limit=author_limit,
+            min_score=min_author_score,
+        )
+        if not stats:
+            continue
+
+        source_payload["authors"] = kept_authors
+        if "author_count" in source_payload and "author_count_full" not in source_payload:
+            source_payload["author_count_full"] = source_payload.get("author_count")
+        source_payload["author_count"] = len(kept_authors)
+        source_payload["authors_pruned"] = True
+
+        pruned_sources.append(
+            {
+                "path": f"data.result.sources.{source_name}.authors",
+                **stats,
+            }
+        )
+
+    if pruned_sources:
+        compacted["artifact_compaction"] = {
+            "version": 1,
+            "reason": "Pruned low-score source-author candidates from saved response.json; paper rankings are preserved.",
+            "source_author_pruning": pruned_sources,
+        }
+
+    return compacted
+
+
 def save_artifacts(
 
     *,
@@ -4007,15 +4141,17 @@ def save_artifacts(
 
     if response is not None:
 
+        artifact_response = compact_response_for_artifact(response)
+
         response_path = run_dir / "response.json"
 
-        write_json(response_path, response)
+        write_json(response_path, artifact_response)
 
         artifacts["response_json"] = str(response_path)
 
 
 
-        summary = build_summary(command, response)
+        summary = build_summary(command, artifact_response)
 
         summary_path = run_dir / "summary.txt"
 
@@ -4035,7 +4171,7 @@ def save_artifacts(
 
                 request=request,
 
-                response=response,
+                response=artifact_response,
 
                 max_items=report_max_items,
 
@@ -4732,7 +4868,7 @@ def cmd_search_papers(args: argparse.Namespace) -> int:
 
         text=text,
 
-        default_top_k=5,
+        default_top_k=DEFAULT_SEARCH_PAPER_TOP_K,
 
         cli_top_k=args.top_k,
 
@@ -5894,4 +6030,3 @@ def main() -> int:
 if __name__ == "__main__":
 
     raise SystemExit(main())
-
