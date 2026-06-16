@@ -23,7 +23,7 @@ Use this skill to deliver a small, evidence-backed paper search from a blank mac
    - Otherwise install from GitHub with `python -m pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"`.
 3. Check whether `SCIATLAS_API_KEY` is present in the current shell environment.
 4. If no token is configured, guide the user through registration:
-   - Open or provide `http://scinet.openkg.cn/register`.
+   - Open or provide `http://sciatlas.openkg.cn/register`.
    - Ask the user for the email only if the registration page or flow needs it and you cannot fill it yourself.
    - Ask for the email verification code when it arrives.
    - Ask the user to paste the returned `sciatlas_xxx` token. The token is shown only once.
@@ -32,16 +32,16 @@ Use this skill to deliver a small, evidence-backed paper search from a blank mac
 Windows PowerShell:
 
 ```powershell
-$env:SCIATLAS_API_BASE_URL = "http://scinet.openkg.cn"
+$env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
 $env:SCIATLAS_API_KEY = "<token>"
-setx SCIATLAS_API_BASE_URL "http://scinet.openkg.cn"
+setx SCIATLAS_API_BASE_URL "http://sciatlas.openkg.cn"
 setx SCIATLAS_API_KEY "<token>"
 ```
 
 macOS/Linux:
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="<token>"
 ```
 

@@ -18,19 +18,19 @@ Use this skill to turn `search-papers` output into a real literature review. The
 
 1. Check whether the `sciatlas` executable exists without invoking a SciAtlas command: use `Get-Command sciatlas -ErrorAction SilentlyContinue` on Windows PowerShell or `command -v sciatlas` on macOS/Linux.
 2. If missing, install from the local repo with `python -m pip install -e ./sciatlas`; otherwise use `python -m pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"`.
-3. If `SCIATLAS_API_KEY` is missing, send the user to `http://scinet.openkg.cn/register`.
+3. If `SCIATLAS_API_KEY` is missing, send the user to `http://sciatlas.openkg.cn/register`.
 4. Walk the user through the browser registration: enter email, wait for the code, ask for the code if you are controlling the form, then ask them to paste the returned `sciatlas_xxx` token.
 5. Configure the shell:
 
 ```powershell
-$env:SCIATLAS_API_BASE_URL = "http://scinet.openkg.cn"
+$env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
 $env:SCIATLAS_API_KEY = "<token>"
-setx SCIATLAS_API_BASE_URL "http://scinet.openkg.cn"
+setx SCIATLAS_API_BASE_URL "http://sciatlas.openkg.cn"
 setx SCIATLAS_API_KEY "<token>"
 ```
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="<token>"
 ```
 

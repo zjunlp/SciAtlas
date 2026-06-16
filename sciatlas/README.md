@@ -10,7 +10,7 @@ The repository also includes a portable Agent Skill pack in `../agent-skill/`, w
   <img src="../imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
 </p>
 
-Documentation: http://scinet.openkg.cn/api/docs/
+Documentation: http://sciatlas.openkg.cn/api/docs/
 
 ## Installation
 
@@ -57,7 +57,7 @@ sciatlas -h
 Open:
 
 ```text
-http://scinet.openkg.cn/register
+http://sciatlas.openkg.cn/register
 ```
 
 Complete email verification and copy your personal token.
@@ -65,7 +65,7 @@ Complete email verification and copy your personal token.
 Then configure:
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="your-personal-sciatlas-token"
 ```
 

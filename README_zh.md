@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="http://scinet.openkg.cn/api/docs/?lang=zh">📚 SciAtlas 文档网站</a>
+  <a href="http://sciatlas.openkg.cn/api/docs/?lang=zh">📚 SciAtlas 文档网站</a>
 </p>
 
 <p align="center">
@@ -17,9 +17,9 @@
 <p align="center">
   <a href="https://arxiv.org/abs/2605.22878">📄 arXiv</a>
   ·
-  <a href="http://scinet.openkg.cn/register">🔑 获取 API Token</a>
+  <a href="http://sciatlas.openkg.cn/register">🔑 获取 API Token</a>
   ·
-  <a href="http://scinet.openkg.cn/healthz">🩺 API 健康检查</a>
+  <a href="http://sciatlas.openkg.cn/healthz">🩺 API 健康检查</a>
 </p>
 
 ---
@@ -114,7 +114,7 @@ sciatlas -h
 
 访问：
 ```text
-http://scinet.openkg.cn/register
+http://sciatlas.openkg.cn/register
 ```
 
 完成邮箱验证码注册，并复制个人 Token。
@@ -127,7 +127,7 @@ http://scinet.openkg.cn/register
 
 Linux / macOS：
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="your-personal-sciatlas-token"
 export SCIATLAS_TIMEOUT=900
 export SCIATLAS_RUNS_DIR="./runs"
@@ -135,7 +135,7 @@ export SCIATLAS_RUNS_DIR="./runs"
 
 Windows CMD：
 ```bat
-set SCIATLAS_API_BASE_URL=http://scinet.openkg.cn
+set SCIATLAS_API_BASE_URL=http://sciatlas.openkg.cn
 set SCIATLAS_API_KEY=your-personal-sciatlas-token
 set SCIATLAS_TIMEOUT=900
 set SCIATLAS_RUNS_DIR=.\runs
@@ -244,7 +244,7 @@ SciAtlas 对公开用户使用个人 API Token。
 
 访问：
 ```text
-http://scinet.openkg.cn/register
+http://sciatlas.openkg.cn/register
 ```
 
 流程：
@@ -260,14 +260,14 @@ Token 只显示一次，请妥善保存。
 ### 查询 Token 状态
 ```bash
 curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
-  http://scinet.openkg.cn/v1/auth/token/status
+  http://sciatlas.openkg.cn/v1/auth/token/status
 ```
 
 ### 查询用量
 
 ```bash
 curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
-  "http://scinet.openkg.cn/v1/auth/usage?days=7"
+  "http://sciatlas.openkg.cn/v1/auth/usage?days=7"
 ```
 
 ---
@@ -295,7 +295,7 @@ curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
 
 SciAtlas 以 CLI 为优先界面。新用户可以先查看帮助，再跑一次基础检索，最后按任务选择下游工作流；每次运行都会保存完整结果，方便复现、调试和交给 AI Agent 继续处理。
 
-文档网站：[📚 SciAtlas 文档网站](http://scinet.openkg.cn/api/docs/?lang=zh)。用于查看 API 配置、CLI 命令、参数含义和可运行示例。
+文档网站：[📚 SciAtlas 文档网站](http://sciatlas.openkg.cn/api/docs/?lang=zh)。用于查看 API 配置、CLI 命令、参数含义和可运行示例。
 
 ### 帮助
 
@@ -560,7 +560,7 @@ print(result)
 
 ```python
 client = SciAtlasClient(
-    base_url="http://scinet.openkg.cn",
+    base_url="http://sciatlas.openkg.cn",
     api_key="your-personal-sciatlas-token",
 )
 ```

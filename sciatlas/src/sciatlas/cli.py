@@ -40,7 +40,7 @@ from typing import Any
 
 
 
-DEFAULT_BASE_URL = os.environ.get("SCIATLAS_API_BASE_URL", "http://scinet.openkg.cn")
+DEFAULT_BASE_URL = os.environ.get("SCIATLAS_API_BASE_URL", "http://sciatlas.openkg.cn")
 
 DEFAULT_API_KEY = os.environ.get("SCIATLAS_API_KEY", "")
 

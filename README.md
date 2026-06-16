@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="http://scinet.openkg.cn/api/docs/">📚 SciAtlas Documentation</a>
+  <a href="http://sciatlas.openkg.cn/api/docs/">📚 SciAtlas Documentation</a>
 </p>
 
 <p align="center">
@@ -17,9 +17,9 @@
 <p align="center">
   <a href="https://arxiv.org/abs/2605.22878">📄 arXiv</a>
   ·
-  <a href="http://scinet.openkg.cn/register">🔑 Get API Token</a>
+  <a href="http://sciatlas.openkg.cn/register">🔑 Get API Token</a>
   ·
-  <a href="http://scinet.openkg.cn/healthz">🩺 API Health</a>
+  <a href="http://sciatlas.openkg.cn/healthz">🩺 API Health</a>
 </p>
 
 <p align="center">
@@ -131,7 +131,7 @@ sciatlas -h
 Open:
 
 ```text
-http://scinet.openkg.cn/register
+http://sciatlas.openkg.cn/register
 ```
 
 Complete email verification and copy your personal token.
@@ -145,7 +145,7 @@ At minimum, configure the hosted SciAtlas API endpoint and your personal token.
 Linux / macOS:
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="your-personal-sciatlas-token"
 export SCIATLAS_TIMEOUT=900
 export SCIATLAS_RUNS_DIR="./runs"
@@ -154,7 +154,7 @@ export SCIATLAS_RUNS_DIR="./runs"
 Windows CMD:
 
 ```bat
-set SCIATLAS_API_BASE_URL=http://scinet.openkg.cn
+set SCIATLAS_API_BASE_URL=http://sciatlas.openkg.cn
 set SCIATLAS_API_KEY=your-personal-sciatlas-token
 set SCIATLAS_TIMEOUT=900
 set SCIATLAS_RUNS_DIR=.\runs
@@ -264,7 +264,7 @@ SciAtlas uses personal API tokens for public access.
 Visit:
 
 ```text
-http://scinet.openkg.cn/register
+http://sciatlas.openkg.cn/register
 ```
 
 Steps:
@@ -281,14 +281,14 @@ The token is shown only once.
 
 ```bash
 curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
-  http://scinet.openkg.cn/v1/auth/token/status
+  http://sciatlas.openkg.cn/v1/auth/token/status
 ```
 
 ### Check Usage
 
 ```bash
 curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
-  "http://scinet.openkg.cn/v1/auth/usage?days=7"
+  "http://sciatlas.openkg.cn/v1/auth/usage?days=7"
 ```
 
 ---
@@ -316,7 +316,7 @@ curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
 
 SciAtlas is CLI-first: you can start with one command, inspect the saved artifacts, and then move into larger research workflows. If you are new, run help once, try a basic retrieval, then choose one of the downstream workflows below.
 
-Documentation: [📚 SciAtlas Documentation](http://scinet.openkg.cn/api/docs/). Use it to check API setup, CLI commands, parameter meanings, and runnable examples.
+Documentation: [📚 SciAtlas Documentation](http://sciatlas.openkg.cn/api/docs/). Use it to check API setup, CLI commands, parameter meanings, and runnable examples.
 
 ### Help
 
@@ -597,7 +597,7 @@ You can also pass credentials directly:
 from sciatlas import SciAtlasClient
 
 client = SciAtlasClient(
-    base_url="http://scinet.openkg.cn",
+    base_url="http://sciatlas.openkg.cn",
     api_key="your-personal-sciatlas-token",
 )
 

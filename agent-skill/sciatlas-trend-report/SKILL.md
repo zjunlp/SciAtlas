@@ -17,18 +17,18 @@ Use this skill to build a trend report from `search-papers` evidence only.
 ## Zero-Start Bootstrap
 
 1. Check whether the `sciatlas` executable exists without invoking a SciAtlas command: use `Get-Command sciatlas -ErrorAction SilentlyContinue` on Windows PowerShell or `command -v sciatlas` on macOS/Linux. Install if needed with `python -m pip install -e ./sciatlas` or `python -m pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"`.
-2. If there is no `SCIATLAS_API_KEY`, guide registration at `http://scinet.openkg.cn/register`, asking for email/code/token only when needed.
+2. If there is no `SCIATLAS_API_KEY`, guide registration at `http://sciatlas.openkg.cn/register`, asking for email/code/token only when needed.
 3. Configure:
 
 ```powershell
-$env:SCIATLAS_API_BASE_URL = "http://scinet.openkg.cn"
+$env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
 $env:SCIATLAS_API_KEY = "<token>"
-setx SCIATLAS_API_BASE_URL "http://scinet.openkg.cn"
+setx SCIATLAS_API_BASE_URL "http://sciatlas.openkg.cn"
 setx SCIATLAS_API_KEY "<token>"
 ```
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="<token>"
 ```
 
