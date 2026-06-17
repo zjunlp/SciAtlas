@@ -43,7 +43,7 @@ cp -R ./agent-skill/sciatlas-literature-review ~/.codex/skills/
 
 Claude Code and other agent tools can use the same `SKILL.md` folders when their skill/plugin loader supports filesystem skills. If a tool uses a different metadata filename, keep `SKILL.md` as the source of truth and adapt the `agents/` metadata as needed.
 
-The skills are written for zero-start users. If the CLI or token is missing, the agent should install/configure what it can, guide the user through browser registration at `http://scinet.openkg.cn/register`, ask for email/code/token only when human feedback is required, and continue until a `search-papers` run produces artifacts.
+The skills are written for zero-start users. If the CLI or token is missing, the agent should install/configure what it can, guide the user through browser registration at `http://sciatlas.openkg.cn/register`, ask for email/code/token only when human feedback is required, and continue until a `search-papers` run produces artifacts.
 
 ## Design Notes
 

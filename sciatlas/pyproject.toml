@@ -36,8 +36,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/zjunlp/SciAtlas"
 Repository = "https://github.com/zjunlp/SciAtlas"
-API = "http://scinet.openkg.cn"
-Registration = "http://scinet.openkg.cn/register"
+API = "http://sciatlas.openkg.cn"
+Registration = "http://sciatlas.openkg.cn/register"
 
 [project.scripts]
 sciatlas = "sciatlas.cli:main"

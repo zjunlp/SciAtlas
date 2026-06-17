@@ -17,19 +17,19 @@ Use this skill to position a research idea against prior work using only `sciatl
 ## Zero-Start Bootstrap
 
 1. Check whether the `sciatlas` executable exists without invoking a SciAtlas command: use `Get-Command sciatlas -ErrorAction SilentlyContinue` on Windows PowerShell or `command -v sciatlas` on macOS/Linux. If missing, install with `python -m pip install -e ./sciatlas` in this repo or `python -m pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"`.
-2. If `SCIATLAS_API_KEY` is absent, guide the user to `http://scinet.openkg.cn/register`.
+2. If `SCIATLAS_API_KEY` is absent, guide the user to `http://sciatlas.openkg.cn/register`.
 3. Ask for the email verification code only when needed. Ask for the returned `sciatlas_xxx` token after registration.
 4. Configure:
 
 ```powershell
-$env:SCIATLAS_API_BASE_URL = "http://scinet.openkg.cn"
+$env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
 $env:SCIATLAS_API_KEY = "<token>"
-setx SCIATLAS_API_BASE_URL "http://scinet.openkg.cn"
+setx SCIATLAS_API_BASE_URL "http://sciatlas.openkg.cn"
 setx SCIATLAS_API_KEY "<token>"
 ```
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://scinet.openkg.cn"
+export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="<token>"
 ```
 

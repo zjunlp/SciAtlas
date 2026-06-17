@@ -35,7 +35,7 @@ def _is_placeholder(value: str | None) -> bool:
 
 @dataclass(frozen=True)
 class SciAtlasConfig:
-    base_url: str = "http://scinet.openkg.cn"
+    base_url: str = "http://sciatlas.openkg.cn"
     api_key: str = ""
     timeout: int = 900
 
@@ -89,7 +89,7 @@ def load_config(
     grobid_base_url: str | None = None,
 ) -> SciAtlasConfig:
     return SciAtlasConfig(
-        base_url=(base_url or _env_first("SCIATLAS_API_BASE_URL") or "http://scinet.openkg.cn").rstrip("/"),
+        base_url=(base_url or _env_first("SCIATLAS_API_BASE_URL") or "http://sciatlas.openkg.cn").rstrip("/"),
         api_key=_clean(api_key or _env_first("SCIATLAS_API_KEY")),
         timeout=int(timeout or _env_first("SCIATLAS_TIMEOUT", "SCIATLAS_API_TIMEOUT_DEFAULT") or 900),
         llm_provider=_clean(llm_provider or _env_first("LLM_PROVIDER", "SCIATLAS_LLM_PROVIDER") or "chat_completions"),
