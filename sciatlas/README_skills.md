@@ -17,4 +17,4 @@ User-defined skills are loaded from:
 
 User skills override builtin skills with the same name.
 
-The portable Agent Skill pack is packaged separately in `../agent-skill/`. Those folders are repository assets for tools such as Codex, Claude Code, and other coding agents; they turn `search-papers` retrieval into end-to-end downstream task playbooks. This CLI loader only reads JSON presets from the locations above.
+The portable Agent Skill pack is packaged separately in `../agent-skill/`. Those folders are repository assets for tools such as Codex, Claude Code, and other coding agents; they turn `search-papers` retrieval into end-to-end downstream task playbooks. See [`../agent-skill/README.md`](../agent-skill/README.md) for the Git, Claude Code, and Codex setup commands. This CLI loader only reads JSON presets from the locations above.

@@ -567,7 +567,53 @@ Included skills:
 | `sciatlas-trend-report` | `search-papers` | Timeline and trend analysis |
 | `sciatlas-researcher-review` | `search-papers` only | Researcher profiles from retrieved paper evidence |
 
-To use one locally, copy its directory into the skill directory supported by your agent tool, then restart or refresh that tool. For Codex, that is usually `~/.codex/skills` or `%USERPROFILE%\.codex\skills`. Inside these Agent Skills, `search-papers` is the only SciAtlas retrieval primitive; the downstream review, idea, trend, or researcher result is produced by the agent reading `runs/<run_id>/` artifacts and synthesizing evidence.
+### Git
+
+Git is the source checkout for the Agent Skill pack. Clone it once, then pull the repository when you want updated skill instructions:
+
+```bash
+git clone https://github.com/zjunlp/SciAtlas.git
+cd SciAtlas
+git pull
+```
+
+Run the copy commands below from the repository root.
+
+### Claude Code
+
+Claude Code loads filesystem skills from `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows. Copy the packaged SciAtlas skill directories there, then restart Claude Code or refresh the workspace.
+
+```powershell
+# Windows PowerShell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+mkdir -p ~/.claude/skills
+cp -R ./agent-skill/sciatlas-* ~/.claude/skills/
+```
+
+You can also keep the same skill directories in a project-local `.claude/skills/` folder when the workflows should stay scoped to one repository. To install only one workflow, replace `sciatlas-*` with a specific folder such as `sciatlas-literature-review`.
+
+### Codex
+
+Codex uses the installed Codex environment and loads skills from `~/.codex/skills` on macOS/Linux or `%USERPROFILE%\.codex\skills` on Windows. Copy the packaged SciAtlas skill directories there, then start a new Codex session.
+
+```powershell
+# Windows PowerShell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.codex\skills\"
+```
+
+```bash
+# macOS / Linux
+mkdir -p ~/.codex/skills
+cp -R ./agent-skill/sciatlas-* ~/.codex/skills/
+```
+
+The same skill directories can be installed in both tools. Each helper skill is self-contained: keep `SKILL.md` as the source of truth, keep API tokens and run artifacts out of `agent-skill/`, and let the agent use `SCIATLAS_API_KEY` plus `runs/<run_id>/` artifacts during the task. Inside these Agent Skills, `search-papers` is the only SciAtlas retrieval primitive; the downstream review, idea, trend, or researcher result is produced by the agent reading saved evidence and synthesizing it.
 
 ---
 

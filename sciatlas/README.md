@@ -4,7 +4,7 @@ A lightweight pip-installable client and CLI for the hosted SciAtlas API service
 
 SciAtlas provides scientific knowledge-graph retrieval for paper search, related-author discovery, author-paper lookup, literature review, idea grounding/evaluation, idea generation, trend analysis, and researcher review.
 
-The repository also includes a portable Agent Skill pack in `../agent-skill/`, which turns the base `search-papers` retrieval capability into downstream task playbooks for tools such as Codex, Claude Code, and other coding agents.
+The repository also includes a portable Agent Skill pack in `../agent-skill/`, which turns the base `search-papers` retrieval capability into downstream task playbooks for tools such as Codex, Claude Code, and other coding agents. See [`../agent-skill/README.md`](../agent-skill/README.md) for the Git, Claude Code, and Codex setup commands.
 
 <p align="center">
   <img src="../imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">

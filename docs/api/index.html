@@ -626,17 +626,41 @@ curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
         <div class="feature"><b data-i18n="agentSkillDifferenceTitle">Different from CLI presets</b><p data-i18n="agentSkillDifferenceText">sciatlas skill run expands JSON presets into CLI commands. Agent Skills are SKILL.md playbooks for multi-step agent behavior, including setup, token handling, artifact reading, and final synthesis.</p></div>
       </div>
 
+      <h3 data-i18n="agentSkillGitTitle">Git</h3>
+      <p data-i18n="agentSkillGitText">Git is the source checkout for the Agent Skill pack. Clone it once, then pull the repository when you want updated skill instructions.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>git clone https://github.com/zjunlp/SciAtlas.git
+cd SciAtlas
+git pull</code></pre>
+      <p data-i18n="agentSkillGitNote">Run the copy commands below from the repository root.</p>
+
+      <h3 data-i18n="agentSkillClaudeTitle">Claude Code</h3>
+      <p data-i18n="agentSkillClaudeText">Claude Code loads filesystem skills from ~/.claude/skills. Copy the packaged SciAtlas skill directories there, then restart Claude Code or refresh the workspace.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
+
+# macOS / Linux
+mkdir -p ~/.claude/skills
+cp -R ./agent-skill/sciatlas-* ~/.claude/skills/</code></pre>
+      <p data-i18n="agentSkillClaudeNote">You can also keep the same skill directories in a project-local .claude/skills/ folder when the workflows should stay scoped to one repository. To install only one workflow, replace sciatlas-* with a specific folder such as sciatlas-literature-review.</p>
+
+      <h3 data-i18n="agentSkillCodexTitle">Codex</h3>
+      <p data-i18n="agentSkillCodexText">Codex uses the installed Codex environment and loads skills from ~/.codex/skills. Copy the packaged SciAtlas skill directories there, then start a new Codex session.</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.codex\skills\"
+
+# macOS / Linux
+mkdir -p ~/.codex/skills
+cp -R ./agent-skill/sciatlas-* ~/.codex/skills/</code></pre>
+      <p data-i18n="agentSkillCodexNote">The same skill directories can be installed in both tools.</p>
+
       <h3 data-i18n="agentSkillPackTitle">Included Agent Skills</h3>
       <p data-i18n="agentSkillPackIntro">Use this table when deciding which skill directory to copy into your agent tool's skill folder.</p>
       <div class="table-scroll"><table class="compact-table" id="agentSkillTable"></table></div>
 
       <h3 data-i18n="agentSkillUseTitle">Use with an agent tool</h3>
-      <p data-i18n="agentSkillUseText">Copy the needed skill directory into the skill directory supported by your agent tool, then restart or refresh that tool. Keep SKILL.md as the source of truth; optional files under agents/ only provide tool-specific display metadata.</p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
-Copy-Item -Recurse .\agent-skill\sciatlas-literature-review "$env:USERPROFILE\.codex\skills\"
-
-# macOS / Linux
-cp -R ./agent-skill/sciatlas-literature-review ~/.codex/skills/</code></pre>
+      <p data-i18n="agentSkillUseText">Each helper skill is self-contained: keep SKILL.md as the source of truth, keep API tokens and run artifacts out of agent-skill/, and let the agent use SCIATLAS_API_KEY plus runs/&lt;run_id&gt;/ artifacts during the task.</p>
 
       <div class="callout" data-i18n="agentSkillContract">Operational contract: do not put API tokens or run artifacts inside agent-skill/. When a token is missing, the agent should guide the user through browser registration, configure SCIATLAS_API_KEY, run only search-papers, and inspect runs/&lt;run_id&gt;/summary.txt, report.md, request.json, and response.json.</div>
     </section>
@@ -796,8 +820,11 @@ const I18N = {
     agentSkillLayerTitle:"How they fit", agentSkillLayerText:"The CLI produces reproducible retrieval artifacts. Agent Skills teach an agent how to set up the CLI, run search-papers, read those artifacts, and complete a downstream research task.",
     agentSkillPrimitiveTitle:"Retrieval primitive", agentSkillPrimitiveText:"Inside these Agent Skills, the only SciAtlas retrieval primitive is search-papers. Review, evaluation, trend, and profile outputs are synthesized by the agent from saved evidence.",
     agentSkillDifferenceTitle:"Different from CLI presets", agentSkillDifferenceText:"sciatlas skill run expands JSON presets into CLI commands. Agent Skills are SKILL.md playbooks for multi-step agent behavior, including setup, token handling, artifact reading, and final synthesis.",
+    agentSkillGitTitle:"Git", agentSkillGitText:"Git is the source checkout for the Agent Skill pack. Clone it once, then pull the repository when you want updated skill instructions.", agentSkillGitNote:"Run the copy commands below from the repository root.",
+    agentSkillClaudeTitle:"Claude Code", agentSkillClaudeText:"Claude Code loads filesystem skills from ~/.claude/skills. Copy the packaged SciAtlas skill directories there, then restart Claude Code or refresh the workspace.", agentSkillClaudeNote:"You can also keep the same skill directories in a project-local .claude/skills/ folder when the workflows should stay scoped to one repository. To install only one workflow, replace sciatlas-* with a specific folder such as sciatlas-literature-review.",
+    agentSkillCodexTitle:"Codex", agentSkillCodexText:"Codex uses the installed Codex environment and loads skills from ~/.codex/skills. Copy the packaged SciAtlas skill directories there, then start a new Codex session.", agentSkillCodexNote:"The same skill directories can be installed in both tools.",
     agentSkillPackTitle:"Included Agent Skills", agentSkillPackIntro:"Use this table when deciding which skill directory to copy into your agent tool's skill folder.",
-    agentSkillUseTitle:"Use with an agent tool", agentSkillUseText:"Copy the needed skill directory into the skill directory supported by your agent tool, then restart or refresh that tool. Keep SKILL.md as the source of truth; optional files under agents/ only provide tool-specific display metadata.",
+    agentSkillUseTitle:"Use with an agent tool", agentSkillUseText:"Each helper skill is self-contained: keep SKILL.md as the source of truth, keep API tokens and run artifacts out of agent-skill/, and let the agent use SCIATLAS_API_KEY plus runs/<run_id>/ artifacts during the task.",
     agentSkillContract:"Operational contract: do not put API tokens or run artifacts inside agent-skill/. When a token is missing, the agent should guide the user through browser registration, configure SCIATLAS_API_KEY, run only search-papers, and inspect runs/<run_id>/summary.txt, report.md, request.json, and response.json.",
     agentSkillName:"Skill", retrievalBase:"Retrieval base", downstreamGoal:"Downstream goal",
     quickstartTitle:"Quick Start", installTitle:"1. Install", tokenTitle:"2. Configure your token", tokenText:"Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciAtlas backend.", tokenRegisterLink:"Open token registration",
@@ -842,8 +869,11 @@ const I18N = {
     agentSkillLayerTitle:"所在层次", agentSkillLayerText:"CLI 负责生成可复现的检索产物。Agent Skill 则指导 Agent 安装配置 CLI、运行 search-papers、读取这些产物，并完成下游科研任务。",
     agentSkillPrimitiveTitle:"检索原语", agentSkillPrimitiveText:"这些 Agent Skill 内部唯一允许使用的 SciAtlas 检索原语是 search-papers。综述、评估、趋势和画像结果由 Agent 基于保存证据综合生成。",
     agentSkillDifferenceTitle:"区别于 CLI 预设", agentSkillDifferenceText:"sciatlas skill run 会把 JSON 预设展开成 CLI 命令。Agent Skill 则是 SKILL.md 形式的多步任务说明书，覆盖环境配置、Token 处理、产物读取和最终综合。",
+    agentSkillGitTitle:"Git", agentSkillGitText:"Git 是 Agent Skill 包的源副本。先克隆一次；之后需要更新技能说明时，直接拉取仓库即可。", agentSkillGitNote:"下面的复制命令都在仓库根目录执行。",
+    agentSkillClaudeTitle:"Claude Code", agentSkillClaudeText:"Claude Code 会从 ~/.claude/skills 读取本地技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后重启 Claude Code 或刷新工作区。", agentSkillClaudeNote:"如果只想让某个项目使用这些技能，也可以把同一组 skill 放在项目内的 .claude/skills/ 目录中。只安装某一个工作流时，把 sciatlas-* 换成具体目录名，例如 sciatlas-literature-review。",
+    agentSkillCodexTitle:"Codex", agentSkillCodexText:"Codex 使用已安装的 Codex 环境，并从 ~/.codex/skills 读取技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后开启新的 Codex 会话。", agentSkillCodexNote:"同一组 skill 目录可以同时安装到 Claude Code 和 Codex。",
     agentSkillPackTitle:"已包含的 Agent Skill", agentSkillPackIntro:"需要决定复制哪个 skill 目录到 Agent 工具的技能目录时，可先看这张表。",
-    agentSkillUseTitle:"在 Agent 工具中使用", agentSkillUseText:"把需要的 skill 目录复制到 Agent 工具支持的技能目录，然后重启或刷新该工具。SKILL.md 是主要说明文件；agents/ 下的可选文件只提供工具侧展示元数据。",
+    agentSkillUseTitle:"在 Agent 工具中使用", agentSkillUseText:"每个辅助 skill 都是自包含的：SKILL.md 是主要说明文件；不要把 API Token 或运行产物放进 agent-skill/；任务执行时让 Agent 使用外部的 SCIATLAS_API_KEY，并读取 runs/<run_id>/ 中的证据产物。",
     agentSkillContract:"操作约束：不要把 API Token 或运行产物放进 agent-skill/。缺少 Token 时，Agent 应引导用户完成浏览器注册，配置 SCIATLAS_API_KEY，只运行 search-papers，并读取 runs/<run_id>/summary.txt、report.md、request.json 和 response.json。",
     agentSkillName:"Skill", retrievalBase:"检索基础", downstreamGoal:"下游目标",
     quickstartTitle:"快速开始", installTitle:"1. 安装", tokenTitle:"2. 配置 Token", tokenText:"先注册个人 Token，再暴露给 CLI。CLI 调用托管 SciAtlas 后端时，会自动把 Token 放入 Authorization 和 X-API-Key 请求头。", tokenRegisterLink:"打开 Token 注册网站",
