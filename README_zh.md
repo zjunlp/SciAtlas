@@ -536,7 +536,53 @@ SciAtlas 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。
 | `sciatlas-trend-report` | `search-papers` | 梳理主题演化、时间线和代表性论文 |
 | `sciatlas-researcher-review` | 仅 `search-papers` | 基于检索论文证据的研究者画像 |
 
-使用时，将需要的 skill 目录复制到你的 Agent 工具支持的技能目录，然后重启或刷新该工具。例如 Codex 通常使用 `~/.codex/skills` 或 `%USERPROFILE%\.codex\skills`。CLI 命令仍是检索和执行层；`agent-skill/` 是其上的下游推理层。
+### Git
+
+Git 是 Agent Skill 包的源副本。先克隆一次；之后需要更新技能说明时，直接拉取仓库即可：
+
+```bash
+git clone https://github.com/zjunlp/SciAtlas.git
+cd SciAtlas
+git pull
+```
+
+下面的复制命令都在仓库根目录执行。
+
+### Claude Code
+
+Claude Code 会从 macOS/Linux 的 `~/.claude/skills` 或 Windows 的 `%USERPROFILE%\.claude\skills` 读取本地技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后重启 Claude Code 或刷新工作区。
+
+```powershell
+# Windows PowerShell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
+```
+
+```bash
+# macOS / Linux
+mkdir -p ~/.claude/skills
+cp -R ./agent-skill/sciatlas-* ~/.claude/skills/
+```
+
+如果只想让某个项目使用这些技能，也可以把同一组 skill 放在项目内的 `.claude/skills/` 目录中。只安装某一个工作流时，把 `sciatlas-*` 换成具体目录名，例如 `sciatlas-literature-review`。
+
+### Codex
+
+Codex 使用已安装的 Codex 环境，并从 macOS/Linux 的 `~/.codex/skills` 或 Windows 的 `%USERPROFILE%\.codex\skills` 读取技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后开启新的 Codex 会话。
+
+```powershell
+# Windows PowerShell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.codex\skills\"
+```
+
+```bash
+# macOS / Linux
+mkdir -p ~/.codex/skills
+cp -R ./agent-skill/sciatlas-* ~/.codex/skills/
+```
+
+同一组 skill 目录可以同时安装到 Claude Code 和 Codex。每个辅助 skill 都是自包含的：`SKILL.md` 是主要说明文件；不要把 API Token 或运行产物放进 `agent-skill/`；任务执行时让 Agent 使用外部的 `SCIATLAS_API_KEY`，并读取 `runs/<run_id>/` 中的证据产物。Agent Skill 内部唯一的 SciAtlas 检索原语仍然是 `search-papers`，综述、评估、趋势和画像结果由 Agent 基于保存证据综合生成。
 
 ---
 
