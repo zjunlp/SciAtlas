@@ -1,94 +1,142 @@
 ---
 name: sciatlas-literature-review
-description: Use only SciAtlas search-papers to take a novice user from zero setup to an evidence-grounded literature review, related-work summary, survey outline, or reading list. Trigger when the user asks for a literature review, related work section, paper map, or topic overview.
+description: Use only the current SciAtlas literature-review workflow (`literature_review_pipeline`) to take a novice user from zero setup to a final evidence-grounded survey outline, paper map, or literature review, including setup, registration guidance, workflow configuration, SciAtlas backend retrieval, artifact reading, and synthesis. Trigger when the user asks for a literature review, related work section, paper map, survey outline, reading path, or topic overview grounded in the provided SciAtlas paper backend.
 ---
 
 # SciAtlas Literature Review
 
-Use this skill to turn `search-papers` output into a real literature review. The only SciAtlas retrieval command allowed in this skill is `sciatlas search-papers`.
+Use this skill to run the repository literature-review workflow. The workflow performs topic profiling, SciAtlas backend paper search, evidence organization, method clustering, time slicing, outline planning, evidence-pack construction, and optionally full section drafting/integration.
 
 ## Operating Contract
 
-- Do not call any SciAtlas downstream command. The only SciAtlas retrieval command allowed is `search-papers`.
-- Run setup yourself when possible; ask the user only for email, verification code, token, or a necessary topic clarification.
-- Keep going until `search-papers` has produced artifacts or the user must supply a human-only value.
-- Never include the full API token in the final answer.
+- Run only `sciatlas literature-review` or `python run_sciatlas.py literature-review` for this skill.
+- Own the end-to-end novice flow: install or locate the CLI, guide registration, configure `.env` or shell variables, run the workflow, inspect artifacts, and synthesize the final review result.
+- Ask the user only for human-only values: missing topic/domain, email, verification code, SciAtlas token, LLM credentials that are not already configured, or one necessary scope clarification.
+- Do not ask the user to run shell commands when tool access is available.
+- Use `--workflow flash` by default for interactive work.
+- Use `--workflow full` when the user requests a comprehensive formal review or when flash artifacts are too thin.
+- Never disclose full API keys or tokens.
+- Read saved artifacts before answering.
 
 ## Zero-Start Bootstrap
 
-1. Check whether the `sciatlas` executable exists without invoking a SciAtlas command: use `Get-Command sciatlas -ErrorAction SilentlyContinue` on Windows PowerShell or `command -v sciatlas` on macOS/Linux.
-2. If missing, install from the local repo with `python -m pip install -e ./sciatlas`; otherwise use `python -m pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"`.
-3. If `SCIATLAS_API_KEY` is missing, send the user to `http://sciatlas.openkg.cn/register`.
-4. Walk the user through the browser registration: enter email, wait for the code, ask for the code if you are controlling the form, then ask them to paste the returned `sciatlas_xxx` token.
-5. Configure the shell:
-
-```powershell
-$env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
-$env:SCIATLAS_API_KEY = "<token>"
-setx SCIATLAS_API_BASE_URL "http://sciatlas.openkg.cn"
-setx SCIATLAS_API_KEY "<token>"
-```
+1. Check whether the repository command works:
 
 ```bash
-export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
-export SCIATLAS_API_KEY="<token>"
+python run_sciatlas.py literature-review -h
 ```
 
-6. Use a tiny `search-papers --top-k 1` only if you must verify the token before the real run.
+If needed, fall back to `sciatlas literature-review -h` after installing the full checkout.
 
-## Search Plan
+2. This dedicated workflow requires a full SciAtlas checkout. If it is missing, clone the repository, change into it, then run `python -m pip install -e ./sciatlas` and `python -m pip install -r requirements-workflows.txt`. Do not use the GitHub `#subdirectory=sciatlas` package-only installation for this workflow.
+3. Check current environment and `.env` for `SCIATLAS_API_KEY` and LLM settings before asking the user.
+4. If no SciAtlas token is configured, guide the user to `http://sciatlas.openkg.cn/register`; ask for email, verification code, and returned `sciatlas_xxx` token only when needed.
+5. If LLM credentials are required and missing, ask only for the missing values. Use the user's provider values without printing them back.
+6. Configure the current shell or `.env` yourself, then run the workflow.
 
-Run only `search-papers`. Prefer two passes when the topic is broad:
+Paper retrieval for this workflow must use only the provided SciAtlas backend through `run_sciatlas.py search-papers`. Do not add public-paper fallback retrieval (Semantic Scholar, OpenAlex, Crossref, arXiv scraping, or browser search) when the SciAtlas backend returns no papers or errors. The local literature-review code may still use LLM calls for planning, clustering, and synthesis.
 
-Precision pass:
+Configure workflow credentials in `.env` or the shell:
 
 ```bash
-sciatlas search-papers --retrieval-mode hybrid --query "<topic>" --domain "<field>" --time-range "<years>" --keyword "high:<core concept>" --top-k 8 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-exploration low --ranking-profile precision --report-max-items 8
+SCIATLAS_API_BASE_URL=http://sciatlas.openkg.cn
+SCIATLAS_API_KEY=<sciatlas-token>
+OPENAI_API_KEY=<llm-key>
+OPENAI_BASE_URL=https://api.deepseek.com
+LLM_MODEL=deepseek-v4-flash
 ```
 
-Coverage pass, only if the first result is too narrow:
+The workflow also accepts `DMX-API-KEY`, `DMX_API_KEY`, `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_API_URL`, `SEARCH_LLM_API_KEY`, `SEARCH_LLM_API_URL`, and `SEARCH_LLM_MODEL`.
+
+## Run Plan
+
+Flash path:
 
 ```bash
-sciatlas search-papers --retrieval-mode hybrid --query "<topic plus neighboring concepts>" --keyword "high:<core concept>" --keyword "middle:<neighbor concept>" --top-k 10 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-related high --bias-exploration middle --ranking-profile balanced --report-max-items 10
+python run_sciatlas.py literature-review \
+  --query "<topic>" \
+  --domain "<optional field>" \
+  --workflow flash
 ```
 
-If the user provides seed papers, put exact titles in `--title "high:<title>"` or `--reference "middle:<title>"`, still using `search-papers`.
+Full path:
 
-## Reading Artifacts
+```bash
+python run_sciatlas.py literature-review \
+  --query "<topic>" \
+  --domain "<optional field>" \
+  --workflow full
+```
 
-For each run, read:
+Useful overrides:
 
-1. `summary.txt` for success/failure and result count.
-2. `report.md` for ranked papers and generated descriptions.
-3. `request.json` to record the exact query and anchors.
-4. `response.json` to recover missing metadata and abstracts.
+- `--top-k N` changes the default SciAtlas search budget.
+- `--probe-top-k N` and `--round-top-k N` tune search breadth.
+- `--round1-action-limit N` and `--round2-action-limit N` tune query planning.
+- `--report-stop-after outline|packs|full` controls report generation depth.
+- `--subject-domain general|chemistry|biology` selects prompt constraints.
+- `--smoke` runs the mock search path for structure validation.
 
-Create a working evidence ledger:
+Smooth flash defaults when the backend is slow or unstable:
 
-- Paper: title, year, venue/source if present.
-- Problem: what question it addresses.
-- Method: model, algorithm, system, dataset, or study design.
-- Evidence: abstract phrase or report sentence that supports inclusion.
-- Role in review: foundation, method, evaluation, application, critique, or recent extension.
+```bash
+python run_sciatlas.py literature-review \
+  --query "<topic>" \
+  --domain "<optional field>" \
+  --workflow flash \
+  --probe-top-k 3 \
+  --round-top-k 3 \
+  --round1-action-limit 1 \
+  --llm-paper-limit 12 \
+  --report-stop-after packs \
+  --workflow-timeout 600 \
+  --llm-timeout 120 \
+  --outline-timeout 180
+```
 
-## Review Construction Method
+Set `SCIATLAS_SEARCH_TIMEOUT` for the per-action hosted `search-papers` timeout. If SciAtlas returns `5xx`, keep the error in artifacts and do not switch to public retrieval.
 
-Do not summarize papers one by one only. Build a literature review:
+## Workflow Modes
 
-1. Define the scope in 2-3 sentences: topic, period, and what counts as relevant.
-2. Cluster papers by research theme. Use paper content, not only keywords.
-3. Order clusters logically: foundations -> methods -> applications/evaluations -> limitations -> recent directions.
-4. For each cluster, explain the shared research question and cite representative papers from the ledger.
-5. Compare papers inside a cluster: what changed in method, data, assumptions, or evaluation.
-6. Identify consensus, disagreement, and gaps. A gap must be tied to missing evaluation, weak assumptions, limited dataset, deployment challenge, or unconnected neighboring literature.
-7. End with a reading path: first 3 papers to read and why.
+`flash` compresses nonessential stages:
+
+- smaller probe and round search budgets;
+- fewer Round 1 actions and no Round 2 by default;
+- query cleaning and relevance guard enabled;
+- report generation stops after evidence packs, producing a fast outline/evidence report.
+
+`full` runs the broader path:
+
+- larger probe and round search budgets;
+- Round 2 refinement enabled;
+- KG policy, query cleaning, and relevance guard enabled;
+- full formal review drafting and integration.
+
+## Artifacts To Read
+
+Read the run directory:
+
+- `summary.json`: status, workflow mode, subprocess logs, and artifact pointers.
+- `report.md`: user-facing review, outline/evidence-pack summary, or full formal review.
+- `lr_search/search_result.json`: topic profile, time windows, paper cards, clusters, coverage report, and search actions.
+- `lr_search/organized_search_result.json`: deterministic evidence map when generated.
+- `lr_review/formal_outline.json`: planned review structure.
+- `lr_review/citation_plan.json`, `section_packs/`, `subsection_packs/`: flash evidence packs.
+- `lr_review/formal_review.md` and `diagnostic_report.md`: full-mode final outputs.
+- `logs/*.txt`: subprocess stdout/stderr when a stage fails.
+
+In `flash`, a report that stops after `packs` is normal success. Do not rerun full unless the user asks or the evidence is insufficient for their requested depth.
 
 ## Deliverable
 
 Return:
 
-- The exact `search-papers` command(s), with token omitted.
-- Evidence table of 6-10 papers.
-- Thematic literature review with headings.
-- Timeline or development notes when years are available.
-- Gaps and next search queries.
+- exact command used, with credentials omitted;
+- workflow mode and artifact paths;
+- concise topic scope;
+- 5-12 representative papers or paper groups;
+- method/theme clusters and timeline notes;
+- review outline or full review summary;
+- gaps, caveats, and next SciAtlas queries.
+
+Keep paper claims tied to artifact titles, clusters, and evidence fields.

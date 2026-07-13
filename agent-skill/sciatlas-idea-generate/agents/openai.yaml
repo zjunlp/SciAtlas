@@ -1,4 +1,4 @@
 interface:
   display_name: "SciAtlas Idea Generate"
-  short_description: "Generate ideas from search-papers evidence"
-  default_prompt: "Use $sciatlas-idea-generate to set up SciAtlas if needed, run only search-papers, and generate evidence-grounded idea seeds for knowledge editing."
+  short_description: "Zero-start flash/full idea generation"
+  default_prompt: "Use $sciatlas-idea-generate to handle setup, run the flash idea-generation workflow, inspect KG and idea artifacts, and generate evidence-grounded idea seeds for knowledge editing."

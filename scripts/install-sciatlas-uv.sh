@@ -94,16 +94,17 @@ log_step "Creating uv virtual environment"
 cd "$TARGET_DIR"
 uv venv
 
-log_step "Installing SciAtlas CLI into .venv"
+log_step "Installing SciAtlas CLI and workflow dependencies into .venv"
 uv pip install -e ./sciatlas
+uv pip install -r ./requirements-workflows.txt
 
 if [ ! -f .env ] && [ -f .env.example ]; then
   cp .env.example .env
 fi
 
 if [ "$SKIP_TOOL_INSTALL" != "1" ]; then
-  log_step "Installing global sciatlas command with uv tool"
-  uv tool install --force ./sciatlas
+  log_step "Installing editable global sciatlas command with workflow dependencies"
+  uv tool install --editable --with-requirements ./requirements-workflows.txt --force ./sciatlas
 fi
 
 if [ -x "$TARGET_DIR/.venv/bin/sciatlas" ]; then

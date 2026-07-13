@@ -1,87 +1,131 @@
 ---
 name: sciatlas-idea-generate
-description: Use only SciAtlas search-papers to take a novice user from zero setup to literature-grounded research idea seeds. Trigger when the user wants new research directions, hypotheses, cross-topic combinations, project ideas, or brainstorming grounded in retrieved papers.
+description: Use only the current SciAtlas multi-step idea-generation workflow (`sciatlas_idea_gen`) to take a novice user from zero setup to final literature-grounded research idea seeds, including setup, registration guidance, workflow configuration, KG retrieval, artifact reading, novelty checking, and synthesis. Trigger when the user wants new research directions, hypotheses, cross-topic combinations, project ideas, or brainstorming grounded in SciAtlas KG retrieval.
 ---
 
 # SciAtlas Idea Generate
 
-Use this skill to generate research ideas from retrieved literature. The only SciAtlas retrieval command allowed is `sciatlas search-papers`.
+Use this skill to generate research ideas from SciAtlas KG evidence. Run only the repository workflow `python -m sciatlas_idea_gen.main`, which retrieves anchor papers, builds a research graph, searches same-field and cross-domain inspirations, generates ideas, and runs novelty checks.
 
 ## Operating Contract
 
-- Do not call any SciAtlas downstream command. The only SciAtlas retrieval command allowed is `search-papers`.
-- Ask the user only for email, verification code, token, or one clarification about the desired topic/field.
-- Complete setup, run `search-papers`, read artifacts, and generate evidence-grounded ideas.
+- Own the end-to-end novice flow: install or locate the workflow, guide registration, configure `.env` or shell variables, run retrieval/generation, inspect artifacts, and synthesize final idea seeds.
+- Ask the user only for human-only values: missing topic/domain, email, verification code, SciAtlas token, LLM key/base/model, S2 key, local KG credentials when explicitly using local KG, or one necessary scope clarification.
+- Do not ask the user to run shell commands when tool access is available.
 - Never disclose the full API token.
+- Use `sciatlas_idea_gen` as the only idea-generation workflow.
+- If `sciatlas_idea_gen` is unavailable or required LLM/KG setup is missing, report the blocker and fix setup if possible; do not substitute another route.
+- Save and inspect artifacts before writing the final answer.
+
+## KG Linkage
+
+The workflow reaches the KG through `sciatlas_idea_gen.clients.SciAtlasClient`:
+
+- Hosted mode: `SCIATLAS_USE_LOCAL_KG=0`; the adapter shells into this repository's `run_sciatlas.py` for KG-backed paper retrieval, then normalizes `data.result.ranking.papers` or `data.result.sources.kg.papers` to `papers`.
+- Local KG mode: `SCIATLAS_USE_LOCAL_KG=1`; the adapter runs `references/search/run_search.py` with `--disable-s2`, `--disable-llm-ranking`, `--kg-top-k`, and `--final-top-k`, then normalizes the local KG response to `papers`.
+- Keep hosted mode as the default unless the user says they have Neo4j and local KG models configured.
 
 ## Zero-Start Bootstrap
 
-1. Check whether the `sciatlas` executable exists without invoking a SciAtlas command: use `Get-Command sciatlas -ErrorAction SilentlyContinue` on Windows PowerShell or `command -v sciatlas` on macOS/Linux. Install if missing using the local repo `python -m pip install -e ./sciatlas` or GitHub `python -m pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"`.
-2. If `SCIATLAS_API_KEY` is missing, guide the user to `http://sciatlas.openkg.cn/register`.
-3. Ask for email/code/token only when needed by the registration flow.
-4. Configure:
+1. Check for the repository workflow:
+
+```bash
+python -m sciatlas_idea_gen.main -h
+```
+
+2. If missing, clone the full SciAtlas repository, change into it, then run `python -m pip install -e ./sciatlas` and `python -m pip install -r requirements-workflows.txt`. Do not use the GitHub `#subdirectory=sciatlas` package-only installation: it does not include `sciatlas_idea_gen`.
+3. Check current environment and `.env` for hosted KG and LLM settings before asking the user.
+4. If `SCIATLAS_API_KEY` is missing for hosted mode, guide the user to `http://sciatlas.openkg.cn/register`; ask for email, verification code, and returned `sciatlas_xxx` token only when needed.
+5. Configure hosted KG yourself:
 
 ```powershell
 $env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
 $env:SCIATLAS_API_KEY = "<token>"
-setx SCIATLAS_API_BASE_URL "http://sciatlas.openkg.cn"
-setx SCIATLAS_API_KEY "<token>"
+$env:SCIATLAS_USE_LOCAL_KG = "0"
 ```
 
 ```bash
 export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="<token>"
+export SCIATLAS_USE_LOCAL_KG=0
 ```
 
-5. If verification is needed, run a one-result `search-papers` smoke test.
-
-## Search Plan
-
-Generate ideas by retrieving a broad but relevant concept pool. Run only `search-papers`:
+6. Configure the LLM endpoint required by the multi-step workflow:
 
 ```bash
-sciatlas search-papers --retrieval-mode hybrid --query "<broad topic>" --keyword "high:<core concept>" --keyword "middle:<neighbor concept>" --top-k 10 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-related high --bias-cooccurrence high --bias-exploration high --ranking-profile discovery --report-max-items 10
+export LLM_API_KEY="<provider-key>"
+export LLM_BASE_URL="https://your-provider.example/v1"
+export LLM_MODEL="<model-name>"
 ```
 
-If the first pool is too homogeneous, run one contrastive search:
+Ask only for missing LLM provider values, then write them to the current shell or `.env` without echoing secrets.
+
+7. Configure local KG only when requested:
 
 ```bash
-sciatlas search-papers --retrieval-mode hybrid --query "<core concept> combined with <distant but plausible field>" --keyword "high:<core concept>" --keyword "middle:<distant field>" --top-k 10 --top-keywords 0 --max-titles 0 --max-refs 0 --bias-exploration high --ranking-profile discovery --report-max-items 10
+export SCIATLAS_USE_LOCAL_KG=1
+export SCIATLAS_LOCAL_SEARCH_ROOT="./references/search"
 ```
 
-## Reading Artifacts
+The local KG engine also needs its own `references/search/.env` with Neo4j/model settings.
 
-Read `report.md`, `response.json`, and `request.json`. Build an idea raw-material board:
+## Run Plan
 
-- Theme clusters.
-- Common assumptions repeated across papers.
-- Underexplored combinations.
-- Methods that appear transferable.
-- Evaluation gaps.
-- Newer papers that change what is feasible.
+Use the flash path first for quick, interactive idea generation:
 
-## Idea Generation Method
+```bash
+python -m sciatlas_idea_gen.main "<research topic>" --workflow flash --domain "<optional field>"
+```
 
-Create ideas by combining evidence, not by free association:
+Run the full path when the user wants a broader research graph, more seed diversity, and a more comprehensive inspiration search:
 
-1. Cluster retrieved papers into 3-5 themes.
-2. For each theme, identify what the papers optimize, assume, or leave untested.
-3. Find bridges between clusters: method from cluster A applied to unsolved problem in cluster B.
-4. Form a hypothesis: "If we change X, then Y should improve because Z."
-5. Define a minimal validation experiment: dataset, metric, baseline, and expected signal.
-6. Check risk: which retrieved paper could make the idea less novel?
-7. Keep speculative parts clearly labeled.
+```bash
+python -m sciatlas_idea_gen.main "<research topic>" --workflow full --domain "<optional field>"
+```
 
-Reject ideas that are only "apply method X to domain Y" unless they include a mechanism and evaluation plan.
+For a seed PDF:
+
+```bash
+python -m sciatlas_idea_gen.main "<research topic>" --workflow full --pdf path/to/paper.pdf
+```
+
+Useful overrides:
+
+- `--workflow flash` for a faster path: 1 seed query, a compact graph, one same-field inspiration, one cross-domain inspiration, compressed Step 5/Step 8 gate stages, and no novelty feedback retry.
+- `--workflow full` for the broader path: multi-query seed retrieval, larger graph construction, broader inspiration retrieval, and novelty feedback retry.
+- `--k-step1 N` for more seed papers.
+- `--anchor-top-k N` for broader Step 1 retrieval.
+- `--graph-budget-min N` and `--graph-budget-max N` for graph size.
+- `--seed-recent-years N` to include older foundational papers.
+- `--resume-from-run-dir runs/<id>` to continue from saved artifacts.
+
+## Artifacts To Read
+
+Read the run directory before answering:
+
+- `summary.json`: status, effective config, counts, and final ideas.
+- `retrieval_trace.json`: KG/S2/OpenAlex retrieval events and returned papers.
+- `step1_seed_papers.json`: anchor papers and refined query.
+- `step2_research_graph.json`: graph nodes, edges, evidence scores, and phases.
+- `step3_trend.txt`: trend summary from the graph.
+- `step5_radius_plan.json`: inspiration radius plan. In `flash`, this is a deterministic compact plan and `summary.json` may mark Step 5 as `compressed`.
+- `step6_inspiration_candidates.json`, `step7_inspirations.json`, `step8_selected_inspirations.json`: inspiration path.
+- `step9_ideas.json` and `step9_ideas.md`: final ideas and citations.
+
+In `flash`, treat `status: "compressed"` for Step 5 or Step 8 as normal success. Step 5 skips the LLM radius gate and uses the compact same-field/cross-domain plan. Step 8 skips the LLM selector and keeps the compact plausible inspiration set. Do not rerun full merely because these stages are compressed.
+
+If the run is in smoke mode and fails partway, use the completed artifacts and clearly state the failed step. Smoke mode is now diagnostic; prefer `--workflow flash` for normal quick runs.
 
 ## Deliverable
 
-Return 3-8 idea seeds. For each:
+Return 3-8 idea seeds when available. For each idea:
 
 - Name.
 - One-sentence hypothesis.
-- Evidence trail from retrieved papers/themes.
+- KG evidence trail from seed papers, graph papers, and inspirations.
 - Why it is nontrivial.
-- Closest-prior-art risk.
+- Closest-prior-art or novelty risk.
 - Minimal validation experiment.
-- Next `search-papers` query to test novelty.
+- Next SciAtlas query or pipeline setting to test novelty.
+
+Keep speculative claims clearly labeled and cite artifacts/paper titles from the run.

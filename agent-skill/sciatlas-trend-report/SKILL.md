@@ -1,6 +1,6 @@
 ---
 name: sciatlas-trend-report
-description: Use only SciAtlas search-papers to take a novice user from zero setup to a timeline-oriented research trend report. Trigger when the user asks for topic history, field evolution, recent trends, representative papers over time, or emerging directions.
+description: Use only SciAtlas search-papers to take a novice user from zero setup to a final timeline-oriented research trend report, including setup, registration guidance, configuration, retrieval, artifact reading, and synthesis. Trigger when the user asks for topic history, field evolution, recent trends, representative papers over time, or emerging directions.
 ---
 
 # SciAtlas Trend Report
@@ -10,8 +10,9 @@ Use this skill to build a trend report from `search-papers` evidence only.
 ## Operating Contract
 
 - Do not call any SciAtlas downstream command. The only SciAtlas retrieval command allowed is `search-papers`.
+- Own the end-to-end novice flow: install or locate the CLI, guide registration, configure environment variables, run retrieval, inspect artifacts, and write the trend report.
 - Ask the user only for email, verification code, token, or the desired time range if it is essential.
-- Run setup and retrieval yourself when possible.
+- Do not ask the user to run shell commands when tool access is available.
 - Do not reveal the full token.
 
 ## Zero-Start Bootstrap

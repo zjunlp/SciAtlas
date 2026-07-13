@@ -4,7 +4,7 @@ A lightweight pip-installable client and CLI for the hosted SciAtlas API service
 
 SciAtlas provides scientific knowledge-graph retrieval for paper search, related-author discovery, author-paper lookup, literature review, idea grounding/evaluation, idea generation, trend analysis, and researcher review.
 
-The repository also includes a portable Agent Skill pack in `../agent-skill/`, which turns the base `search-papers` retrieval capability into downstream task playbooks for tools such as Codex, Claude Code, and other coding agents. See [`../agent-skill/README.md`](../agent-skill/README.md) for the Git, Claude Code, and Codex setup commands.
+The repository also includes a portable Agent Skill pack in `../agent-skill/`, which turns SciAtlas retrieval and the current literature-review, automated-review, and idea-generation workflows into zero-start downstream task playbooks for tools such as Codex, Claude Code, and other coding agents. The agent installs or locates the CLI, guides registration, configures environment variables, runs retrieval or the selected workflow, reads saved artifacts, and writes the final result. The user only supplies human-only values such as email, verification code, API token, LLM/S2/KG keys, or one necessary task clarification. Quick search, grounding, trend, and researcher-profile Skills are restricted to `search-papers`; the three dedicated Skills use their named workflows and start with `flash`, switching to `full` only when needed. The researcher profile is evidence-grounded rather than an authoritative CV. See [`../agent-skill/README.md`](../agent-skill/README.md) for the Git, Claude Code, and Codex setup commands.
 
 <p align="center">
   <img src="../imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
@@ -29,10 +29,12 @@ powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/zju
 ```
 
 The installer downloads the full repository to `~/SciAtlas`, creates a `uv`
-virtual environment, installs the SciAtlas CLI, and also exposes `sciatlas`
-through `uv tool install`.
+virtual environment, installs the SciAtlas CLI and workflow dependencies, and
+also exposes an editable `sciatlas` command through `uv tool install`.
 
-Package-only alternatives are also supported.
+Package-only alternatives support the core CLI only. They do not include the
+repository-level `literature-review`, `idea-evaluate`, or `idea-generate`
+workflows.
 
 Install directly from GitHub:
 
@@ -93,10 +95,20 @@ sciatlas --timeout 900 search-papers \
   --report-max-items 3
 ```
 
+For repository workflows, use a full checkout and install their dependencies:
+
+```bash
+git clone https://github.com/zjunlp/SciAtlas.git
+cd SciAtlas
+python -m pip install -e ./sciatlas
+python -m pip install -r requirements-workflows.txt
+```
+
 Literature review:
 
 ```bash
 sciatlas --timeout 900 literature-review \
+  --workflow flash \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -108,6 +120,7 @@ Idea evaluation:
 
 ```bash
 sciatlas --timeout 900 idea-evaluate \
+  --workflow flash \
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
   --keyword "high:idea evaluation" \
   --top-k 3
@@ -151,13 +164,23 @@ print(result)
 | `author-papers` | Query papers by author |
 | `support-papers` | Retrieve support papers |
 | `paper-search` | Lightweight low-level paper search |
-| `literature-review` | Review-oriented paper retrieval |
+| `literature-review` | Run the current literature-review workflow with compact `--workflow flash` or comprehensive `--workflow full` |
 | `idea-grounding` | Ground a research idea against literature |
-| `idea-evaluate` | Collect evidence for idea evaluation |
-| `idea-generate` | Discover idea seeds |
+| `idea-evaluate` | Run the current automated review workflow with compact `--workflow flash` or comprehensive `--workflow full` |
+| `idea-generate` | Run the current multi-step idea-generation workflow with compressed `--workflow flash` or comprehensive `--workflow full` |
 | `trend-report` | Research trend analysis |
 | `researcher-review` | Researcher background review |
 | `make-report` | Regenerate Markdown report from saved artifacts |
+
+## Workflow Modes
+
+`literature-review`, `idea-evaluate`, and `idea-generate` support `--workflow flash|full`. `flash` is the default for interactive use; `full` keeps the comprehensive path.
+
+| Command | `flash` | `full` |
+|---|---|---|
+| `literature-review` | Compact search and evidence-pack path. | Broader multi-round retrieval plus formal review drafting/integration. |
+| `idea-evaluate` | Smaller reviewer, rubric, manifest, and evidence budgets. | Fuller reviewer/rubric/grounding/review/report path. |
+| `idea-generate` | Compact graph and compressed gate/selection stages. | Broader graph, inspiration search, and novelty feedback. |
 
 ## Outputs
 
@@ -220,5 +243,5 @@ Optional LLM settings are only for better keyword extraction before retrieval. T
 
 If LLM variables are empty or the LLM call fails, SciAtlas falls back to built-in keyword extraction. If OpenAlex variables are empty, OpenAlex enrichment is skipped and normal KG retrieval still works.
 
-User-editable config template: [.env.example](.env.example#L7-L26).
+User-editable config template: [.env.example](.env.example#L1-L52).
 <!-- SCIATLAS_FRONTEND_OPTIONAL_LLM_OPENALEX_END -->

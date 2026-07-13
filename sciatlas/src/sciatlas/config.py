@@ -16,6 +16,18 @@ def _env_first(*names: str) -> str:
     return ""
 
 
+CANONICAL_SCIATLAS_BASE_URL = "http://sciatlas.openkg.cn"
+LEGACY_SCIATLAS_BASE_URLS = {
+    "http://scinet.openkg.cn": CANONICAL_SCIATLAS_BASE_URL,
+    "https://scinet.openkg.cn": "https://sciatlas.openkg.cn",
+}
+
+
+def normalize_sciatlas_base_url(value: str | None) -> str:
+    normalized = _clean(value or CANONICAL_SCIATLAS_BASE_URL).rstrip("/")
+    return LEGACY_SCIATLAS_BASE_URLS.get(normalized, normalized)
+
+
 def _is_placeholder(value: str | None) -> bool:
     normalized = _clean(value).lower()
     placeholder_tokens = (
@@ -35,7 +47,7 @@ def _is_placeholder(value: str | None) -> bool:
 
 @dataclass(frozen=True)
 class SciAtlasConfig:
-    base_url: str = "http://sciatlas.openkg.cn"
+    base_url: str = CANONICAL_SCIATLAS_BASE_URL
     api_key: str = ""
     timeout: int = 900
 
@@ -89,7 +101,7 @@ def load_config(
     grobid_base_url: str | None = None,
 ) -> SciAtlasConfig:
     return SciAtlasConfig(
-        base_url=(base_url or _env_first("SCIATLAS_API_BASE_URL") or "http://sciatlas.openkg.cn").rstrip("/"),
+        base_url=normalize_sciatlas_base_url(base_url or _env_first("SCIATLAS_API_BASE_URL")),
         api_key=_clean(api_key or _env_first("SCIATLAS_API_KEY")),
         timeout=int(timeout or _env_first("SCIATLAS_TIMEOUT", "SCIATLAS_API_TIMEOUT_DEFAULT") or 900),
         llm_provider=_clean(llm_provider or _env_first("LLM_PROVIDER", "SCIATLAS_LLM_PROVIDER") or "chat_completions"),

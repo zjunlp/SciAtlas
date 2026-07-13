@@ -1,6 +1,6 @@
 ---
 name: sciatlas-idea-grounding
-description: Use only SciAtlas search-papers to take a novice user from zero setup to prior-art grounding for a research idea. Trigger when the user gives an idea and asks for similar work, differentiation evidence, related work, motivation support, or literature-grounded refinement.
+description: Use only SciAtlas search-papers to take a novice user from zero setup to final prior-art grounding for a research idea, including setup, registration guidance, configuration, retrieval, artifact reading, and synthesis. Trigger when the user gives an idea and asks for similar work, differentiation evidence, related work, motivation support, or literature-grounded refinement.
 ---
 
 # SciAtlas Idea Grounding
@@ -10,8 +10,9 @@ Use this skill to position a research idea against prior work using only `sciatl
 ## Operating Contract
 
 - Do not call any SciAtlas downstream command. The only SciAtlas retrieval command allowed is `search-papers`.
+- Own the end-to-end novice flow: install or locate the CLI, guide registration, configure environment variables, run retrieval, inspect artifacts, and produce a grounded positioning memo.
 - Ask the user only for human-only setup values: email, verification code, token, or one concise clarification about the idea.
-- Complete setup, run `search-papers`, inspect artifacts, and produce a grounded positioning memo.
+- Do not ask the user to run shell commands when tool access is available.
 - Do not reveal the full API token in final output.
 
 ## Zero-Start Bootstrap

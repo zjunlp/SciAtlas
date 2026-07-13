@@ -20,6 +20,18 @@ from .common import (
 )
 
 
+CANONICAL_SCIATLAS_BASE_URL = "http://sciatlas.openkg.cn"
+LEGACY_SCIATLAS_BASE_URLS = {
+    "http://scinet.openkg.cn": CANONICAL_SCIATLAS_BASE_URL,
+    "https://scinet.openkg.cn": "https://sciatlas.openkg.cn",
+}
+
+
+def normalize_sciatlas_base_url(value: str) -> str:
+    normalized = normalize_whitespace(value).rstrip("/")
+    return LEGACY_SCIATLAS_BASE_URLS.get(normalized, normalized)
+
+
 class SciAtlasApiError(RuntimeError):
     def __init__(self, message: str, *, status_code: int | None = None, payload: Any = None) -> None:
         super().__init__(message)
@@ -165,7 +177,7 @@ def load_sciatlas_api_settings(env_path: Path, params: dict[str, Any] | None = N
     if not api_key:
         raise ValueError(f"Missing SCIATLAS_API_KEY in {env_path}")
     return SciAtlasApiSettings(
-        base_url=base_url.rstrip("/"),
+        base_url=normalize_sciatlas_base_url(base_url),
         api_key=api_key,
         default_timeout=default_timeout,
         search_timeout=search_timeout,

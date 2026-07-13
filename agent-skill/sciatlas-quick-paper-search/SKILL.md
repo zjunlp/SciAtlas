@@ -1,6 +1,6 @@
 ---
 name: sciatlas-quick-paper-search
-description: Use only SciAtlas search-papers to take a novice user from zero setup to a small evidence-backed paper search result. Trigger when the user wants a quick paper check, first-pass literature evidence, a retrieval smoke test, or help deciding which deeper SciAtlas agent skill to use next.
+description: Use only SciAtlas search-papers to take a novice user from zero setup to a final small evidence-backed paper search result, including setup, registration guidance, configuration, retrieval, artifact reading, and summary. Trigger when the user wants a quick paper check, first-pass literature evidence, a retrieval smoke test, or help deciding which deeper SciAtlas agent skill to use next.
 ---
 
 # SciAtlas Quick Paper Search
@@ -10,10 +10,11 @@ Use this skill to deliver a small, evidence-backed paper search from a blank mac
 ## Operating Contract
 
 - Do not call any SciAtlas downstream, author, support, report, config, health, or skill-management command for retrieval. The only SciAtlas retrieval command allowed is `search-papers`.
+- Own the end-to-end novice flow: install or locate the CLI, guide registration, configure environment variables, run retrieval, read artifacts, and write the final answer.
 - Run setup commands yourself when tool access is available. Do not ask a novice user to run shell commands unless you are blocked by missing permissions or missing human-only information.
 - Ask the user only for values a program cannot know: email address, verification code, returned API token, or a clarification when the topic is genuinely ambiguous.
 - Never print the full API token in the final answer. Mask it if you must mention it.
-- If any step fails, explain the exact blocker in plain language, fix what you can, and continue until a `search-papers` run succeeds or the user must provide a missing human value.
+- If any step fails, explain the exact blocker in plain language, fix what you can, and continue until a `search-papers` run succeeds, the final result is produced, or the user must provide a missing human-only value.
 
 ## Zero-Start Bootstrap
 

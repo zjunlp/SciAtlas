@@ -3,22 +3,40 @@
     "name": "literature-review",
     "aliases": [
       "review",
-      "lit-review"
+      "lit-review",
+      "literature-review-flash",
+      "lit-review-flash"
     ],
-    "description": "Core paper pool and literature-review oriented report.",
+    "description": "Fast flash path of the current literature_review_pipeline workflow.",
     "command": "literature-review",
     "defaults": {
-      "retrieval_mode": "hybrid",
-      "top_k": 5,
+      "workflow": "flash",
       "top_keywords": 0,
       "max_titles": 0,
       "max_refs": 0,
-      "bias_exploration": "low",
-      "ranking_profile": "balanced",
-      "report_max_items": 5
+      "report_max_items": 8
     },
     "examples": [
       "sciatlas skill run literature-review --query \"open world agent\" --keyword \"high:open world agent\""
+    ]
+  },
+  {
+    "name": "literature-review-full",
+    "aliases": [
+      "review-full",
+      "lit-review-full"
+    ],
+    "description": "Comprehensive full path of the current literature_review_pipeline workflow.",
+    "command": "literature-review",
+    "defaults": {
+      "workflow": "full",
+      "top_keywords": 0,
+      "max_titles": 0,
+      "max_refs": 0,
+      "report_max_items": 12
+    },
+    "examples": [
+      "sciatlas skill run literature-review-full --query \"retrieval augmented generation\" --domain \"artificial intelligence\""
     ]
   },
   {
@@ -49,48 +67,75 @@
     "name": "idea-evaluate",
     "aliases": [
       "idea-eval",
-      "eval-idea"
+      "eval-idea",
+      "idea-evaluate-flash",
+      "idea-eval-flash"
     ],
-    "description": "Collect KG evidence for novelty, feasibility, soundness, and differentiation.",
+    "description": "Fast flash path of the current automated review workflow.",
     "command": "idea-evaluate",
     "defaults": {
-      "retrieval_mode": "hybrid",
-      "top_k": 5,
+      "workflow": "flash",
       "top_keywords": 0,
       "max_titles": 0,
       "max_refs": 0,
-      "bias_keyword": "high",
-      "bias_related": "high",
-      "bias_citation": "low",
-      "bias_exploration": "low",
-      "ranking_profile": "precision",
-      "report_max_items": 5
+      "report_max_items": 8
     },
     "examples": [
       "sciatlas skill run idea-evaluate --idea \"Federated knowledge editing for LLMs\" --keyword \"high:knowledge editing\""
     ]
   },
   {
-    "name": "idea-generate",
+    "name": "idea-evaluate-full",
     "aliases": [
-      "ideate"
+      "idea-eval-full",
+      "eval-idea-full"
     ],
-    "description": "Broader KG exploration for research idea seed discovery.",
-    "command": "idea-generate",
+    "description": "Comprehensive full path of the current automated review workflow.",
+    "command": "idea-evaluate",
     "defaults": {
-      "retrieval_mode": "hybrid",
-      "top_k": 8,
+      "workflow": "full",
       "top_keywords": 0,
       "max_titles": 0,
       "max_refs": 0,
-      "bias_related": "high",
-      "bias_cooccurrence": "high",
-      "bias_exploration": "high",
-      "ranking_profile": "discovery",
-      "report_max_items": 8
+      "report_max_items": 12
     },
     "examples": [
-      "sciatlas skill run idea-generate --query \"automated scientific research\" --keyword \"high:idea evaluation\""
+      "sciatlas skill run idea-evaluate-full --idea \"Federated knowledge editing for LLMs\""
+    ]
+  },
+  {
+    "name": "idea-generate",
+    "aliases": [
+      "ideate",
+      "idea-generate-flash",
+      "ideate-flash"
+    ],
+    "description": "Fast flash path of the current sciatlas_idea_gen workflow.",
+    "command": "idea-generate",
+    "defaults": {
+      "workflow": "flash",
+      "idea_count": 1
+    },
+    "examples": [
+      "sciatlas skill run idea-generate --query \"automated scientific research\""
+    ]
+  },
+  {
+    "name": "idea-generate-full",
+    "aliases": [
+      "ideate-full"
+    ],
+    "description": "Comprehensive full path of the current sciatlas_idea_gen workflow.",
+    "command": "idea-generate",
+    "defaults": {
+      "workflow": "full",
+      "top_k": 5,
+      "seed_num_queries": 8,
+      "seed_per_query": 3,
+      "idea_count": 1
+    },
+    "examples": [
+      "sciatlas skill run idea-generate-full --query \"automated scientific research\""
     ]
   },
   {

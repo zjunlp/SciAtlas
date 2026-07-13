@@ -1,0 +1,51 @@
+# Step-3 smoke test: discover a "State-Space Models / Mamba" lane in DNN corpus.
+# Tests corpus_rescan: family_keywords prefilter + LLM classifier.
+# named_fetch + recommend_expansion stubs (Step 4) will return placeholder data.
+
+topic:
+  title: "DNN Architectures + SSM (Step-3 smoke)"
+  subtitle: "Discover SSM/Mamba family in DNN corpus"
+  time_range: [1955, 2026]
+  current_year: 2026
+
+artifacts:
+  search_result:      ../runs/case_dnn_arch/artifacts/lr_search/search_result.json
+  clusters_recovered: ../runs/case_dnn_arch/artifacts/lr_search/clusters_recovered.json
+  current_spec:       method_timeline_spec.yaml
+
+defaults:
+  llm_confidence_threshold: 0.6
+  max_auto_extras_per_lane: 5
+  llm_batch_size: 25
+
+clusters:
+  - id: C2
+    name: "Transformer Family"
+    color: "#6A1B9A"
+    source: {mode: inherit, from_lane: C2}
+
+  - id: C12
+    name: "State-Space Models / Mamba"
+    color: "#C2185B"
+    description: "Sub-quadratic sequence models based on state-space recurrence, positioned as Transformer alternatives. Includes structured state-space models (S4 lineage), selective state-space models (Mamba), and linear-attention RNN hybrids (RWKV)."
+    seed_anchors:
+      - {label: "S4",       title: "Efficiently Modeling Long Sequences with Structured State Spaces", year: 2022, first_author: "Gu, Goel, Ré",   citation_count: 2000, venue: "ICLR"}
+      - {label: "Mamba",    title: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces", year: 2023, first_author: "Gu, Dao",        citation_count: 1500, venue: "arXiv"}
+      - {label: "Mamba-2",  title: "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality", year: 2024, first_author: "Dao, Gu", citation_count: 500, venue: "ICML"}
+      - {label: "RWKV",     title: "RWKV: Reinventing RNNs for the Transformer Era", year: 2023, first_author: "Peng et al.", citation_count: 900, venue: "EMNLP Findings"}
+      - {label: "Hyena",    title: "Hyena Hierarchy: Towards Larger Convolutional Language Models", year: 2023, first_author: "Poli et al.", citation_count: 600, venue: "ICML"}
+    family_keywords:
+      - "state space model"
+      - "state-space model"
+      - "structured state space"
+      - "selective state"
+      - "mamba"
+      - "S4"
+      - "linear attention"
+      - "RWKV"
+      - "Hyena"
+      - "linear recurrence"
+    source:
+      mode: discover
+      stages: [corpus_rescan, named_fetch, recommend_expansion]
+      recommend_per_seed: 8

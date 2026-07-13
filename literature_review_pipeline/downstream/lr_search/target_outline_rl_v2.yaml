@@ -1,0 +1,138 @@
+# Target outline for RL case study v2.
+#
+# What this outline does, relative to method_timeline_spec_rl.yaml:
+#   - Lanes M1 / M2 / M3 / M4 / M6 inherit unchanged (cheap, no LLM/S2 calls).
+#   - Lane M5 ("Offline & Model-Based") is split into:
+#       * M5a "Model-Based RL"          — reclassify from corpus clusters C4+C6
+#       * M5b "Offline RL"              — reclassify from corpus clusters C4+C6
+#     (C4 = Offline / Batch RL,  C6 = Model-Based RL in clusters_recovered.json)
+#   - A new lane M7 "Exploration / Intrinsic Motivation" is discovered via
+#     corpus_rescan + named_fetch + recommend_expansion (mostly out-of-corpus —
+#     ICM / RND / Go-Explore weren't picked up by the original lr_search query).
+#
+# Render after migrate with:
+#   python3 downstream/lr_search/render_method_timeline.py \
+#     --spec downstream/lr_search/method_timeline_spec_rl.v2.yaml \
+#     --output-html .../timeline/method_timeline.v2.html \
+#     --output-svg  .../timeline/method_timeline.v2.svg --width 1600
+
+topic:
+  title: "Evolution of Reinforcement Learning Algorithms"
+  subtitle: "Canonical anchors per method family · filled = retrieved or S2-verified, dashed = still injected"
+  time_range: [1985, 2026]
+  current_year: 2026
+  row_height: 165
+  time_segments:
+    - {start: 1985, end: 2000, weight: 0.13}
+    - {start: 2000, end: 2013, weight: 0.05}
+    - {start: 2013, end: 2016, weight: 0.15}
+    - {start: 2016, end: 2018, weight: 0.18}
+    - {start: 2018, end: 2021, weight: 0.18}
+    - {start: 2021, end: 2024, weight: 0.18}
+    - {start: 2024, end: 2026, weight: 0.13}
+
+artifacts:
+  search_result:      ../runs/case_rl_evolution/artifacts/lr_search/search_result.json
+  clusters_recovered: ../runs/case_rl_evolution/artifacts/lr_search/clusters_recovered.json
+  current_spec:       method_timeline_spec_rl.yaml
+
+defaults:
+  llm_confidence_threshold: 0.65
+  max_auto_extras_per_lane: 3
+  llm_batch_size: 25
+  llm_max_parallel: 6
+
+clusters:
+  - id: M1
+    name: "Classical Foundations"
+    color: "#6B4F3F"
+    source: {mode: inherit, from_lane: M1}
+
+  - id: M2
+    name: "Deep Value-Based RL"
+    color: "#1565C0"
+    source: {mode: inherit, from_lane: M2}
+
+  - id: M3
+    name: "Actor-Critic / Continuous Control"
+    color: "#EF6C00"
+    source: {mode: inherit, from_lane: M3}
+
+  - id: M4
+    name: "Trust Region / PPO"
+    color: "#00838F"
+    source: {mode: inherit, from_lane: M4}
+
+  # ------------------------------------------------------------------
+  # M5 split: pull from C4 (Offline) + C6 (Model-Based) in clusters_recovered,
+  # let the LLM re-bucket each paper into M5a vs M5b.
+  # ------------------------------------------------------------------
+  - id: M5a
+    name: "Model-Based RL"
+    color: "#6A1B9A"
+    description: "Algorithms that learn or use an explicit world / transition model to plan or imagine rollouts: Dyna lineage, world-model latent dynamics, AlphaGo/MuZero-style planning-with-learned-model."
+    seed_anchors:
+      - {label: "Dyna",         title: "Integrated Architectures for Learning, Planning, and Reacting Based on Approximating Dynamic Programming", year: 1991, first_author: "Sutton",       citation_count: 3500, venue: "ICML"}
+      - {label: "AlphaGo Zero", title: "Mastering the Game of Go without Human Knowledge",                                                         year: 2017, first_author: "Silver et al.", citation_count: 12000, venue: "Nature"}
+      - {label: "World Models", title: "World Models",                                                                                              year: 2018, first_author: "Ha, Schmidhuber", citation_count: 1500, venue: "NeurIPS",
+         corpus_paper_id: "P032",
+         notes: "Pinned to P032 (Mastering Atari with Discrete World Models, 2020); the actual Ha 2018 paper is not in corpus."}
+      - {label: "MuZero",       title: "Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model",                                     year: 2019, first_author: "Schrittwieser et al.", citation_count: 3000, venue: "Nature"}
+      - {label: "Dreamer",      title: "Dream to Control: Learning Behaviors by Latent Imagination",                                                year: 2020, first_author: "Hafner et al.", citation_count: 2500, venue: "ICLR"}
+      - {label: "DreamerV3",    title: "Mastering Diverse Domains through World Models",                                                            year: 2023, first_author: "Hafner et al.", citation_count: 700,  venue: "arXiv"}
+    source:
+      mode: reclassify
+      from_clusters: [C4, C6]
+
+  - id: M5b
+    name: "Offline RL"
+    color: "#7B1FA2"
+    description: "Algorithms that learn policies from a fixed dataset of logged transitions without further environment interaction. Includes conservative-value, behavior-regularised, and sequence-modelling approaches."
+    seed_anchors:
+      - {label: "BCQ",                  title: "Off-Policy Deep Reinforcement Learning without Exploration",   year: 2019, first_author: "Fujimoto, Meger, Precup", citation_count: 2000, venue: "ICML"}
+      - {label: "CQL",                  title: "Conservative Q-Learning for Offline Reinforcement Learning",   year: 2020, first_author: "Kumar et al.",           citation_count: 2500, venue: "NeurIPS"}
+      - {label: "IQL",                  title: "Offline Reinforcement Learning with Implicit Q-Learning",      year: 2021, first_author: "Kostrikov, Nair, Levine", citation_count: 1500, venue: "ICLR"}
+      - {label: "Decision Transformer", title: "Decision Transformer: Reinforcement Learning via Sequence Modeling", year: 2021, first_author: "Chen et al.",      citation_count: 2500, venue: "NeurIPS",
+         corpus_paper_id: "P307",
+         notes: "Pinned to P307 (follow-up paper); actual Chen 2021 not in corpus."}
+    source:
+      mode: reclassify
+      from_clusters: [C4, C6]
+
+  - id: M6
+    name: "RL for LLMs / Alignment"
+    color: "#2E7D32"
+    source: {mode: inherit, from_lane: M6}
+
+  # ------------------------------------------------------------------
+  # M7: brand-new family — Exploration / Intrinsic Motivation.
+  # Original lr_search query didn't target this; expect most seeds to come
+  # in via named_fetch and a few extras via recommend_expansion.
+  # ------------------------------------------------------------------
+  - id: M7
+    name: "Exploration / Intrinsic Motivation"
+    color: "#FBC02D"
+    description: "Algorithms that drive exploration via intrinsic rewards or directed search: prediction-error curiosity (ICM), random network distillation (RND), pseudo-count / count-based bonuses, episodic memory exploration, and Go-Explore."
+    seed_anchors:
+      - {label: "Pseudo-counts",  title: "Unifying Count-Based Exploration and Intrinsic Motivation",                year: 2016, first_author: "Bellemare et al.", citation_count: 1500, venue: "NeurIPS"}
+      - {label: "ICM",            title: "Curiosity-driven Exploration by Self-supervised Prediction",                year: 2017, first_author: "Pathak et al.",   citation_count: 2500, venue: "ICML"}
+      - {label: "RND",            title: "Exploration by Random Network Distillation",                                year: 2018, first_author: "Burda et al.",    citation_count: 1500, venue: "ICLR"}
+      - {label: "NoisyNet",       title: "Noisy Networks for Exploration",                                            year: 2018, first_author: "Fortunato et al.", citation_count: 1200, venue: "ICLR"}
+      - {label: "Go-Explore",     title: "Go-Explore: a New Approach for Hard-Exploration Problems",                  year: 2019, first_author: "Ecoffet et al.",  citation_count: 800,  venue: "arXiv"}
+      - {label: "Agent57",        title: "Agent57: Outperforming the Atari Human Benchmark",                          year: 2020, first_author: "Badia et al.",    citation_count: 500,  venue: "ICML"}
+    family_keywords:
+      - "intrinsic motivation"
+      - "intrinsic reward"
+      - "curiosity-driven"
+      - "curiosity driven"
+      - "random network distillation"
+      - "pseudo-count"
+      - "count-based exploration"
+      - "Go-Explore"
+      - "Agent57"
+      - "novelty bonus"
+      - "exploration bonus"
+    source:
+      mode: discover
+      stages: [corpus_rescan, named_fetch, recommend_expansion]
+      recommend_per_seed: 6

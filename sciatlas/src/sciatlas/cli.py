@@ -18,6 +18,8 @@ import re
 
 import socket
 
+import subprocess
+
 import sys
 
 import threading
@@ -40,11 +42,35 @@ from typing import Any
 
 
 
-DEFAULT_BASE_URL = os.environ.get("SCIATLAS_API_BASE_URL", "http://sciatlas.openkg.cn")
+CANONICAL_SCIATLAS_BASE_URL = "http://sciatlas.openkg.cn"
+LEGACY_SCIATLAS_BASE_URLS = {
+    "http://scinet.openkg.cn": CANONICAL_SCIATLAS_BASE_URL,
+    "https://scinet.openkg.cn": "https://sciatlas.openkg.cn",
+}
+
+
+def normalize_sciatlas_base_url(value: str | None) -> str:
+    normalized = (value or CANONICAL_SCIATLAS_BASE_URL).strip().rstrip("/")
+    return LEGACY_SCIATLAS_BASE_URLS.get(normalized, normalized)
+
+
+DEFAULT_BASE_URL = normalize_sciatlas_base_url(os.environ.get("SCIATLAS_API_BASE_URL"))
 
 DEFAULT_API_KEY = os.environ.get("SCIATLAS_API_KEY", "")
 
 DEFAULT_RUNS_DIR = os.environ.get("SCIATLAS_RUNS_DIR") or os.environ.get("SCIATLAS_SKILL_RUNS_DIR") or str(Path.cwd() / "runs")
+
+
+def _configure_stdio() -> None:
+    for stream in (getattr(sys, "stdout", None), getattr(sys, "stderr", None)):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+
+
+_configure_stdio()
 
 
 def _env_int(name: str, default: int) -> int:
@@ -61,6 +87,7 @@ def _env_float(name: str, default: float) -> float:
         return default
 
 
+DEFAULT_TIMEOUT = _env_int("SCIATLAS_TIMEOUT", 900)
 DEFAULT_SEARCH_PAPER_TOP_K = _env_int("SCIATLAS_SEARCH_PAPER_TOP_K", 10)
 DEFAULT_RESPONSE_AUTHOR_LIMIT = _env_int("SCIATLAS_RESPONSE_AUTHOR_LIMIT", 30)
 DEFAULT_RESPONSE_MIN_AUTHOR_SCORE = _env_float("SCIATLAS_RESPONSE_MIN_AUTHOR_SCORE", 0.0)
@@ -3782,7 +3809,7 @@ def render_idea_generate_report(*, command: str, request: dict[str, Any], respon
         for t in topics[:5]:
             combos.append(f"{base} + {t}")
 
-    lines = _report_header(command, "Idea Generation: use exploratory KG retrieval to find cross-topic combinations and possible research gaps.", now, query_text, response, ctx)
+    lines = _report_header(command, "Idea Generation: run the current multi-step sciatlas_idea_gen workflow.", now, query_text, response, ctx)
     lines += [
         "## 2. Idea Generation Evidence Pool",
         "",
@@ -4429,10 +4456,10 @@ def cmd_build_plan(args: argparse.Namespace) -> int:
 # ============================================================
 
 DOWNSTREAM_CHANNEL_HINTS = {
-    "literature-review": "Retrieved core papers for the Literature Review channel. Open report.md to organize background, method lines, representative works, and limitations.",
+    "literature-review": "Ran the current literature_review_pipeline workflow. Open report.md and workflow artifacts for the paper pool, evidence packs, and review draft.",
     "idea-grounding": "Retrieved related and supporting papers for the Idea Grounding channel. Compare motivation, methodology, and evaluation settings.",
-    "idea-evaluate": "Collected KG evidence for the Idea Evaluation channel. Continue judging Novelty, Feasibility, and Soundness manually or with a reviewer module.",
-    "idea-generate": "Enabled a more exploratory graph-discovery profile for Idea Generation. Look for cross-topic combinations and research gaps.",
+    "idea-evaluate": "Ran the current review_pipeline workflow. Open report.md and workflow artifacts for rubric critique, evidence grounding, and revision direction.",
+    "idea-generate": "Runs the current multi-step sciatlas_idea_gen workflow for Idea Generation.",
     "trend-report": "Emphasized citation impact and timeline evidence for Research Trend Analysis. Read papers by year to summarize stage-wise evolution.",
     "researcher-review": "Collected researcher-related papers for Researcher Review. Use year, citation count, and topic clusters to analyze research trajectory.",
 }
@@ -4634,8 +4661,563 @@ def _run_author_papers_channel(*, args: argparse.Namespace, command: str, prefix
     return 0 if response.get("ok") else 1
 
 
+def _workflow_repo_root_candidates() -> list[Path]:
+    here = Path(__file__).resolve()
+    candidates = [Path.cwd()]
+    for parent in here.parents:
+        candidates.append(parent)
+    return list(dict.fromkeys(path.expanduser().resolve() for path in candidates))
+
+
+def _find_workflow_dir(name: str) -> Path:
+    for root in _workflow_repo_root_candidates():
+        candidate = root / name
+        if candidate.exists() and candidate.is_dir():
+            return candidate
+    raise FileNotFoundError(f"Workflow directory not found: {name}")
+
+
+def _workflow_env_path(args: argparse.Namespace) -> Path:
+    value = getattr(args, "workflow_env", None) or getattr(args, "env", None) or ".env"
+    return Path(value).expanduser().resolve()
+
+
+def _first_text(*values: Any) -> str:
+    for value in values:
+        text = normalize_text(str(value)) if value is not None else ""
+        if text:
+            return text
+    return ""
+
+
+def _openai_base_url(value: str | None) -> str | None:
+    text = normalize_text(value)
+    if not text:
+        return None
+    text = text.rstrip("/")
+    if text.endswith("/chat/completions"):
+        text = text[: -len("/chat/completions")].rstrip("/")
+    return text or None
+
+
+def _chat_completions_url(value: str | None) -> str | None:
+    text = normalize_text(value)
+    if not text:
+        return None
+    text = text.rstrip("/")
+    if text.endswith("/chat/completions"):
+        return text
+    return f"{text}/chat/completions"
+
+
+def _workflow_subprocess_env(args: argparse.Namespace, env_path: Path) -> dict[str, str]:
+    env = os.environ.copy()
+    env["SCIATLAS_API_BASE_URL"] = normalize_sciatlas_base_url(getattr(args, "base_url", None))
+    if getattr(args, "api_key", None):
+        env["SCIATLAS_API_KEY"] = str(args.api_key)
+    env["SCIATLAS_WORKFLOW_ENV"] = str(env_path)
+
+    llm_api_key = _first_text(
+        getattr(args, "llm_api_key", None),
+        os.environ.get("LLM_API_KEY"),
+        os.environ.get("OPENAI_API_KEY"),
+        os.environ.get("DMX_API_KEY"),
+        os.environ.get("DMX-API-KEY"),
+    )
+    if llm_api_key:
+        for key in ("LLM_API_KEY", "OPENAI_API_KEY", "DMX_API_KEY", "DMX-API-KEY", "SEARCH_LLM_API_KEY"):
+            env[key] = llm_api_key
+
+    llm_base_url = _openai_base_url(_first_text(getattr(args, "llm_base_url", None), os.environ.get("LLM_BASE_URL"), os.environ.get("OPENAI_BASE_URL")))
+    if llm_base_url:
+        env["LLM_BASE_URL"] = llm_base_url
+        env["OPENAI_BASE_URL"] = llm_base_url
+
+    llm_api_url = _chat_completions_url(_first_text(getattr(args, "llm_api_url", None), os.environ.get("LLM_API_URL"), os.environ.get("SEARCH_LLM_API_URL"), llm_base_url))
+    if llm_api_url:
+        env["LLM_API_URL"] = llm_api_url
+        env["SEARCH_LLM_API_URL"] = llm_api_url
+
+    llm_model = _first_text(getattr(args, "llm_model", None), os.environ.get("LLM_MODEL"), os.environ.get("OPENAI_MODEL"), os.environ.get("SEARCH_LLM_MODEL"))
+    if llm_model:
+        env["LLM_MODEL"] = llm_model
+        env["OPENAI_MODEL"] = llm_model
+        env["SEARCH_LLM_MODEL"] = llm_model
+    return env
+
+
+def _run_workflow_command(
+    command: list[str],
+    *,
+    cwd: Path,
+    env: dict[str, str],
+    stdout_path: Path,
+    stderr_path: Path,
+    timeout: int | None = None,
+) -> dict[str, Any]:
+    started = time.time()
+    stdout_path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=str(cwd),
+            env=env,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout,
+        )
+    except subprocess.TimeoutExpired as exc:
+        stdout = exc.stdout.decode("utf-8", errors="replace") if isinstance(exc.stdout, bytes) else (exc.stdout or "")
+        stderr = exc.stderr.decode("utf-8", errors="replace") if isinstance(exc.stderr, bytes) else (exc.stderr or "")
+        stderr = f"{stderr}\nWorkflow subprocess timed out after {timeout} seconds.\n"
+        stdout_path.write_text(stdout, encoding="utf-8")
+        stderr_path.write_text(stderr, encoding="utf-8")
+        return {
+            "command": command,
+            "cwd": str(cwd),
+            "returncode": 124,
+            "timed_out": True,
+            "elapsed_seconds": round(time.time() - started, 3),
+            "stdout_path": str(stdout_path),
+            "stderr_path": str(stderr_path),
+        }
+    stdout_path.write_text(completed.stdout or "", encoding="utf-8")
+    stderr_path.write_text(completed.stderr or "", encoding="utf-8")
+    return {
+        "command": command,
+        "cwd": str(cwd),
+        "returncode": completed.returncode,
+        "elapsed_seconds": round(time.time() - started, 3),
+        "stdout_path": str(stdout_path),
+        "stderr_path": str(stderr_path),
+    }
+
+
+def _load_json_if_exists(path: Path) -> dict[str, Any]:
+    try:
+        if path.exists():
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if isinstance(payload, dict):
+                return payload
+    except Exception:
+        pass
+    return {}
+
+
+def _format_workflow_table(items: list[dict[str, Any]], *, max_items: int = 10) -> list[str]:
+    lines = ["| # | Title | Year | Source |", "|---:|---|---:|---|"]
+    for index, item in enumerate(items[:max_items], start=1):
+        title = normalize_text(str(item.get("title") or item.get("paper_title") or "Untitled"))
+        year = item.get("year") or item.get("publication_year") or "-"
+        source = item.get("source") or ", ".join(item.get("source_set") or []) if isinstance(item.get("source_set"), list) else item.get("source") or "-"
+        lines.append(f"| {index} | {title} | {year} | {source} |")
+    return lines
+
+
+def _render_literature_workflow_report(
+    *,
+    run_dir: Path,
+    topic: str,
+    workflow: str,
+    search_result_path: Path,
+    review_result: dict[str, Any],
+) -> Path:
+    report_path = run_dir / "report.md"
+    formal_review = normalize_text(str(review_result.get("formal_review_path") or ""))
+    if formal_review and Path(formal_review).exists():
+        report_path.write_text(Path(formal_review).read_text(encoding="utf-8", errors="replace"), encoding="utf-8")
+        return report_path
+
+    search_result = _load_json_if_exists(search_result_path)
+    outline_path = normalize_text(str(review_result.get("formal_outline_path") or ""))
+    outline = _load_json_if_exists(Path(outline_path)) if outline_path else {}
+    papers = search_result.get("paper_cards") if isinstance(search_result.get("paper_cards"), list) else []
+    clusters = search_result.get("method_clusters") if isinstance(search_result.get("method_clusters"), list) else []
+    time_windows = search_result.get("time_windows") if isinstance(search_result.get("time_windows"), list) else []
+
+    lines = [
+        "# SciAtlas Literature Review Workflow",
+        "",
+        f"- Workflow: `{workflow}`",
+        f"- Topic: {topic}",
+        f"- Search result: `{search_result_path}`",
+        f"- Paper count: `{len(papers)}`",
+        f"- Report stop stage: `{review_result.get('stop_after', 'full')}`",
+        "",
+        "## Review Outline",
+        "",
+    ]
+    if outline:
+        lines.append(f"- Title: {normalize_text(str(outline.get('review_title') or outline.get('title') or '')) or '-'}")
+        lines.append(f"- Summary: {normalize_text(str(outline.get('one_sentence_summary') or '')) or '-'}")
+        sections = outline.get("sections") if isinstance(outline.get("sections"), list) else []
+        for index, section in enumerate(sections[:8], start=1):
+            if isinstance(section, dict):
+                lines.append(f"{index}. {normalize_text(str(section.get('section_title') or section.get('title') or section.get('section_id') or 'Section'))}")
+    else:
+        lines.append("No generated outline was available. Inspect the search artifacts for details.")
+
+    lines.extend(["", "## Method Clusters", ""])
+    if clusters:
+        for index, cluster in enumerate(clusters[:8], start=1):
+            if isinstance(cluster, dict):
+                label = normalize_text(str(cluster.get("cluster_label") or cluster.get("label") or cluster.get("name") or f"cluster {index}"))
+                description = normalize_text(str(cluster.get("description") or cluster.get("rationale") or ""))
+                lines.append(f"- **{label}**: {description or 'No description.'}")
+    else:
+        lines.append("No method clusters were parsed.")
+
+    lines.extend(["", "## Time Windows", ""])
+    if time_windows:
+        for item in time_windows[:8]:
+            if isinstance(item, dict):
+                label = normalize_text(str(item.get("label") or "period"))
+                start = item.get("start_year") or "?"
+                end = item.get("end_year") or "?"
+                lines.append(f"- `{start}-{end}` {label}: {normalize_text(str(item.get('rationale') or item.get('search_focus') or ''))}")
+    else:
+        lines.append("No time-window plan was parsed.")
+
+    lines.extend(["", "## Representative Papers", ""])
+    lines.extend(_format_workflow_table([p for p in papers if isinstance(p, dict)], max_items=12))
+    report_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return report_path
+
+
+def _topic_from_workflow_args(args: argparse.Namespace) -> str:
+    text = read_text_input(args.text, args.text_file, getattr(args, "query", None))
+    text = append_soft_domain_to_query(text, getattr(args, "domain", None))
+    text = merge_expert_plan_controls(args, text)
+    return normalize_text(text)
+
+
+def _year_bounds_from_args(args: argparse.Namespace) -> tuple[int | None, int | None]:
+    after, before = parse_time_range_arg(getattr(args, "time_range", None))
+    if getattr(args, "after", None):
+        after = args.after
+    if getattr(args, "before", None):
+        before = args.before
+
+    def to_year(value: str | None) -> int | None:
+        if not value:
+            return None
+        match = re.search(r"\d{4}", str(value))
+        return int(match.group(0)) if match else None
+
+    return to_year(after), to_year(before)
+
+
+def _run_literature_review_workflow(args: argparse.Namespace) -> int:
+    topic = _topic_from_workflow_args(args)
+    if not topic:
+        raise SystemExit("Please provide --query, --text, or --text-file.")
+
+    workflow = getattr(args, "workflow", "flash") or "flash"
+    workflow_root = _find_workflow_dir("literature_review_pipeline")
+    lr_dir = workflow_root / "downstream" / "lr_search"
+    env_path = _workflow_env_path(args)
+    env = _workflow_subprocess_env(args, env_path)
+    run_dir = ensure_run_dir(args.runs_dir, args.run_id, "literature_review")
+    logs_dir = run_dir / "logs"
+    search_dir = run_dir / "lr_search"
+    review_dir = run_dir / "lr_review"
+
+    top_k = getattr(args, "top_k", None)
+    if workflow == "flash":
+        probe_top_k = getattr(args, "probe_top_k", None) or top_k or 8
+        round_top_k = getattr(args, "round_top_k", None) or top_k or 6
+        round1_limit = getattr(args, "round1_action_limit", None) or 3
+        round2_limit = getattr(args, "round2_action_limit", None) or 0
+        llm_paper_limit = getattr(args, "llm_paper_limit", None) or 30
+        report_stop_after = getattr(args, "report_stop_after", None) or "packs"
+    else:
+        probe_top_k = getattr(args, "probe_top_k", None) or top_k or 30
+        round_top_k = getattr(args, "round_top_k", None) or top_k or 20
+        round1_limit = getattr(args, "round1_action_limit", None) or 7
+        round2_limit = getattr(args, "round2_action_limit", None) or 4
+        llm_paper_limit = getattr(args, "llm_paper_limit", None) or 100
+        report_stop_after = getattr(args, "report_stop_after", None) or "full"
+    if getattr(args, "smoke", False):
+        report_stop_after = "bibliography"
+
+    search_cmd = [
+        sys.executable,
+        str(lr_dir / "literature_review_search.py"),
+        "--topic",
+        topic,
+        "--output-dir",
+        str(search_dir),
+        "--env",
+        str(env_path),
+        "--probe-kg-top-k",
+        str(probe_top_k),
+        "--probe-s2-top-k",
+        str(probe_top_k),
+        "--round-kg-top-k",
+        str(round_top_k),
+        "--round-s2-top-k",
+        str(round_top_k),
+        "--round1-action-limit",
+        str(round1_limit),
+        "--round2-action-limit",
+        str(round2_limit),
+        "--llm-paper-limit",
+        str(llm_paper_limit),
+        "--llm-timeout",
+        str(getattr(args, "llm_timeout", None) or 180),
+        "--enable-query-cleaning",
+        "--enable-relevance-guard",
+    ]
+    min_year, max_year = _year_bounds_from_args(args)
+    if min_year is not None:
+        search_cmd.extend(["--min-year", str(min_year)])
+    if max_year is not None:
+        search_cmd.extend(["--max-year", str(max_year)])
+    if getattr(args, "llm_model", None):
+        search_cmd.extend(["--llm-model", str(args.llm_model)])
+    chat_url = _chat_completions_url(_first_text(getattr(args, "llm_api_url", None), getattr(args, "llm_base_url", None), env.get("LLM_API_URL"), env.get("LLM_BASE_URL")))
+    if chat_url:
+        search_cmd.extend(["--llm-api-url", chat_url])
+    if workflow == "full" and round2_limit > 0:
+        search_cmd.extend(["--enable-round2", "--enable-kg-policy"])
+    if getattr(args, "enable_embedding_expansion", False):
+        search_cmd.append("--enable-embedding-expansion")
+    if getattr(args, "smoke", False):
+        search_cmd.append("--mock-backend")
+
+    search_run = _run_workflow_command(
+        search_cmd,
+        cwd=workflow_root,
+        env=env,
+        stdout_path=logs_dir / "literature_search.stdout.txt",
+        stderr_path=logs_dir / "literature_search.stderr.txt",
+        timeout=getattr(args, "workflow_timeout", None),
+    )
+
+    search_result_path = search_dir / "search_result.json"
+    review_result: dict[str, Any] = {}
+    report_run: dict[str, Any] | None = None
+    if search_run["returncode"] == 0 and search_result_path.exists():
+        report_cmd = [
+            sys.executable,
+            str(lr_dir / "generate_literature_review_report.py"),
+            "--search-result",
+            str(search_result_path),
+            "--output-dir",
+            str(review_dir),
+            "--env",
+            str(env_path),
+            "--subject-domain",
+            str(getattr(args, "subject_domain", "general")),
+            "--stop-after",
+            report_stop_after,
+            "--llm-timeout",
+            str(getattr(args, "llm_timeout", None) or 180),
+            "--outline-timeout",
+            str(getattr(args, "outline_timeout", None) or 600),
+            "--integration-timeout",
+            str(getattr(args, "integration_timeout", None) or 600),
+            "--resume",
+        ]
+        if getattr(args, "llm_model", None):
+            report_cmd.extend(["--llm-model", str(args.llm_model)])
+        if chat_url:
+            report_cmd.extend(["--llm-api-url", chat_url])
+        report_run = _run_workflow_command(
+            report_cmd,
+            cwd=workflow_root,
+            env=env,
+            stdout_path=logs_dir / "literature_report.stdout.txt",
+            stderr_path=logs_dir / "literature_report.stderr.txt",
+            timeout=getattr(args, "workflow_timeout", None),
+        )
+        try:
+            text = Path(report_run["stdout_path"]).read_text(encoding="utf-8", errors="replace").strip()
+            if text:
+                review_result = json.loads(text[text.find("{") : text.rfind("}") + 1])
+        except Exception:
+            review_result = {}
+
+    report_path = _render_literature_workflow_report(
+        run_dir=run_dir,
+        topic=topic,
+        workflow=workflow,
+        search_result_path=search_result_path,
+        review_result=review_result,
+    )
+    summary = {
+        "ok": search_run["returncode"] == 0 and (report_run is None or report_run["returncode"] == 0),
+        "command": "literature-review",
+        "workflow_mode": workflow,
+        "topic": topic,
+        "run_dir": str(run_dir),
+        "search": search_run,
+        "report_generation": report_run,
+        "search_result_path": str(search_result_path),
+        "review_result": review_result,
+        "report_path": str(report_path),
+    }
+    summary_path = run_dir / "summary.json"
+    write_json(summary_path, summary)
+    payload = {
+        "ok": bool(summary["ok"]),
+        "command": "literature-review",
+        "query": topic,
+        "message": f"Literature-review workflow ({workflow}) completed. Report stage: {review_result.get('stop_after', report_stop_after)}.",
+        "workflow_mode": workflow,
+        "report": str(report_path),
+        "response_json": str(summary_path),
+    }
+    print(render_user_output(payload))
+    return 0 if payload["ok"] else 1
+
+
+def _run_idea_evaluate_workflow(args: argparse.Namespace) -> int:
+    idea_text = _topic_from_workflow_args(args)
+    pdf_path = normalize_text(str(getattr(args, "pdf", None) or ""))
+    if not idea_text and not pdf_path:
+        raise SystemExit("Please provide --idea, --query, --text, --text-file, or --pdf.")
+
+    workflow = getattr(args, "workflow", "flash") or "flash"
+    workflow_root = _find_workflow_dir("review_pipeline")
+    env_path = _workflow_env_path(args)
+    env = _workflow_subprocess_env(args, env_path)
+    run_dir = ensure_run_dir(args.runs_dir, args.run_id, "idea_evaluate")
+    logs_dir = run_dir / "logs"
+
+    top_k = getattr(args, "top_k", None)
+    if workflow == "flash":
+        kg_top_k = getattr(args, "kg_top_k", None) or top_k or 6
+        s2_top_k = getattr(args, "s2_top_k", None) or top_k or 6
+        manifest_top_k = getattr(args, "manifest_top_k", None) or top_k or 6
+        max_reviewers = getattr(args, "max_reviewers", None) or 1
+        review_workers = getattr(args, "review_max_workers", None) or 1
+        evidence_cards = getattr(args, "review_max_evidence_cards_per_section", None) or 12
+        total_evidence_chars = getattr(args, "review_max_total_evidence_chars_per_section", None) or 20000
+        short_report = True
+    else:
+        kg_top_k = getattr(args, "kg_top_k", None) or top_k or 20
+        s2_top_k = getattr(args, "s2_top_k", None) or top_k or 20
+        manifest_top_k = getattr(args, "manifest_top_k", None) or top_k or 20
+        max_reviewers = getattr(args, "max_reviewers", None) or 3
+        review_workers = getattr(args, "review_max_workers", None) or 5
+        evidence_cards = getattr(args, "review_max_evidence_cards_per_section", None) or 40
+        total_evidence_chars = getattr(args, "review_max_total_evidence_chars_per_section", None) or 60000
+        short_report = bool(getattr(args, "short_report", False))
+
+    review_cmd = [
+        sys.executable,
+        str(workflow_root / "pipeline.py"),
+        "--run-root",
+        str(run_dir.parent),
+        "--run-id",
+        run_dir.name,
+        "--env",
+        str(env_path),
+        "--kg-top-k",
+        str(kg_top_k),
+        "--s2-top-k",
+        str(s2_top_k),
+        "--manifest-top-k",
+        str(manifest_top_k),
+        "--grounding-final-top-k",
+        str(getattr(args, "grounding_final_top_k", None) or (4 if workflow == "flash" else 8)),
+        "--max-reviewers",
+        str(max_reviewers),
+        "--reviewer-selection-top-k",
+        str(getattr(args, "reviewer_selection_top_k", None) or (10 if workflow == "flash" else 30)),
+        "--reviewer-max-workers",
+        str(getattr(args, "reviewer_max_workers", None) or (1 if workflow == "flash" else 6)),
+        "--review-max-workers",
+        str(review_workers),
+        "--review-max-evidence-cards-per-section",
+        str(evidence_cards),
+        "--review-max-evidence-cards-per-query",
+        str(getattr(args, "review_max_evidence_cards_per_query", None) or (2 if workflow == "flash" else 4)),
+        "--review-max-experiment-cards-per-section",
+        str(getattr(args, "review_max_experiment_cards_per_section", None) or (6 if workflow == "flash" else 20)),
+        "--review-max-total-evidence-chars-per-section",
+        str(total_evidence_chars),
+        "--review-llm-timeout-seconds",
+        str(getattr(args, "review_llm_timeout_seconds", None) or (240 if workflow == "flash" else 600)),
+        "--rubric-llm-timeout-seconds",
+        str(getattr(args, "rubric_llm_timeout_seconds", None) or (180 if workflow == "flash" else 300)),
+    ]
+    if pdf_path:
+        review_cmd.extend(["--pdf-path", str(Path(pdf_path).expanduser().resolve())])
+    else:
+        review_cmd.extend(["--idea-text", idea_text])
+    if getattr(args, "llm_api_key", None):
+        review_cmd.extend(["--review-llm-api-key", str(args.llm_api_key)])
+    base_url = _openai_base_url(_first_text(getattr(args, "llm_base_url", None), env.get("LLM_BASE_URL"), env.get("OPENAI_BASE_URL")))
+    if base_url:
+        review_cmd.extend(["--review-llm-base-url", base_url])
+    if getattr(args, "llm_model", None):
+        review_cmd.extend(["--review-llm-model-name", str(args.llm_model)])
+    if short_report:
+        review_cmd.append("--short-report")
+    if workflow == "flash":
+        review_cmd.append("--disable-grounding-refinement")
+    if getattr(args, "disable_llm_ranking", False):
+        review_cmd.append("--disable-llm-ranking")
+    if getattr(args, "disable_review_llm", False):
+        review_cmd.append("--disable-review-llm")
+    if getattr(args, "smoke", False):
+        review_cmd.extend(["--smoke", "--disable-reviewers"])
+
+    review_run = _run_workflow_command(
+        review_cmd,
+        cwd=workflow_root,
+        env=env,
+        stdout_path=logs_dir / "review_pipeline.stdout.txt",
+        stderr_path=logs_dir / "review_pipeline.stderr.txt",
+        timeout=getattr(args, "workflow_timeout", None),
+    )
+    final_payload_path = run_dir / "result.json"
+    final_payload = _load_json_if_exists(final_payload_path)
+    final_report = normalize_text(str(final_payload.get("final_report_path") or ""))
+    report_path = run_dir / "report.md"
+    if final_report and Path(final_report).exists():
+        report_path.write_text(Path(final_report).read_text(encoding="utf-8", errors="replace"), encoding="utf-8")
+    else:
+        report_path.write_text(
+            "# SciAtlas Idea Evaluation Workflow\n\n"
+            f"- Workflow: `{workflow}`\n"
+            f"- Status: `{final_payload.get('status', 'unknown')}`\n"
+            f"- Pipeline stdout: `{review_run['stdout_path']}`\n"
+            f"- Pipeline stderr: `{review_run['stderr_path']}`\n",
+            encoding="utf-8",
+        )
+
+    summary = {
+        "ok": review_run["returncode"] == 0 and final_payload.get("status") in {"ok", "partial_error"},
+        "command": "idea-evaluate",
+        "workflow_mode": workflow,
+        "run_dir": str(run_dir),
+        "pipeline": review_run,
+        "final_payload_path": str(final_payload_path),
+        "final_payload": final_payload,
+        "report_path": str(report_path),
+    }
+    summary_path = run_dir / "summary.json"
+    write_json(summary_path, summary)
+    payload = {
+        "ok": bool(summary["ok"]),
+        "command": "idea-evaluate",
+        "query": idea_text or pdf_path,
+        "message": f"Automated review workflow ({workflow}) completed with status `{final_payload.get('status', 'unknown')}`.",
+        "workflow_mode": workflow,
+        "report": str(report_path),
+        "response_json": str(summary_path),
+    }
+    print(render_user_output(payload))
+    return 0 if payload["ok"] else 1
+
+
 def cmd_literature_review(args: argparse.Namespace) -> int:
-    return _run_plan_search_channel(args=args, command="literature-review", prefix="literature_review", default_top_k=8)
+    return _run_literature_review_workflow(args)
 
 
 def cmd_idea_grounding(args: argparse.Namespace) -> int:
@@ -4643,11 +5225,123 @@ def cmd_idea_grounding(args: argparse.Namespace) -> int:
 
 
 def cmd_idea_evaluate(args: argparse.Namespace) -> int:
-    return _run_plan_search_channel(args=args, command="idea-evaluate", prefix="idea_evaluate", default_top_k=5)
+    return _run_idea_evaluate_workflow(args)
 
 
 def cmd_idea_generate(args: argparse.Namespace) -> int:
-    return _run_plan_search_channel(args=args, command="idea-generate", prefix="idea_generate", default_top_k=8)
+    # The idea-generation workflow lives beside the installable CLI package.
+    # Editable installs from a full repository checkout can locate that directory
+    # through ``_find_workflow_dir``; add its parent explicitly so the command
+    # also works when invoked through the installed ``sciatlas`` entry point.
+    try:
+        workflow_root = _find_workflow_dir("sciatlas_idea_gen")
+        repository_root = str(workflow_root.parent)
+        if repository_root not in sys.path:
+            sys.path.insert(0, repository_root)
+        from sciatlas_idea_gen.config import load_config
+        from sciatlas_idea_gen.main import apply_preset
+        from sciatlas_idea_gen.pipeline import run_pipeline
+    except Exception as exc:
+        payload = {
+            "ok": False,
+            "command": "idea-generate",
+            "error_type": exc.__class__.__name__,
+            "message": (
+                "The current idea-generation workflow `sciatlas_idea_gen` is not available. "
+                "Run from a full SciAtlas repository checkout and install "
+                "requirements-workflows.txt, or install the workflow package."
+            ),
+        }
+        print(render_user_output(payload))
+        return 1
+
+    has_text_input = bool(getattr(args, "query", None) or getattr(args, "text", None) or getattr(args, "text_file", None))
+    pdf_paths = getattr(args, "pdf", None) or None
+    topic = read_text_input(args.text, args.text_file, getattr(args, "query", None)) if has_text_input else None
+    if not topic and not pdf_paths and not getattr(args, "resume_from_run_dir", None):
+        raise SystemExit("Please provide --query, --text, --text-file, --pdf, or --resume-from-run-dir.")
+
+    cfg = load_config()
+    apply_preset(args, cfg)
+    cfg.sciatlas.base_url = args.base_url
+    cfg.sciatlas.api_key = args.api_key
+    cfg.sciatlas.timeout = args.timeout
+    cfg.pipeline.runs_dir = Path(args.runs_dir)
+    if getattr(args, "seed_recent_years", None) is not None:
+        cfg.pipeline.seed_recent_years = args.seed_recent_years
+    if getattr(args, "graph_budget_max", None) is not None:
+        cfg.pipeline.graph_budget_max = args.graph_budget_max
+    if getattr(args, "graph_budget_min", None) is not None:
+        cfg.pipeline.graph_budget_min = args.graph_budget_min
+    if getattr(args, "k_step1", None) is not None:
+        cfg.pipeline.k_step1 = args.k_step1
+    if getattr(args, "seed_num_queries", None) is not None:
+        cfg.pipeline.seed_num_queries = max(1, int(args.seed_num_queries))
+    if getattr(args, "seed_per_query", None) is not None:
+        cfg.pipeline.seed_per_query = max(1, int(args.seed_per_query))
+    if getattr(args, "anchor_top_k", None) is not None:
+        cfg.pipeline.anchor_top_k = max(1, int(args.anchor_top_k))
+    if getattr(args, "idea_count", None) is not None:
+        cfg.pipeline.idea_count = max(1, int(args.idea_count))
+
+    try:
+        seed_keywords = json.loads(args.keywords_json) if getattr(args, "keywords_json", None) else None
+    except json.JSONDecodeError as exc:
+        payload = {
+            "ok": False,
+            "command": "idea-generate",
+            "error_type": "JSONDecodeError",
+            "message": f"Invalid --keywords-json: {exc}",
+        }
+        print(render_user_output(payload))
+        return 1
+
+    run_dir = (
+        Path(args.resume_from_run_dir).expanduser().resolve()
+        if getattr(args, "resume_from_run_dir", None)
+        else ensure_run_dir(args.runs_dir, args.run_id, "idea_generate")
+    )
+    try:
+        summary = run_pipeline(
+            topic,
+            seed_keywords=seed_keywords,
+            domain=getattr(args, "domain", None),
+            pdf_paths=pdf_paths,
+            config=cfg,
+            output_dir=run_dir,
+            smoke_mode=bool(getattr(args, "smoke", False)),
+            resume_from_run_dir=getattr(args, "resume_from_run_dir", None),
+            save_intermediate_json=not bool(getattr(args, "no_intermediate_json", False)),
+        )
+    except Exception as exc:
+        payload = {
+            "ok": False,
+            "command": "idea-generate",
+            "query": topic,
+            "error_type": exc.__class__.__name__,
+            "message": str(exc),
+            "response_json": str(run_dir / "summary.json") if (run_dir / "summary.json").exists() else None,
+        }
+        print(render_user_output(payload))
+        return 1
+
+    ideas = summary.get("ideas", []) if isinstance(summary, dict) else []
+    workflow_mode = str(summary.get("workflow_mode") or getattr(cfg.pipeline, "workflow_mode", "default"))
+    payload = {
+        "ok": bool(summary.get("ok", True)),
+        "command": "idea-generate",
+        "query": topic,
+        "message": (
+            f"Current idea-generation workflow ({workflow_mode}) completed: "
+            f"{summary.get('idea_count', len(ideas))} idea(s), "
+            f"{summary.get('graph_paper_count', 0)} graph paper(s)."
+        ),
+        "workflow_mode": workflow_mode,
+        "report": str(run_dir / "step9_ideas.md") if (run_dir / "step9_ideas.md").exists() else None,
+        "response_json": str(run_dir / "summary.json"),
+    }
+    print(render_user_output(payload))
+    return 0 if payload["ok"] else 1
 
 
 def cmd_trend_report(args: argparse.Namespace) -> int:
@@ -5581,6 +6275,164 @@ def add_downstream_search_args(parser: argparse.ArgumentParser) -> None:
     add_output_args(parser)
 
 
+def add_workflow_common_args(parser: argparse.ArgumentParser) -> None:
+    parser.add_argument("--workflow", choices=["flash", "full"], default="flash", help="Workflow path: flash is compact and fast; full runs the comprehensive path.")
+    parser.add_argument("--env", dest="workflow_env", default=".env", help="Workflow .env path for KG, S2, and LLM credentials.")
+    parser.add_argument("--llm-api-key", default=None, help="OpenAI-compatible/DMX API key override for workflow LLM calls.")
+    parser.add_argument("--llm-base-url", default=None, help="OpenAI-compatible base URL, e.g. https://api.deepseek.com or https://api.openai.com/v1.")
+    parser.add_argument("--llm-api-url", default=None, help="Chat completions endpoint override for workflow components that expect a full endpoint.")
+    parser.add_argument("--llm-model", default=None, help="LLM model name for workflow calls.")
+    parser.add_argument("--llm-timeout", type=int, default=None, help="Per-call LLM timeout in seconds for workflow stages.")
+    parser.add_argument("--workflow-timeout", type=int, default=None, help="Whole subprocess timeout in seconds for each workflow stage.")
+    parser.add_argument("--smoke", action="store_true", help="Run workflow smoke/mock mode where supported.")
+
+
+def add_literature_review_workflow_args(parser: argparse.ArgumentParser) -> None:
+    add_downstream_search_args(parser)
+    add_workflow_common_args(parser)
+    parser.add_argument("--probe-top-k", type=int, default=None, help="Override probe SciAtlas search budget for the literature workflow.")
+    parser.add_argument("--round-top-k", type=int, default=None, help="Override round SciAtlas search budget for the literature workflow.")
+    parser.add_argument("--round1-action-limit", type=int, default=None, help="Override Round 1 search action count.")
+    parser.add_argument("--round2-action-limit", type=int, default=None, help="Override Round 2 search action count.")
+    parser.add_argument("--llm-paper-limit", type=int, default=None, help="Max paper cards sent into LLM planning stages.")
+    parser.add_argument("--enable-embedding-expansion", action="store_true", help="Enable heavy KG embedding-space Round 2 expansion.")
+    parser.add_argument(
+        "--subject-domain",
+        choices=["general", "chemistry", "biology"],
+        default="general",
+        help="Prompt constraint family for formal review generation.",
+    )
+    parser.add_argument(
+        "--report-stop-after",
+        choices=["bibliography", "outline", "packs", "full"],
+        default=None,
+        help="Override report generation stop stage. Flash defaults to packs; full defaults to full.",
+    )
+    parser.add_argument("--outline-timeout", type=int, default=None, help="Outline-stage LLM timeout in seconds.")
+    parser.add_argument("--integration-timeout", type=int, default=None, help="Integration-stage LLM timeout in seconds.")
+
+
+def add_idea_evaluate_workflow_args(parser: argparse.ArgumentParser) -> None:
+    add_downstream_search_args(parser)
+    add_workflow_common_args(parser)
+    parser.add_argument("--idea", dest="query", default=None, help="Research idea text; equivalent to --query.")
+    parser.add_argument("--pdf", default=None, metavar="PATH", help="Local PDF paper to review instead of idea text.")
+    parser.add_argument("--kg-top-k", type=int, default=None, help="Override KG search top-k for the review workflow.")
+    parser.add_argument("--s2-top-k", type=int, default=None, help="Override Semantic Scholar top-k for the review workflow.")
+    parser.add_argument("--manifest-top-k", type=int, default=None, help="Override paper count sent into PDF/XML manifest stage.")
+    parser.add_argument("--grounding-final-top-k", type=int, default=None, help="Override final paragraph grounding top-k.")
+    parser.add_argument("--max-reviewers", type=int, default=None, help="Maximum reviewer personas to sample.")
+    parser.add_argument("--reviewer-selection-top-k", type=int, default=None, help="Candidate reviewer pool cap before sampling.")
+    parser.add_argument("--reviewer-max-workers", type=int, default=None, help="Maximum reviewer-background subprocesses.")
+    parser.add_argument("--review-max-workers", type=int, default=None, help="Maximum reviewer-evaluation workers.")
+    parser.add_argument("--review-max-evidence-cards-per-section", type=int, default=None, help="Evidence cards per review section.")
+    parser.add_argument("--review-max-evidence-cards-per-query", type=int, default=None, help="Evidence cards per grounding query.")
+    parser.add_argument("--review-max-experiment-cards-per-section", type=int, default=None, help="Experiment cards per review section.")
+    parser.add_argument("--review-max-total-evidence-chars-per-section", type=int, default=None, help="Character budget per review section.")
+    parser.add_argument("--review-llm-timeout-seconds", type=int, default=None, help="Review/report LLM timeout in seconds.")
+    parser.add_argument("--rubric-llm-timeout-seconds", type=int, default=None, help="Rubric LLM timeout in seconds.")
+    parser.add_argument("--short-report", action="store_true", help="Generate compact meta-review even on the full workflow.")
+    parser.add_argument("--disable-llm-ranking", action="store_true", help="Skip search-stage LLM reranking.")
+    parser.add_argument("--disable-review-llm", action="store_true", help="Use deterministic review/report fallback.")
+
+
+def add_idea_generate_workflow_args(parser: argparse.ArgumentParser) -> None:
+    add_text_args(parser)
+    add_output_args(parser)
+    parser.add_argument(
+        "--pdf",
+        action="append",
+        default=None,
+        metavar="PATH",
+        help="Path to an input PDF paper. Repeatable.",
+    )
+    parser.add_argument(
+        "--keywords-json",
+        default=None,
+        help='Optional seed keywords JSON, e.g. \'[{"text":"graph","score":9}]\'.',
+    )
+    parser.add_argument(
+        "--workflow",
+        choices=["flash", "full"],
+        default=None,
+        help=(
+            "Choose the idea-generation path: flash for fast interactive runs "
+            "with compressed gate/selection stages, full for comprehensive runs."
+        ),
+    )
+    parser.add_argument(
+        "--preset",
+        choices=["default", "smoke", "flash", "full"],
+        default="default",
+        help="Apply a built-in pipeline preset. Use --workflow for the main flash/full choice.",
+    )
+    parser.add_argument(
+        "--smoke",
+        action="store_true",
+        help="Enable smoke mode and return partial results on failure.",
+    )
+    parser.add_argument(
+        "--seed-recent-years",
+        type=int,
+        default=None,
+        help="Override Step 1 seed recency window in years.",
+    )
+    parser.add_argument(
+        "--graph-budget-max",
+        type=int,
+        default=None,
+        help="Override Step 2 max research-graph size.",
+    )
+    parser.add_argument(
+        "--graph-budget-min",
+        type=int,
+        default=None,
+        help="Override Step 2 min research-graph size.",
+    )
+    parser.add_argument(
+        "--k-step1",
+        type=int,
+        default=None,
+        help="Override the number of seed papers Step 1 returns.",
+    )
+    parser.add_argument(
+        "--seed-num-queries",
+        type=int,
+        default=None,
+        help="Override the number of diverse Step 1 seed queries.",
+    )
+    parser.add_argument(
+        "--seed-per-query",
+        type=int,
+        default=None,
+        help="Override the number of candidate seeds kept per Step 1 query.",
+    )
+    parser.add_argument(
+        "--top-k",
+        "--anchor-top-k",
+        dest="anchor_top_k",
+        type=int,
+        default=None,
+        help="Override the number of anchor papers used during Step 1 retrieval.",
+    )
+    parser.add_argument(
+        "--idea-count",
+        type=int,
+        default=None,
+        help="Override the number of final ideas to generate.",
+    )
+    parser.add_argument(
+        "--resume-from-run-dir",
+        default=None,
+        help="Resume from an existing idea-generation workflow run directory.",
+    )
+    parser.add_argument(
+        "--no-intermediate-json",
+        action="store_true",
+        help="Do not save intermediate workflow JSON artifacts.",
+    )
+
+
 def add_researcher_review_args(parser: argparse.ArgumentParser) -> None:
     add_text_args(parser)
     add_output_args(parser)
@@ -5609,10 +6461,10 @@ def build_parser() -> argparse.ArgumentParser:
   make-report            Regenerate a Markdown report from saved artifacts
 
 Skill system:\n  skill list             List editable downstream skills\n  skill run <name>       Run a skill preset\n  skill init <name>      Create a local editable skill\n\nDownstream channels:
-  literature-review      Literature review material generation
+  literature-review      Current literature-review workflow
   idea-grounding         Research idea grounding and related-work search
-  idea-evaluate          Evidence collection for idea evaluation
-  idea-generate          Research idea seed discovery
+  idea-evaluate          Current automated idea-review workflow
+  idea-generate          Current multi-step idea-generation workflow
   trend-report           Research trend analysis
   researcher-review      Researcher background review
 
@@ -5621,8 +6473,8 @@ examples:
   sciatlas config
   sciatlas paper-search --text "open world agent" --mode vector --field title --top-k 3
   sciatlas search-papers --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
-  sciatlas literature-review --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
-  sciatlas idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
+  sciatlas literature-review --workflow flash --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024
+  sciatlas idea-evaluate --workflow flash --idea "LLM-based multi-perspective evaluation for scientific research ideas"
 
 input:
   --query TEXT                      expert query text
@@ -5649,7 +6501,7 @@ tips:
 
     parser.add_argument("--api-key", default=DEFAULT_API_KEY, help="SciAtlas API key; environment variables are recommended.")
 
-    parser.add_argument("--timeout", type=int, default=600, help="HTTP request timeout in seconds.")
+    parser.add_argument("--timeout", type=int, default=DEFAULT_TIMEOUT, help="HTTP request timeout in seconds.")
 
     parser.add_argument("--runs-dir", default=DEFAULT_RUNS_DIR, help="Directory for saved run artifacts.")
 
@@ -5764,8 +6616,8 @@ tips:
 
 
     # Downstream user channels from the SciAtlas paper.
-    p = sub.add_parser("literature-review", help="Downstream channel: literature review material generation.")
-    add_downstream_search_args(p)
+    p = sub.add_parser("literature-review", help="Run the current literature-review generation workflow.")
+    add_literature_review_workflow_args(p)
     p.set_defaults(
         func=cmd_literature_review,
         retrieval_mode="hybrid",
@@ -5794,9 +6646,8 @@ tips:
         report_max_items=5,
     )
 
-    p = sub.add_parser("idea-evaluate", help="Downstream channel: evidence collection for idea evaluation.")
-    add_downstream_search_args(p)
-    p.add_argument("--idea", dest="query", default=None, help="Research idea text; equivalent to --query.")
+    p = sub.add_parser("idea-evaluate", help="Run the current automated idea-review workflow.")
+    add_idea_evaluate_workflow_args(p)
     p.set_defaults(
         func=cmd_idea_evaluate,
         retrieval_mode="hybrid",
@@ -5811,18 +6662,10 @@ tips:
         report_max_items=5,
     )
 
-    p = sub.add_parser("idea-generate", help="Downstream channel: research idea seed discovery.")
-    add_downstream_search_args(p)
+    p = sub.add_parser("idea-generate", help="Run the current multi-step idea-generation workflow.")
+    add_idea_generate_workflow_args(p)
     p.set_defaults(
         func=cmd_idea_generate,
-        retrieval_mode="hybrid",
-        top_keywords=0,
-        max_titles=0,
-        max_refs=0,
-        bias_related="high",
-        bias_cooccurrence="high",
-        bias_exploration="high",
-        ranking_profile="discovery",
         report_max_items=8,
     )
 
@@ -5883,8 +6726,8 @@ tips:
   sciatlas config
   sciatlas paper-search --text "open world agent" --mode vector --field title --top-k 3
   sciatlas search-papers --retrieval-mode hybrid --query "open world agent" --keyword "high:open world agent" --top-k 3
-  sciatlas literature-review --query "open world agent" --keyword "high:open world agent" --top-k 3
-  sciatlas idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
+  sciatlas literature-review --workflow flash --query "open world agent" --keyword "high:open world agent"
+  sciatlas idea-evaluate --workflow flash --idea "LLM-based multi-perspective evaluation for scientific research ideas"
 
 input:
   --query TEXT                         expert query text
@@ -5924,12 +6767,12 @@ purpose:
   Retrieve papers with keyword, semantic, title, or hybrid KG retrieval.""",
 
         "literature-review": """examples:
-  sciatlas literature-review --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024 --keyword "high:open world agent" --top-k 3
-  sciatlas literature-review --query "retrieval augmented generation for scientific discovery" --keyword "high:retrieval augmented generation" --keyword "middle:knowledge graph" --top-k 5
+  sciatlas literature-review --workflow flash --query "open world agent" --domain "artificial intelligence" --time-range 2020-2024
+  sciatlas literature-review --workflow full --query "retrieval augmented generation for scientific discovery" --keyword "high:retrieval augmented generation" --keyword "middle:knowledge graph"
 
 purpose:
-  Retrieve core papers and generate a review-oriented report with paper pool,
-  timeline view, representative works, and writing suggestions.""",
+  Run the current literature_review_pipeline. Flash keeps a compact evidence path;
+  full keeps broader multi-round retrieval and report generation.""",
 
         "idea-grounding": """examples:
   sciatlas idea-grounding --idea "Communication-efficient multi-agent collaboration for long-horizon Minecraft construction tasks" --keyword "high:multi-agent collaboration" --top-k 3
@@ -5940,19 +6783,22 @@ purpose:
   similarity, difference, motivation, methodology, and evaluation design.""",
 
         "idea-evaluate": """examples:
-  sciatlas idea-evaluate --idea "LLM-based multi-perspective evaluation for scientific research ideas" --keyword "high:idea evaluation" --top-k 3
-  sciatlas idea-evaluate --idea "Federated and privacy-preserving knowledge editing for large language models" --keyword "high:knowledge editing" --keyword "middle:federated learning" --top-k 3
+  sciatlas idea-evaluate --workflow flash --idea "LLM-based multi-perspective evaluation for scientific research ideas"
+  sciatlas idea-evaluate --workflow full --idea "Federated and privacy-preserving knowledge editing for large language models" --keyword "high:knowledge editing" --keyword "middle:federated learning"
 
 purpose:
-  Collect KG evidence for novelty, feasibility, soundness, and differentiation.
-  Current version does not use LLM judging.""",
+  Run the current review_pipeline automated review workflow. Flash compresses
+  reviewer/evidence budgets; full keeps the broader rubric and review path.""",
 
         "idea-generate": """examples:
-  sciatlas idea-generate --query "knowledge editing for large language models" --keyword "high:knowledge editing" --top-k 5
-  sciatlas idea-generate --query "scientific idea evaluation and automated research" --keyword "high:idea evaluation" --keyword "middle:LLM as a judge" --top-k 5
+  sciatlas idea-generate --query "knowledge editing for large language models" --workflow flash
+  sciatlas idea-generate --query "knowledge editing for large language models" --workflow full --top-k 5
 
 purpose:
-  Use exploratory KG retrieval to discover possible idea seeds and topic combinations.""",
+  Run the current multi-step sciatlas_idea_gen workflow: anchor retrieval, graph construction,
+  trend/RSS extraction, inspiration retrieval, idea generation, and novelty checking.
+  Use --workflow flash for fast interactive runs with compressed gate/selection stages,
+  or --workflow full for broader evidence.""",
 
         "trend-report": """examples:
   sciatlas trend-report --query "open world agent" --time-range 2018-2025 --keyword "high:open world agent" --top-k 5

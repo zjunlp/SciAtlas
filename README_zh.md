@@ -54,7 +54,7 @@
 - **科研工作流自动化**：运行文献综述、idea grounding、idea evaluation、idea generation、趋势分析、相关作者检索和研究者画像；
 - **Agent 友好的输出**：保留 `request.json`、`response.json` 等机器可读产物，同时生成面向用户的 `summary.txt` 和 `report.md`；
 - **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill；
-- **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 把基础 `search-papers` 检索能力迁移成端到端下游任务技能，让 Codex、Claude Code 等工具型 Agent 从检索一路完成科研目标。
+- **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 把基础检索和当前专用 workflow 包装成端到端下游任务技能；文献综述、自动评审和 idea 生成都提供 `flash/full` 两条路径，让 Codex、Claude Code 等工具型 Agent 从检索一路完成科研目标。
 
 ## 📑 目录
 
@@ -104,6 +104,15 @@ pip install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"
 pipx install "git+https://github.com/zjunlp/SciAtlas.git#subdirectory=sciatlas"
 ```
 
+> **专用 workflow 前提**：上面的 GitHub 子目录和 `pipx` 安装只提供核心 CLI（健康检查、配置、计划、论文和作者检索）。`literature-review`、`idea-evaluate` 与 `idea-generate` 必须使用完整仓库及其工作流依赖；一键 `uv` 安装会自动完成。手动安装时执行：
+>
+> ```bash
+> git clone https://github.com/zjunlp/SciAtlas.git
+> cd SciAtlas
+> python -m pip install -e ./sciatlas
+> python -m pip install -r requirements-workflows.txt
+> ```
+
 安装后检查：
 
 ```bash
@@ -152,18 +161,18 @@ export LLM_MODEL="your-model-name"
 # 如果服务商使用特殊接口地址或鉴权头，可按需打开：
 # export LLM_CHAT_COMPLETIONS_URL="https://your-provider-or-gateway.example/v1/chat/completions"
 # export LLM_AUTH_HEADER="x-api-key: your-provider-api-key"
-export SCIATLAS_LLM_TIMEOUT=30
-export SCIATLAS_LLM_TEMPERATURE=0
-export SCIATLAS_LLM_MAX_TOKENS=512
+export LLM_TIMEOUT=180
+export LLM_TEMPERATURE=0.7
+export LLM_MAX_TOKENS=512
 ```
 
 这是可选项。只有当你希望 SciAtlas 在检索前，用你的 LLM API 从自然语言输入中提炼更好的关键词时，才需要配置。
 
 `LLM_PROVIDER` 保持 `chat_completions`，然后把 `LLM_API_KEY`、`LLM_BASE_URL` 和 `LLM_MODEL` 换成你的服务商参数。若服务商直接给出完整 chat-completions 接口地址，填写 `LLM_CHAT_COMPLETIONS_URL`；若需要自定义鉴权头，填写 `LLM_AUTH_HEADER`。
 
-不需要 LLM 时可以全部留空。SciAtlas 会自动使用内置关键词抽取，论文检索、文献综述、idea、趋势分析和研究者画像等流程都能正常运行。
+不需要 LLM 时可以全部留空。核心检索 CLI 会自动使用内置关键词抽取。文献综述、Idea 评审和 Idea 生成这三条专用 workflow 有各自的凭证要求；运行前请查看上面的专用 workflow 前提和对应说明。
 
-用户需要编辑的配置模板：[.env.example](.env.example#L7-L19)。只有需要 LLM 辅助关键词抽取时，才填写这些变量。
+用户需要编辑的配置模板：[.env.example](.env.example#L19-L45)。只有需要 LLM 辅助关键词抽取时，才填写这些变量。
 
 🖊 可选：OpenAlex 元数据支持
 
@@ -174,7 +183,7 @@ export OPENALEX_MAILTO=""
 
 OpenAlex 主要用于补充元数据或辅助 PDF 相关流程。README 中的常用 CLI 示例不依赖它。即使不填写这些变量，普通 SciAtlas 检索也可以正常运行。
 
-用户需要编辑的配置模板：[.env.example](.env.example#L24-L26)。只有需要 OpenAlex 辅助元数据支持时才填写。
+用户需要编辑的配置模板：[.env.example](.env.example#L50-L52)。只有需要 OpenAlex 辅助元数据支持时才填写。
 
 🖌 可选：本地 PDF 工作流需要 GROBID
 
@@ -200,7 +209,7 @@ Windows CMD：
 set GROBID_BASE_URL=http://127.0.0.1:8070
 ```
 
-用户需要编辑的配置模板：[.env.example](.env.example#L21-L22)。不处理本地 PDF 时可以留空。
+用户需要编辑的配置模板：[.env.example](.env.example#L47-L48)。不处理本地 PDF 时可以留空。
 
 运行时变量说明：
 
@@ -281,10 +290,10 @@ curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
 | `sciatlas author-papers` | 作者论文查询 | 指定作者论文 |
 | `sciatlas support-papers` | 支撑论文检索 | 候选作者的相关证据论文 |
 | `sciatlas paper-search` | 轻量底层论文检索 | 快速论文候选 |
-| `sciatlas literature-review` | 文献综述 | 核心论文池、时间线、写作提示 |
+| `sciatlas literature-review` | 文献综述 | `literature_review_pipeline` flash/full workflow 产物 |
 | `sciatlas idea-grounding` | idea 定位 | 相似工作和差异化证据 |
-| `sciatlas idea-evaluate` | idea 评估 | 新颖性、可行性、可靠性证据 |
-| `sciatlas idea-generate` | idea 生成 | 主题组合和 idea seeds |
+| `sciatlas idea-evaluate` | idea 评估 | `review_pipeline` flash/full 自动评审产物 |
+| `sciatlas idea-generate` | idea 生成 | `sciatlas_idea_gen` flash/full 多步 workflow 产物和 idea seeds |
 | `sciatlas trend-report` | 趋势分析 | 发展脉络和代表工作 |
 | `sciatlas researcher-review` | 研究者背景综述 | 研究轨迹与代表论文 |
 | `sciatlas skill` | 可编辑 skill 注册表 | 可复用工作流预设 |
@@ -371,12 +380,23 @@ sciatlas search-papers \
 
 下面的命令可以直接作为起点。你只需要替换 `--query`、`--idea`、`--author`、`--domain`、`--time-range` 和 `--keyword` 等参数。
 
+#### 如何选择 `flash` 和 `full`
+
+建议先用 `flash`。它适合快速交互、smoke test、初步判断方向是否值得继续。需要正式写综述、做更完整评审或保留更丰富证据链时，再切到 `full`。CLI 默认是 `flash`；可编辑 skill 中的 `literature-review-full`、`idea-evaluate-full` 和 `idea-generate-full` 对应完整版。
+
+| Workflow | `flash` | `full` |
+|---|---|---|
+| `literature-review` | 压缩 KG/S2 检索轮次、规划 action 和论文预算，通常停在 bibliography / outline / evidence packs 等轻量阶段。 | 保留更完整的多轮检索、论文池、outline、section packs，并继续生成/整合正式综述。 |
+| `idea-evaluate` | 压缩 KG/S2/manifest、reviewer 和 evidence budget，适合快速得到新颖性、可行性和修改方向判断。 | 保留更完整的 reviewer、rubric、grounding、evidence、review 和 report 路径，适合深入自动评审。 |
+| `idea-generate` | 压缩锚点检索、研究图、gate/selection 阶段，快速生成少量 idea seeds。 | 扩大 seed、研究图和灵感检索范围，并保留更完整的新颖性反馈路径。 |
+
 #### 文献综述
 
-用于快速形成初始阅读清单，并收集写作文献综述所需的核心证据。
+运行当前 `literature_review_pipeline` workflow。`flash` 会压缩检索轮次和报告深度，适合快速形成阅读清单；`full` 会保留更完整的多轮检索、证据筛选和综述生成。
 
 ```bash
 sciatlas literature-review \
+  --workflow flash \
   --query "retrieval augmented generation" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -384,12 +404,21 @@ sciatlas literature-review \
   --top-k 10
 ```
 
+```bash
+sciatlas literature-review \
+  --workflow full \
+  --query "retrieval augmented generation" \
+  --domain "artificial intelligence" \
+  --time-range 2020-2025
+```
+
 #### Idea Evaluation
 
-用于评估一个研究想法的新颖性、可行性和已有文献支撑。
+运行当前 `review_pipeline` 自动评审 workflow。`flash` 会压缩 reviewer、manifest 和 evidence budget，适合快速判断；`full` 会保留更完整的 reviewer/rubric/evidence/report 路径。
 
 ```bash
 sciatlas idea-evaluate \
+  --workflow flash \
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
@@ -398,19 +427,30 @@ sciatlas idea-evaluate \
   --top-k 10
 ```
 
+```bash
+sciatlas idea-evaluate \
+  --workflow full \
+  --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
+  --domain "artificial intelligence"
+```
+
 #### Idea Generation
 
-用于探索潜在主题组合，生成可继续扩展的研究方向。
+运行当前 `sciatlas_idea_gen` 多步 workflow：锚点论文检索、研究图构建、趋势/RSS 提取、灵感检索、idea 生成和新颖性检查。`flash` 会压缩 gate / selection 阶段，适合更快的实时交互；`full` 适合更完整的证据构建。
 
 ```bash
 sciatlas idea-generate \
   --query "knowledge editing for large language models" \
   --domain "artificial intelligence" \
-  --time-range 2020-2025 \
-  --keyword "high:knowledge editing" \
-  --keyword "middle:large language models" \
-  --keyword "low:continual learning" \
-  --top-k 10
+  --workflow flash
+```
+
+```bash
+sciatlas idea-generate \
+  --query "knowledge editing for large language models" \
+  --domain "artificial intelligence" \
+  --workflow full \
+  --top-k 5
 ```
 
 #### Trend Report
@@ -491,6 +531,9 @@ SciAtlas skills 是下游科研工作流的 JSON 预设，方便用户查看、�
 sciatlas skill list
 sciatlas skill show literature-review
 sciatlas skill run literature-review --query "open world agent" --keyword "high:open world agent"
+sciatlas skill run literature-review-full --query "open world agent" --keyword "high:open world agent"
+sciatlas skill run idea-evaluate --idea "LLM-based idea evaluation"
+sciatlas skill run idea-evaluate-full --idea "LLM-based idea evaluation"
 sciatlas skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent"
 ```
 
@@ -514,75 +557,49 @@ sciatlas skill run my-review --query "your topic"
 
 ## 🖊Agent Skill
 
-SciAtlas 还在 [`agent-skill/`](agent-skill/) 中打包了通用 Agent Skill。这些目录不是运行产物，也不是简单命令别名，而是面向 Codex、Claude Code 等工具型 Agent 的下游任务 playbook：它们会指导 Agent 从零开始帮助新用户安装/配置 CLI，在需要时获取邮箱、验证码或 API Token 反馈，只运行 SciAtlas 基础 `search-papers` 命令，读取 `runs/<run_id>/` 证据产物，并完成具体科研目标。
+> **想直接描述科研目标，并让 Agent 把流程跑完时，就使用 Agent Skill。** 如果你希望自己执行、调试和微调每条命令，请继续使用上面的 CLI 模板。
+
+Agent Skill 是供 Codex、Claude Code 等能够读取 `SKILL.md` 的工具使用的任务说明。安装后，你只需告诉 Agent 想了解或产出什么；它会完成安装或定位 SciAtlas、注册引导、环境配置、执行、读取运行产物和最终综合，交付科研结果而不只是命令模板。
 
 <p align="center">
   <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill 工作流演示" width="92%">
 </p>
 
 <p align="center">
-  <em>Agent Skill 演示：从用户请求出发，调用 SciAtlas 检索，读取运行产物，并生成面向具体科研任务的结果。</em>
+  <em>Agent Skill 演示：把科研需求变成检索或 workflow 运行、产物读取和面向任务的答案。</em>
 </p>
 
-已包含的技能：
+### 三步开始
 
-| Skill | 检索基础 | 下游目标 |
+1. 按下表选择最接近目标的 Skill。
+2. 通过 [Agent Skill 包安装说明](agent-skill/README.md#use) 安装该一个 Skill 目录（推荐）；只有确定会使用全部任务时，才安装全部 Skill。
+3. 开启新的 Agent 会话，用自然语言描述目标。例如：“梳理 2020 年以来 retrieval-augmented generation 的文献脉络”或“评估这个研究想法”。
+
+### 按目标选择 Skill
+
+| 你想做什么 | 使用哪个 Skill | 你会得到什么 |
 |---|---|---|
-| `sciatlas-quick-paper-search` | `search-papers` | 快速证据种子与下游任务分流 |
-| `sciatlas-literature-review` | `search-papers` | 阅读清单与 related work 报告 |
-| `sciatlas-idea-grounding` | `search-papers` | 为研究想法检索相似工作和差异化证据 |
-| `sciatlas-idea-evaluate` | `search-papers` | 评估新颖性、可行性和可靠性 |
-| `sciatlas-idea-generate` | `search-papers` | 生成有文献依据的研究 idea seeds |
-| `sciatlas-trend-report` | `search-papers` | 梳理主题演化、时间线和代表性论文 |
-| `sciatlas-researcher-review` | 仅 `search-papers` | 基于检索论文证据的研究者画像 |
+| 在投入更多时间前先判断一个主题 | `sciatlas-quick-paper-search` | 小规模、可核查的论文证据和下一步建议 |
+| 规划阅读路径、论文地图、related work 或综述 | `sciatlas-literature-review` | 综述大纲、证据包或正式综述 |
+| 判断一个 idea 是否与已有工作重叠 | `sciatlas-idea-grounding` | 前序工作矩阵、差异化风险和下一轮检索 |
+| 判断一个 idea 或论文是否值得继续做 | `sciatlas-idea-evaluate` | 自动评审、reviewer/rubric 证据和修改建议 |
+| 从一个主题出发寻找研究方向 | `sciatlas-idea-generate` | 有文献依据的 idea seeds 和验证方向 |
+| 解释一个领域如何随时间演化 | `sciatlas-trend-report` | 时间线、代表论文和新兴信号 |
+| 根据检索到的论文整理研究者工作 | `sciatlas-researcher-review` | 有证据依据的研究者画像，不是权威履历 |
 
-### Git
+### Agent 会做什么，你需要提供什么
 
-Git 是 Agent Skill 包的源副本。先克隆一次；之后需要更新技能说明时，直接拉取仓库即可：
+Agent 会安装或定位 SciAtlas、引导浏览器注册、配置环境变量、运行允许的检索或 workflow、读取 `runs/<run_id>/` 产物并撰写最终答案。你只需提供程序无法知道的信息：邮箱验证码、返回的 SciAtlas Token、缺失的 LLM/S2/KG 密钥、本地 PDF，或一次必要的任务范围澄清。不要把 Token 和运行产物放进 `agent-skill/`。
 
-```bash
-git clone https://github.com/zjunlp/SciAtlas.git
-cd SciAtlas
-git pull
-```
+### 怎么选择 `flash` 和 `full`
 
-下面的复制命令都在仓库根目录执行。
+文献综述、idea 评估和 idea 生成这三类 Skill 都先用 `flash`：速度更快，但保留主要证据链。只有你要求更广覆盖，或 `flash` 的产物对所需深度不足时，Agent 才切到 `full`。无论哪种模式都只安装同一个 Skill 目录；`literature-review-full`、`idea-evaluate-full` 和 `idea-generate-full` 是 `sciatlas skill run` 的 CLI JSON 预设名，不是 Agent Skill 目录。
 
-### Claude Code
+底层执行时，快速检索、idea grounding、趋势分析和研究者画像只使用 `search-papers`；文献综述、idea 评估和 idea 生成分别调用专用 workflow。完整的执行边界和 artifact 说明见 [`agent-skill/README.md`](agent-skill/README.md)。
 
-Claude Code 会从 macOS/Linux 的 `~/.claude/skills` 或 Windows 的 `%USERPROFILE%\.claude\skills` 读取本地技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后重启 Claude Code 或刷新工作区。
+### 安装所选 Skill
 
-```powershell
-# Windows PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
-Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
-```
-
-```bash
-# macOS / Linux
-mkdir -p ~/.claude/skills
-cp -R ./agent-skill/sciatlas-* ~/.claude/skills/
-```
-
-如果只想让某个项目使用这些技能，也可以把同一组 skill 放在项目内的 `.claude/skills/` 目录中。只安装某一个工作流时，把 `sciatlas-*` 换成具体目录名，例如 `sciatlas-literature-review`。
-
-### Codex
-
-Codex 使用已安装的 Codex 环境，并从 macOS/Linux 的 `~/.codex/skills` 或 Windows 的 `%USERPROFILE%\.codex\skills` 读取技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后开启新的 Codex 会话。
-
-```powershell
-# Windows PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.codex\skills\"
-```
-
-```bash
-# macOS / Linux
-mkdir -p ~/.codex/skills
-cp -R ./agent-skill/sciatlas-* ~/.codex/skills/
-```
-
-同一组 skill 目录可以同时安装到 Claude Code 和 Codex。每个辅助 skill 都是自包含的：`SKILL.md` 是主要说明文件；不要把 API Token 或运行产物放进 `agent-skill/`；任务执行时让 Agent 使用外部的 `SCIATLAS_API_KEY`，并读取 `runs/<run_id>/` 中的证据产物。Agent Skill 内部唯一的 SciAtlas 检索原语仍然是 `search-papers`，综述、评估、趋势和画像结果由 Agent 基于保存证据综合生成。
+[Agent Skill 包安装说明](agent-skill/README.md#use) 是唯一的安装参考，其中包含 Codex 与 Claude Code 在 Windows、macOS 和 Linux 上的命令，并明确区分“安装一个所选 Skill”和“安装全部 Skill”。安装后开启新的会话并直接描述科研目标；所选 `SKILL.md` 就是 Agent 进行安装、执行、读取产物和综合回答时遵循的唯一操作说明。
 
 ---
 

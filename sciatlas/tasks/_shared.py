@@ -19,7 +19,6 @@ from ..llm.prompts import (
     IDEA_EVALUATION_SYSTEM_PROMPT,
     IDEA_EVALUATION_USER_PROMPT,
     build_author_profile_prompt,
-    build_idea_generation_prompt,
     build_trend_prompt,
 )
 from ..search.planner import build_search_plan
@@ -881,60 +880,9 @@ def execute_author_profile(request: SciAtlasRequest, run_dir: Path, client: SciA
 
 
 def execute_idea_generation(request: SciAtlasRequest, run_dir: Path, client: SciAtlasApiClient) -> dict[str, Any]:
-    params = merge_task_params(request.task_type, request.params)
-    topic_text = normalize_whitespace(request.input_payload.get("topic_text") or request.input_payload.get("idea_text"))
-    if not topic_text:
-        raise ValueError(f"{TASK_IDEA_GENERATION} requires topic_text or idea_text.")
+    from ._idea_generation_workflow import execute_current_idea_generation
 
-    search_artifact_dir = ensure_dir(run_dir / "artifacts" / "search")
-    plan = _build_search_plan(
-        input_payload={"idea_text": topic_text},
-        params=params,
-        env_path=request.env_path,
-        artifact_dir=search_artifact_dir,
-    )
-    _, search_payload, search_result_path = _run_search_via_api(
-        client=client,
-        plan=plan,
-        params=params,
-        env_path=request.env_path,
-        artifact_dir=search_artifact_dir,
-        api_top_k=int(params["search_api_top_k"]),
-        rerank_top_k=int(params["final_paper_count_for_summary"]),
-    )
-
-    ranked_papers = [
-        _paper_card_from_ranked_item(item, abstract_char_limit=int(params["abstract_char_limit"]))
-        for item in search_payload.get("ranking", {}).get("papers", [])
-        if isinstance(item, dict)
-    ]
-    llm_artifact_path = run_dir / "artifacts" / "idea_generation.raw.json"
-    raw_ideas = call_llm_json(
-        env_path=request.env_path,
-        params=params,
-        system_prompt="You are an expert research idea generator and only return valid JSON.",
-        user_prompt=build_idea_generation_prompt(
-            ranked_papers,
-            idea_count=int(params["idea_count"]),
-            abstract_char_limit=int(params["abstract_char_limit"]),
-        ),
-        artifact_path=llm_artifact_path,
-    )
-    ideas_list = raw_ideas.get("ideas", []) if isinstance(raw_ideas, dict) else []
-    ideas = _pick_ideas_references(ideas_list, ranked_papers)
-    return {
-        "status": "ok",
-        "input_summary": {"topic_text": truncate_text(topic_text, max_chars=220)},
-        "params_effective": params,
-        "artifacts": {
-            "search_result_path": str(search_result_path.resolve()),
-            "idea_generation_raw_path": str(llm_artifact_path.resolve()),
-        },
-        "result": {
-            "query_text": topic_text,
-            "ideas": ideas,
-        },
-    }
+    return execute_current_idea_generation(request, run_dir, client)
 
 
 def execute_request(request: SciAtlasRequest, run_dir: Path) -> dict[str, Any]:

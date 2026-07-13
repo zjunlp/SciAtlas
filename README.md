@@ -65,7 +65,7 @@ With the client, SciAtlas becomes a practical research assistant for:
 - **research workflow automation**: run literature review, idea grounding, idea evaluation, idea generation, trend analysis, related-author retrieval, and researcher profiling;
 - **agent-friendly outputs**: keep reproducible machine-readable artifacts such as `request.json` and `response.json`, plus user-facing `summary.txt` and `report.md`;
 - **editable CLI skills**: inspect, copy, modify, and rerun common downstream workflows as reusable JSON skills;
-- **portable Agent Skill pack**: use [`agent-skill/`](agent-skill/) to migrate the base `search-papers` capability into end-to-end downstream tasks for tools such as Codex, Claude Code, and other coding agents.
+- **portable Agent Skill pack**: use [`agent-skill/`](agent-skill/) to migrate SciAtlas retrieval and the current literature-review, automated-review, and idea-generation workflows into end-to-end downstream tasks for tools such as Codex, Claude Code, and other coding agents.
 
 ## 📑 Table of Contents
 
@@ -103,10 +103,13 @@ powershell -ExecutionPolicy Bypass -c "irm https://raw.githubusercontent.com/zju
 ```
 
 The installer downloads the full repository to `~/SciAtlas`, creates a `uv`
-virtual environment, installs the SciAtlas CLI, and also exposes `sciatlas`
-through `uv tool install`.
+virtual environment, installs the SciAtlas CLI and workflow dependencies, and
+also exposes an editable `sciatlas` command through `uv tool install`.
 
-Package-only alternatives are also supported.
+Package-only alternatives are supported for the core CLI: health checks,
+configuration, plans, and hosted paper/author retrieval. They do **not** ship
+the repository-level literature-review, idea-evaluate, or idea-generate
+workflows.
 
 Install directly from GitHub:
 
@@ -170,18 +173,18 @@ export LLM_MODEL="your-model-name"
 # Optional when your provider uses a custom endpoint or auth header:
 # export LLM_CHAT_COMPLETIONS_URL="https://your-provider-or-gateway.example/v1/chat/completions"
 # export LLM_AUTH_HEADER="x-api-key: your-provider-api-key"
-export SCIATLAS_LLM_TIMEOUT=30
-export SCIATLAS_LLM_TEMPERATURE=0
-export SCIATLAS_LLM_MAX_TOKENS=512
+export LLM_TIMEOUT=180
+export LLM_TEMPERATURE=0.7
+export LLM_MAX_TOKENS=512
 ```
 
 This step is optional. Configure it only when you want SciAtlas to use your LLM API to turn a free-form query into better search keywords.
 
 Keep `LLM_PROVIDER=chat_completions`, then replace `LLM_API_KEY`, `LLM_BASE_URL`, and `LLM_MODEL` with your provider values. If your provider gives a full chat-completions endpoint, set `LLM_CHAT_COMPLETIONS_URL`; if it requires a custom auth header, set `LLM_AUTH_HEADER`.
 
-Leave the LLM values empty if you do not need this. SciAtlas will use built-in keyword extraction, and normal search, review, idea, trend, and researcher workflows still run.
+Leave the LLM values empty if you do not need this. The core retrieval CLI will use built-in keyword extraction. Dedicated literature-review, idea-evaluate, and idea-generate workflows have their own credential requirements; see [Workflow prerequisites](#workflow-prerequisites) and the relevant workflow section before running them.
 
-User-editable template: [.env.example](.env.example#L7-L19). Set these variables only if you want LLM-assisted keyword extraction.
+User-editable template: [.env.example](.env.example#L19-L45). Set these variables only if you want LLM-assisted keyword extraction.
 
 🖊 Optional: OpenAlex metadata support
 
@@ -192,7 +195,7 @@ export OPENALEX_MAILTO=""
 
 OpenAlex is useful when you want extra metadata or PDF-related support. It is not required for the main CLI examples in this README. If you leave these variables empty, normal SciAtlas retrieval still works.
 
-User-editable template: [.env.example](.env.example#L24-L26). Set these only if you want OpenAlex-assisted metadata support.
+User-editable template: [.env.example](.env.example#L50-L52). Set these only if you want OpenAlex-assisted metadata support.
 
 🖌 Optional: GROBID for local PDF workflows
 
@@ -218,7 +221,7 @@ Windows CMD:
 set GROBID_BASE_URL=http://127.0.0.1:8070
 ```
 
-User-editable template: [.env.example](.env.example#L21-L22). Leave `GROBID_BASE_URL` empty unless you process local PDFs.
+User-editable template: [.env.example](.env.example#L47-L48). Leave `GROBID_BASE_URL` empty unless you process local PDFs.
 
 Runtime variables:
 
@@ -302,10 +305,10 @@ curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
 | `sciatlas author-papers` | Author paper lookup | Papers by a specified author |
 | `sciatlas support-papers` | Support-paper retrieval | Evidence papers for candidate authors |
 | `sciatlas paper-search` | Lightweight low-level paper search | Fast paper candidates |
-| `sciatlas literature-review` | Literature review | Core paper pool, timeline, writing hints |
+| `sciatlas literature-review` | Literature review | `literature_review_pipeline` flash/full workflow artifacts |
 | `sciatlas idea-grounding` | Idea grounding | Similar works and differentiation evidence |
-| `sciatlas idea-evaluate` | Idea evaluation | Evidence for novelty, feasibility, and soundness |
-| `sciatlas idea-generate` | Idea generation | Topic combinations and idea seeds |
+| `sciatlas idea-evaluate` | Idea evaluation | `review_pipeline` flash/full automated review artifacts |
+| `sciatlas idea-generate` | Idea generation | `sciatlas_idea_gen` flash/full workflow artifacts and idea seeds |
 | `sciatlas trend-report` | Trend analysis | Evolution evidence and representative works |
 | `sciatlas researcher-review` | Researcher background review | Research trajectory and representative works |
 | `sciatlas skill` | Editable skill registry | Reusable workflow presets |
@@ -390,9 +393,35 @@ sciatlas search-papers \
 
 Each workflow prints a concise terminal summary and saves full artifacts under `runs/<run_id>/`.
 
+#### Workflow prerequisites
+
+`literature-review`, `idea-evaluate`, and `idea-generate` run code stored at
+the repository root. Use the installer above, or prepare a full checkout before
+using them:
+
+```bash
+git clone https://github.com/zjunlp/SciAtlas.git
+cd SciAtlas
+python -m pip install -e ./sciatlas
+python -m pip install -r requirements-workflows.txt
+```
+
+The GitHub `#subdirectory=sciatlas` and `pipx` commands in the installation
+section remain appropriate for the core retrieval CLI only.
+
+#### Choosing `flash` or `full`
+
+Use `flash` first when you want a fast interactive run, a smoke test, or enough evidence to decide whether to continue. Use `full` when you need a more complete artifact set for writing, review, or final decision making. The CLI defaults to `flash`; the editable skill registry exposes full presets as `literature-review-full`, `idea-evaluate-full`, and `idea-generate-full`.
+
+| Workflow | `flash` | `full` |
+|---|---|---|
+| `literature-review` | Compact KG/S2 search, fewer planning actions, stops at bibliography/outline/evidence packs when appropriate. | Broader multi-round retrieval, larger paper budget, full outline, section packs, and formal review drafting/integration. |
+| `idea-evaluate` | Smaller KG/S2/manifest budgets, fewer reviewer/evidence branches, compact meta-review direction. | Broader reviewer, rubric, grounding, evidence, review, and report path for deeper critique. |
+| `idea-generate` | Compact anchor retrieval and graph, compressed gate/selection stages, one fast idea pass. | Larger seed retrieval, broader graph/inspiration search, and fuller novelty-feedback path. |
+
 #### Literature Review
 
-Build an initial reading list and get evidence for writing a literature review.
+Run the current literature-review workflow. Use `flash` for a quick outline/evidence-pack path, or `full` for formal review drafting and integration.
 
 ```bash
 sciatlas literature-review \
@@ -400,12 +429,20 @@ sciatlas literature-review \
   --domain "artificial intelligence" \
   --time-range 2020-2025 \
   --keyword "high:retrieval augmented generation" \
-  --top-k 10
+  --top-k 10 \
+  --workflow flash
+```
+
+```bash
+sciatlas literature-review \
+  --query "retrieval augmented generation" \
+  --domain "artificial intelligence" \
+  --workflow full
 ```
 
 #### Idea Evaluation
 
-Check whether a proposed research idea is novel, feasible, and well supported by existing work.
+Run the current automated review workflow for novelty, feasibility, soundness, reviewer concerns, and revision direction. Use `flash` for a compact review, or `full` for broader reviewer/rubric/evidence branches.
 
 ```bash
 sciatlas idea-evaluate \
@@ -414,22 +451,33 @@ sciatlas idea-evaluate \
   --time-range 2020-2025 \
   --keyword "high:idea evaluation" \
   --keyword "middle:LLM as a judge" \
-  --top-k 10
+  --top-k 10 \
+  --workflow flash
+```
+
+```bash
+sciatlas idea-evaluate \
+  --idea "LLM-based multi-perspective evaluation for scientific research ideas" \
+  --workflow full
 ```
 
 #### Idea Generation
 
-Explore promising topic combinations and generate candidate research directions.
+Run the current multi-step idea-generation workflow to build a research graph, retrieve inspirations, generate candidate ideas, and check novelty. Choose `flash` for faster interactive runs with compressed gate/selection stages, or `full` for a broader research graph and inspiration search.
 
 ```bash
 sciatlas idea-generate \
   --query "knowledge editing for large language models" \
   --domain "artificial intelligence" \
-  --time-range 2020-2025 \
-  --keyword "high:knowledge editing" \
-  --keyword "middle:large language models" \
-  --keyword "low:continual learning" \
-  --top-k 10
+  --workflow flash
+```
+
+```bash
+sciatlas idea-generate \
+  --query "knowledge editing for large language models" \
+  --domain "artificial intelligence" \
+  --workflow full \
+  --top-k 5
 ```
 
 #### Trend Report
@@ -512,6 +560,9 @@ SciAtlas skills are JSON presets for downstream research workflows. They make co
 sciatlas skill list
 sciatlas skill show literature-review
 sciatlas skill run literature-review --query "open world agent" --keyword "high:open world agent"
+sciatlas skill run literature-review-full --query "open world agent" --keyword "high:open world agent"
+sciatlas skill run idea-evaluate --idea "LLM-based idea evaluation"
+sciatlas skill run idea-evaluate-full --idea "LLM-based idea evaluation"
 sciatlas skill run --dry-run literature-review --query "open world agent" --keyword "high:open world agent"
 ```
 
@@ -545,75 +596,49 @@ User-defined skills can override built-in skills with the same name.
 
 ## 🖊Agent Skill
 
-SciAtlas also ships a portable Agent Skill pack under [`agent-skill/`](agent-skill/). These are not runtime outputs or simple command aliases. They are downstream task playbooks that teach tools such as Codex, Claude Code, and other coding agents how to bootstrap a new user's environment, obtain/configure the API token with user feedback when needed, run only SciAtlas's base `search-papers` command, read saved artifacts, and complete a research goal.
+> **Use an Agent Skill when you want to describe a research goal in plain language and have an agent complete the workflow.** Use the CLI templates above when you prefer to run and tune every command yourself.
+
+An Agent Skill is a task guide for Codex, Claude Code, and similar tools that understand `SKILL.md`. After you install a Skill, you tell the agent what you want to learn or produce. It handles the routine steps—setup, registration guidance, configuration, execution, artifact reading, and synthesis—then returns a research result rather than only a command to copy.
 
 <p align="center">
   <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
 </p>
 
 <p align="center">
-  <em>Agent Skill demo: from a user request to SciAtlas retrieval, artifact reading, and task-specific research output.</em>
+  <em>Agent Skill demo: turn a research request into retrieval or workflow runs, artifact reading, and a task-specific answer.</em>
 </p>
 
-Included skills:
+### Start in three steps
 
-| Skill | Retrieval base | Downstream use case |
+1. Choose the Skill that matches the result you want below.
+2. Install that one Skill directory (recommended) with the [Agent Skill pack setup guide](agent-skill/README.md#use). Install every Skill only if you expect to use every task.
+3. Start a new agent session and describe the goal naturally—for example, “Map the literature on retrieval-augmented generation since 2020” or “Critique this research idea.”
+
+### Choose a Skill by your goal
+
+| If you want to… | Start with | You will get… |
 |---|---|---|
-| `sciatlas-quick-paper-search` | `search-papers` | Small evidence seed and downstream routing |
-| `sciatlas-literature-review` | `search-papers` | Reading lists and related-work reports |
-| `sciatlas-idea-grounding` | `search-papers` | Prior-art grounding for research ideas |
-| `sciatlas-idea-evaluate` | `search-papers` | Novelty, feasibility, and soundness checks |
-| `sciatlas-idea-generate` | `search-papers` | Literature-grounded idea seeds |
-| `sciatlas-trend-report` | `search-papers` | Timeline and trend analysis |
-| `sciatlas-researcher-review` | `search-papers` only | Researcher profiles from retrieved paper evidence |
+| Check a topic before committing more time | `sciatlas-quick-paper-search` | A small evidence-backed paper set and the best next step |
+| Build a reading path, paper map, related-work section, or review | `sciatlas-literature-review` | An outline, evidence packs, or a formal review |
+| Test whether an idea overlaps with prior work | `sciatlas-idea-grounding` | A prior-art matrix, differentiation risks, and next queries |
+| Decide whether an idea or paper is worth pursuing | `sciatlas-idea-evaluate` | Automated review, reviewer/rubric evidence, and revision advice |
+| Find research directions from a topic | `sciatlas-idea-generate` | Literature-grounded idea seeds and validation directions |
+| Explain how a field has changed over time | `sciatlas-trend-report` | A timeline, representative papers, and emerging signals |
+| Summarize a researcher's work from retrieved papers | `sciatlas-researcher-review` | An evidence-grounded profile, not an authoritative CV |
 
-### Git
+### What the agent does—and what you provide
 
-Git is the source checkout for the Agent Skill pack. Clone it once, then pull the repository when you want updated skill instructions:
+The agent installs or locates SciAtlas, guides browser registration, configures variables, runs the allowed retrieval or workflow, reads `runs/<run_id>/` artifacts, and writes the final answer. You only need to provide information a program cannot know: an email verification code, returned SciAtlas token, missing LLM/S2/KG credentials, a local PDF, or one necessary scope clarification. Keep tokens and run artifacts outside `agent-skill/`.
 
-```bash
-git clone https://github.com/zjunlp/SciAtlas.git
-cd SciAtlas
-git pull
-```
+### `flash` or `full`?
 
-Run the copy commands below from the repository root.
+For literature review, idea evaluation, and idea generation, the Agent starts with `flash`: a faster path that preserves the main evidence trail. It switches to `full` only when you ask for broader coverage or the flash artifacts are too thin. You install one Skill directory either way—`literature-review-full`, `idea-evaluate-full`, and `idea-generate-full` are CLI JSON preset names for `sciatlas skill run`, not Agent Skill directories.
 
-### Claude Code
+Under the hood, quick search, idea grounding, trend analysis, and researcher profiling use `search-papers` only. Literature review, idea evaluation, and idea generation use their dedicated workflows. The full execution boundaries and artifacts are documented in [`agent-skill/README.md`](agent-skill/README.md).
 
-Claude Code loads filesystem skills from `~/.claude/skills` on macOS/Linux or `%USERPROFILE%\.claude\skills` on Windows. Copy the packaged SciAtlas skill directories there, then restart Claude Code or refresh the workspace.
+### Install the selected Skill
 
-```powershell
-# Windows PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
-Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
-```
-
-```bash
-# macOS / Linux
-mkdir -p ~/.claude/skills
-cp -R ./agent-skill/sciatlas-* ~/.claude/skills/
-```
-
-You can also keep the same skill directories in a project-local `.claude/skills/` folder when the workflows should stay scoped to one repository. To install only one workflow, replace `sciatlas-*` with a specific folder such as `sciatlas-literature-review`.
-
-### Codex
-
-Codex uses the installed Codex environment and loads skills from `~/.codex/skills` on macOS/Linux or `%USERPROFILE%\.codex\skills` on Windows. Copy the packaged SciAtlas skill directories there, then start a new Codex session.
-
-```powershell
-# Windows PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
-Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.codex\skills\"
-```
-
-```bash
-# macOS / Linux
-mkdir -p ~/.codex/skills
-cp -R ./agent-skill/sciatlas-* ~/.codex/skills/
-```
-
-The same skill directories can be installed in both tools. Each helper skill is self-contained: keep `SKILL.md` as the source of truth, keep API tokens and run artifacts out of `agent-skill/`, and let the agent use `SCIATLAS_API_KEY` plus `runs/<run_id>/` artifacts during the task. Inside these Agent Skills, `search-papers` is the only SciAtlas retrieval primitive; the downstream review, idea, trend, or researcher result is produced by the agent reading saved evidence and synthesizing it.
+The [Agent Skill pack setup guide](agent-skill/README.md#use) is the canonical installation reference. It includes the commands for Codex and Claude Code on Windows, macOS, and Linux; it also makes the “one selected Skill” and “all Skills” choices explicit. After installation, start a new session and describe the research goal. The selected `SKILL.md` is the source of truth for setup, execution, artifact reading, and final synthesis.
 
 ---
 

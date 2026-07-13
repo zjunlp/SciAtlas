@@ -111,16 +111,17 @@ Push-Location $targetDir
 try {
   uv venv
 
-  Write-Step "Installing SciAtlas CLI into .venv"
+  Write-Step "Installing SciAtlas CLI and workflow dependencies into .venv"
   uv pip install -e ".\sciatlas"
+  uv pip install -r ".\requirements-workflows.txt"
 
   if (-not (Test-Path ".env") -and (Test-Path ".env.example")) {
     Copy-Item ".env.example" ".env"
   }
 
   if (-not $SkipToolInstall) {
-    Write-Step "Installing global sciatlas command with uv tool"
-    uv tool install --force ".\sciatlas"
+    Write-Step "Installing editable global sciatlas command with workflow dependencies"
+    uv tool install --editable --with-requirements ".\requirements-workflows.txt" --force ".\sciatlas"
   }
 
   $localCli = Join-Path $targetDir ".venv\Scripts\sciatlas.exe"

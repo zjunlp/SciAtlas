@@ -1,4 +1,4 @@
 interface:
   display_name: "SciAtlas Idea Evaluate"
-  short_description: "Evaluate an idea using search-papers evidence"
-  default_prompt: "Use $sciatlas-idea-evaluate to set up SciAtlas if needed, run only search-papers, and assess this idea for novelty, feasibility, and soundness."
+  short_description: "Zero-start flash/full idea review"
+  default_prompt: "Use $sciatlas-idea-evaluate to handle setup, run the flash workflow, read artifacts, and assess this idea for novelty, feasibility, soundness, and revision direction."

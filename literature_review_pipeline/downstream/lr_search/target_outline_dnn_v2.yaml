@@ -1,0 +1,151 @@
+# Target outline for DNN-architecture case study v2.
+#
+# What this outline does, relative to method_timeline_spec.yaml:
+#   - Existing 6 lanes (C9 / C1 / C5 / C2 / C3 / C7) inherit unchanged.
+#   - Three new lanes are discovered via S2:
+#       * C12 "State-Space Models / Mamba" — S4 / Mamba / Mamba-2 / RWKV / Hyena
+#       * C13 "Generative Adversarial Nets" — GAN / DCGAN / WGAN / StyleGAN / BigGAN ...
+#       * C14 "Graph Neural Networks"      — GCN / GAT / GraphSAGE / GIN / MPNN ...
+#
+# Note: the DNN corpus retrieval missed almost all of these families; most
+# seeds will arrive via the S2 ``named_fetch`` stage rather than corpus_rescan.
+
+topic:
+  title: "Evolution of Deep Neural Network Architectures"
+  subtitle: "Canonical anchors per method family · filled = retrieved or S2-verified, dashed = still injected"
+  time_range: [1955, 2026]
+  current_year: 2026
+
+artifacts:
+  search_result:      ../runs/case_dnn_arch/artifacts/lr_search/search_result.json
+  clusters_recovered: ../runs/case_dnn_arch/artifacts/lr_search/clusters_recovered.json
+  current_spec:       method_timeline_spec.yaml
+
+defaults:
+  llm_confidence_threshold: 0.65
+  max_auto_extras_per_lane: 3
+  llm_batch_size: 25
+  llm_max_parallel: 6
+
+clusters:
+  - id: C9
+    name: "MLP / Foundational"
+    color: "#5B6770"
+    source: {mode: inherit, from_lane: C9}
+
+  - id: C1
+    name: "CNN Architectures"
+    color: "#1E88E5"
+    source: {mode: inherit, from_lane: C1}
+
+  - id: C5
+    name: "RNN / Sequence"
+    color: "#FB8C00"
+    source: {mode: inherit, from_lane: C5}
+
+  - id: C2
+    name: "Transformer Family"
+    color: "#6A1B9A"
+    source: {mode: inherit, from_lane: C2}
+
+  # ------------------------------------------------------------------
+  # C12: brand-new family — State-Space Models / Mamba.
+  # Modern Transformer alternatives with sub-quadratic complexity.
+  # ------------------------------------------------------------------
+  - id: C12
+    name: "State-Space Models / Mamba"
+    color: "#C2185B"
+    description: "Sub-quadratic sequence models based on (continuous or discrete) state-space recurrence, positioned as Transformer alternatives. Includes structured state-space models (S4 lineage), selective state-space models (Mamba lineage), and linear-attention RNN hybrids (RWKV, Hyena)."
+    seed_anchors:
+      - {label: "HiPPO",    title: "HiPPO: Recurrent Memory with Optimal Polynomial Projections",                                                       year: 2020, first_author: "Gu et al.",      citation_count: 350,  venue: "NeurIPS"}
+      - {label: "S4",       title: "Efficiently Modeling Long Sequences with Structured State Spaces",                                                  year: 2022, first_author: "Gu, Goel, Ré",   citation_count: 2000, venue: "ICLR"}
+      - {label: "S5",       title: "Simplified State Space Layers for Sequence Modeling",                                                                year: 2023, first_author: "Smith et al.",   citation_count: 350,  venue: "ICLR"}
+      - {label: "Mamba",    title: "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",                                                  year: 2023, first_author: "Gu, Dao",        citation_count: 1500, venue: "arXiv"}
+      - {label: "Mamba-2",  title: "Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality",         year: 2024, first_author: "Dao, Gu",        citation_count: 500,  venue: "ICML"}
+      - {label: "RWKV",     title: "RWKV: Reinventing RNNs for the Transformer Era",                                                                    year: 2023, first_author: "Peng et al.",    citation_count: 900,  venue: "EMNLP Findings"}
+      - {label: "Hyena",    title: "Hyena Hierarchy: Towards Larger Convolutional Language Models",                                                     year: 2023, first_author: "Poli et al.",    citation_count: 600,  venue: "ICML"}
+    family_keywords:
+      - "state space model"
+      - "state-space model"
+      - "structured state space"
+      - "selective state"
+      - "mamba"
+      - "linear attention"
+      - "linear recurrence"
+      - "RWKV"
+      - "Hyena"
+    source:
+      mode: discover
+      stages: [corpus_rescan, named_fetch, recommend_expansion]
+      recommend_per_seed: 6
+
+  - id: C3
+    name: "Diffusion / Score-Based"
+    color: "#00838F"
+    source: {mode: inherit, from_lane: C3}
+
+  # ------------------------------------------------------------------
+  # C13: brand-new family — Generative Adversarial Networks.
+  # Dominant generative model 2014-2020. The original DNN retrieval almost
+  # entirely missed this thread; expect most seeds to come from named_fetch.
+  # ------------------------------------------------------------------
+  - id: C13
+    name: "Generative Adversarial Nets"
+    color: "#E53935"
+    description: "Generative models trained via a minimax game between a generator and a discriminator. Includes the original GAN formulation, deep convolutional GANs, Wasserstein objectives, progressive growth, style-conditioned generation, and large-scale image GANs."
+    seed_anchors:
+      - {label: "GAN",         title: "Generative Adversarial Nets",                                                year: 2014, first_author: "Goodfellow et al.", citation_count: 70000, venue: "NeurIPS"}
+      - {label: "DCGAN",       title: "Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks", year: 2016, first_author: "Radford et al.", citation_count: 20000, venue: "ICLR"}
+      - {label: "WGAN",        title: "Wasserstein GAN",                                                            year: 2017, first_author: "Arjovsky et al.",   citation_count: 14000, venue: "ICML"}
+      - {label: "WGAN-GP",     title: "Improved Training of Wasserstein GANs",                                      year: 2017, first_author: "Gulrajani et al.",  citation_count: 11000, venue: "NeurIPS"}
+      - {label: "ProgressiveGAN", title: "Progressive Growing of GANs for Improved Quality, Stability, and Variation", year: 2018, first_author: "Karras et al.",   citation_count: 7500,  venue: "ICLR"}
+      - {label: "StyleGAN",    title: "A Style-Based Generator Architecture for Generative Adversarial Networks",   year: 2019, first_author: "Karras et al.",   citation_count: 14000, venue: "CVPR"}
+      - {label: "BigGAN",      title: "Large Scale GAN Training for High Fidelity Natural Image Synthesis",         year: 2019, first_author: "Brock et al.",    citation_count: 5500,  venue: "ICLR"}
+      - {label: "StyleGAN2",   title: "Analyzing and Improving the Image Quality of StyleGAN",                      year: 2020, first_author: "Karras et al.",   citation_count: 5500,  venue: "CVPR"}
+      - {label: "StyleGAN3",   title: "Alias-Free Generative Adversarial Networks",                                 year: 2021, first_author: "Karras et al.",   citation_count: 2000,  venue: "NeurIPS"}
+    family_keywords:
+      - "generative adversarial"
+      - "GAN"
+      - "DCGAN"
+      - "Wasserstein"
+      - "StyleGAN"
+      - "BigGAN"
+      - "adversarial training"
+      - "image generation"
+    source:
+      mode: discover
+      stages: [corpus_rescan, named_fetch, recommend_expansion]
+      recommend_per_seed: 5
+
+  - id: C7
+    name: "Self-Supervised"
+    color: "#43A047"
+    source: {mode: inherit, from_lane: C7}
+
+  # ------------------------------------------------------------------
+  # C14: brand-new family — Graph Neural Networks.
+  # ------------------------------------------------------------------
+  - id: C14
+    name: "Graph Neural Networks"
+    color: "#3949AB"
+    description: "Neural networks that operate on graph-structured data via message passing. Includes spectral and spatial convolutional GNNs, attention-based message passing, sampling-based scalable variants, and expressive GNNs."
+    seed_anchors:
+      - {label: "Spectral GCN", title: "Spectral Networks and Deep Locally Connected Networks on Graphs",          year: 2014, first_author: "Bruna et al.",   citation_count: 4500, venue: "ICLR"}
+      - {label: "ChebNet",      title: "Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering", year: 2016, first_author: "Defferrard et al.", citation_count: 7500, venue: "NeurIPS"}
+      - {label: "GCN",          title: "Semi-Supervised Classification with Graph Convolutional Networks",          year: 2017, first_author: "Kipf, Welling",   citation_count: 28000, venue: "ICLR"}
+      - {label: "GraphSAGE",    title: "Inductive Representation Learning on Large Graphs",                         year: 2017, first_author: "Hamilton et al.", citation_count: 13000, venue: "NeurIPS"}
+      - {label: "MPNN",         title: "Neural Message Passing for Quantum Chemistry",                              year: 2017, first_author: "Gilmer et al.",   citation_count: 6000,  venue: "ICML"}
+      - {label: "GAT",          title: "Graph Attention Networks",                                                  year: 2018, first_author: "Veličković et al.", citation_count: 17000, venue: "ICLR"}
+      - {label: "GIN",          title: "How Powerful are Graph Neural Networks?",                                   year: 2019, first_author: "Xu et al.",       citation_count: 8000,  venue: "ICLR"}
+    family_keywords:
+      - "graph neural network"
+      - "graph convolutional"
+      - "message passing"
+      - "GraphSAGE"
+      - "graph attention"
+      - "node classification"
+      - "node embedding"
+    source:
+      mode: discover
+      stages: [corpus_rescan, named_fetch, recommend_expansion]
+      recommend_per_seed: 5

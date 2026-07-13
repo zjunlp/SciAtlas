@@ -1,6 +1,6 @@
 ---
 name: sciatlas-researcher-review
-description: Use only SciAtlas search-papers to take a novice user from zero setup to an evidence-grounded researcher profile from retrieved papers. Trigger when the user asks for a researcher's background, representative works, topic trajectory, or author-centered literature overview.
+description: Use only SciAtlas search-papers to take a novice user from zero setup to a final evidence-grounded researcher profile from retrieved papers, including setup, registration guidance, configuration, retrieval, artifact reading, and synthesis. Trigger when the user asks for a researcher's background, representative works, topic trajectory, or author-centered literature overview.
 ---
 
 # SciAtlas Researcher Review
@@ -11,7 +11,9 @@ Use this skill to create a researcher profile from `search-papers` evidence only
 
 - Do not call any SciAtlas downstream, author, support, or report command. The only SciAtlas retrieval command allowed is `search-papers`.
 - Use only `sciatlas search-papers` for retrieval.
+- Own the end-to-end novice flow: install or locate the CLI, guide registration, configure environment variables, run retrieval, inspect artifacts, and write the researcher profile.
 - Ask the user only for email, verification code, token, or a clarification when the researcher name is ambiguous.
+- Do not ask the user to run shell commands when tool access is available.
 - Do not expose the full token.
 
 ## Zero-Start Bootstrap
