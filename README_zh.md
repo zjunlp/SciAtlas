@@ -56,6 +56,14 @@
 - **可编辑 CLI skills**：把常用下游任务保存为可查看、可复制、可修改、可复用的 JSON skill；
 - **通用 Agent Skill 包**：通过 [`agent-skill/`](agent-skill/) 把基础检索和当前专用 workflow 包装成端到端下游任务技能；文献综述、自动评审和 idea 生成都提供 `flash/full` 两条路径，让 Codex、Claude Code 等工具型 Agent 从检索一路完成科研目标。
 
+<p align="center">
+  <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill 工作流演示" width="92%">
+</p>
+
+<p align="center">
+  <em>Agent Skill 演示：从用户请求出发，调用 SciAtlas 检索，读取运行产物，并生成面向具体科研任务的结果。</em>
+</p>
+
 ## 📑 目录
 
 - [✨ 项目概览](#-项目概览)

@@ -67,6 +67,14 @@ With the client, SciAtlas becomes a practical research assistant for:
 - **editable CLI skills**: inspect, copy, modify, and rerun common downstream workflows as reusable JSON skills;
 - **portable Agent Skill pack**: use [`agent-skill/`](agent-skill/) to migrate SciAtlas retrieval and the current literature-review, automated-review, and idea-generation workflows into end-to-end downstream tasks for tools such as Codex, Claude Code, and other coding agents.
 
+<p align="center">
+  <img src="imgs/agent-skill-demo.gif" alt="SciAtlas Agent Skill workflow demo" width="92%">
+</p>
+
+<p align="center">
+  <em>Agent Skill demo: from a user request to SciAtlas retrieval, artifact reading, and task-specific research output.</em>
+</p>
+
 ## 📑 Table of Contents
 
 - [✨ Overview](#-overview)
