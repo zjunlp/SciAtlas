@@ -1,0 +1,12 @@
+# Dependencies for the repository-level literature-review, idea-evaluate, and
+# idea-generate workflows. Install this file from a full SciAtlas checkout.
+-r requirements.txt
+
+beautifulsoup4>=4.12
+faiss-cpu>=1.8
+json-repair>=0.30
+pydantic>=2,<3
+PyMuPDF>=1.24
+PyYAML>=6.0
+torch>=2.1
+transformers>=4.40,<5

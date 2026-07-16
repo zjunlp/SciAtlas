@@ -1,0 +1,48 @@
+# Step-1 smoke test: inherit every lane from the current RL spec.
+# Expected output: a spec yaml structurally identical to method_timeline_spec_rl.yaml.
+
+topic:
+  title: "Evolution of Reinforcement Learning Algorithms"
+  subtitle: "Canonical anchors per method family · filled = retrieved, dashed = injected"
+  time_range: [1985, 2026]
+  current_year: 2026
+  row_height: 165
+  time_segments:
+    - {start: 1985, end: 2000, weight: 0.14}
+    - {start: 2000, end: 2013, weight: 0.06}
+    - {start: 2013, end: 2016, weight: 0.16}
+    - {start: 2016, end: 2018, weight: 0.18}
+    - {start: 2018, end: 2021, weight: 0.18}
+    - {start: 2021, end: 2024, weight: 0.16}
+    - {start: 2024, end: 2026, weight: 0.12}
+
+artifacts:
+  search_result:      ../runs/case_rl_evolution/artifacts/lr_search/search_result.json
+  clusters_recovered: ../runs/case_rl_evolution/artifacts/lr_search/clusters_recovered.json
+  current_spec:       method_timeline_spec_rl.yaml
+
+clusters:
+  - id: M1
+    name: "Classical Foundations"
+    color: "#6B4F3F"
+    source: {mode: inherit, from_lane: M1}
+  - id: M2
+    name: "Deep Value-Based RL"
+    color: "#1565C0"
+    source: {mode: inherit, from_lane: M2}
+  - id: M3
+    name: "Actor-Critic / Continuous Control"
+    color: "#EF6C00"
+    source: {mode: inherit, from_lane: M3}
+  - id: M4
+    name: "Trust Region / PPO"
+    color: "#00838F"
+    source: {mode: inherit, from_lane: M4}
+  - id: M5
+    name: "Offline & Model-Based"
+    color: "#6A1B9A"
+    source: {mode: inherit, from_lane: M5}
+  - id: M6
+    name: "RL for LLMs / Alignment"
+    color: "#2E7D32"
+    source: {mode: inherit, from_lane: M6}

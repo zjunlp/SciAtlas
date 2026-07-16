@@ -1,0 +1,686 @@
+topic:
+  title: Evolution of Reinforcement Learning Algorithms
+  subtitle: Canonical anchors per method family · filled = retrieved or S2-verified,
+    dashed = still injected
+  time_range:
+  - 1985
+  - 2026
+  current_year: 2026
+  row_height: 165
+  time_segments:
+  - start: 1985
+    end: 2000
+    weight: 0.13
+  - start: 2000
+    end: 2013
+    weight: 0.05
+  - start: 2013
+    end: 2016
+    weight: 0.15
+  - start: 2016
+    end: 2018
+    weight: 0.18
+  - start: 2018
+    end: 2021
+    weight: 0.18
+  - start: 2021
+    end: 2024
+    weight: 0.18
+  - start: 2024
+    end: 2026
+    weight: 0.13
+  future_work_width: 360
+future_work:
+- title: Verifier-Native RL
+  text: Future RL may be built around cheap verifiers rather than dense rewards, making
+    sparse but reliable supervision the default training signal.
+  lane_ids:
+  - M6
+  - M5b
+  lane_labels:
+  - LLM Post-Training
+  - Offline RL
+- title: Replay for Reasoning
+  text: A major frontier is how to reuse long reasoning trajectories efficiently,
+    turning replay from a control tool into a core ingredient of agent training.
+  lane_ids:
+  - M6
+  - M3
+  lane_labels:
+  - LLM Post-Training
+  - Actor-Critic
+- title: Trajectory Credit Assignment
+  text: RL needs new mechanisms to assign credit across multi-step tool use, planning,
+    and recovery, where the decisive action may occur far before the final outcome.
+  lane_ids:
+  - M6
+  - M3
+  lane_labels:
+  - LLM Post-Training
+  - Actor-Critic
+- title: Self-Improving Curricula
+  text: Future agents may generate and curate their own training tasks, creating adaptive
+    curricula instead of relying on fixed benchmark distributions.
+  lane_ids:
+  - M5a
+  - M7
+  lane_labels:
+  - Model-Based RL
+  - Exploration
+- title: Population-Based Agents
+  text: Training may shift from single policies to interacting populations, where
+    cooperation, competition, and specialization become part of the learning algorithm.
+  lane_ids:
+  - M8
+  - M6
+  lane_labels:
+  - Multi-Agent RL
+  - LLM Post-Training
+clusters:
+- id: M1
+  name: Classical RL Foundations
+  color: '#6B4F3F'
+  anchors:
+  - label: TD Learning
+    full_title: Learning to Predict by the Methods of Temporal Differences
+    first_author: Sutton
+    year: 1988
+    citation_count: 12000
+    venue: Machine Learning
+    in_corpus: false
+  - label: Q-Learning (thesis)
+    full_title: Learning from Delayed Rewards
+    first_author: Watkins
+    year: 1989
+    citation_count: 5000
+    venue: PhD thesis, Cambridge
+    in_corpus: false
+  - label: Q-Learning (proof)
+    full_title: Q-Learning
+    first_author: Watkins, Dayan
+    year: 1992
+    citation_count: 12000
+    venue: Machine Learning
+    in_corpus: false
+  - label: REINFORCE
+    full_title: Simple Statistical Gradient-Following Algorithms for Connectionist
+      Reinforcement Learning
+    first_author: Williams
+    year: 1992
+    citation_count: 10000
+    venue: Machine Learning
+    in_corpus: true
+    corpus_paper_id: P005
+    notes: Corpus metadata shows year=2004 (indexing artifact); canonical year is
+      1992.
+  - label: SARSA
+    full_title: On-Line Q-Learning Using Connectionist Systems
+    first_author: Rummery, Niranjan
+    year: 1994
+    citation_count: 3500
+    venue: Cambridge Tech Report
+    in_corpus: false
+  - label: TD-Gammon
+    full_title: Temporal Difference Learning and TD-Gammon
+    first_author: Tesauro
+    year: 1995
+    citation_count: 5000
+    venue: Communications of the ACM
+    in_corpus: false
+  - label: Policy Gradient
+    full_title: Policy Gradient Methods for Reinforcement Learning with Function Approximation
+    first_author: Sutton, McAllester, Singh, Mansour
+    year: 1999
+    citation_count: 8500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P010
+  - label: Actor-Critic
+    full_title: Actor-Critic Algorithms
+    first_author: Konda, Tsitsiklis
+    year: 2000
+    citation_count: 3500
+    venue: NeurIPS
+    in_corpus: false
+- id: M2
+  name: Value-Based RL
+  color: '#1565C0'
+  anchors:
+  - label: DQN (workshop)
+    full_title: Playing Atari with Deep Reinforcement Learning
+    first_author: Mnih et al.
+    year: 2013
+    citation_count: 13000
+    venue: NeurIPS Workshop
+    in_corpus: false
+  - label: DQN (Nature)
+    full_title: Human-Level Control through Deep Reinforcement Learning
+    first_author: Mnih et al.
+    year: 2015
+    citation_count: 32000
+    venue: Nature
+    in_corpus: true
+    corpus_paper_id: P001
+  - label: Double DQN
+    full_title: Deep Reinforcement Learning with Double Q-Learning
+    first_author: van Hasselt, Guez, Silver
+    year: 2016
+    citation_count: 6500
+    venue: AAAI
+    in_corpus: false
+  - label: Dueling DQN
+    full_title: Dueling Network Architectures for Deep Reinforcement Learning
+    first_author: Wang et al.
+    year: 2016
+    citation_count: 4500
+    venue: ICML
+    in_corpus: false
+  - label: PER
+    full_title: Prioritized Experience Replay
+    first_author: Schaul et al.
+    year: 2016
+    citation_count: 4500
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: P112
+    notes: Corpus metadata shows year=2024 (indexing artifact); canonical year is
+      2016.
+  - label: C51
+    full_title: A Distributional Perspective on Reinforcement Learning
+    first_author: Bellemare, Dabney, Munos
+    year: 2017
+    citation_count: 2500
+    venue: ICML
+    in_corpus: false
+  - label: Rainbow
+    full_title: 'Rainbow: Combining Improvements in Deep Reinforcement Learning'
+    first_author: Hessel et al.
+    year: 2018
+    citation_count: 3500
+    venue: AAAI
+    in_corpus: false
+  - label: IQN
+    full_title: Implicit Quantile Networks for Distributional Reinforcement Learning
+    first_author: Dabney et al.
+    year: 2018
+    citation_count: 1500
+    venue: ICML
+    in_corpus: false
+- id: M3
+  name: Policy Optimization & Actor-Critic
+  color: '#EF6C00'
+  anchors:
+  - label: DPG
+    full_title: Deterministic Policy Gradient Algorithms
+    first_author: Silver et al.
+    year: 2014
+    citation_count: 5000
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P151
+    notes: Corpus metadata shows year=2024 (indexing artifact); canonical year is
+      2014.
+  - label: TRPO
+    full_title: Trust Region Policy Optimization
+    first_author: Schulman et al.
+    year: 2015
+    citation_count: 8000
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P009
+  - label: A3C
+    full_title: Asynchronous Methods for Deep Reinforcement Learning
+    first_author: Mnih et al.
+    year: 2016
+    citation_count: 10000
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P006
+  - label: DDPG
+    full_title: Continuous Control with Deep Reinforcement Learning
+    first_author: Lillicrap et al.
+    year: 2016
+    citation_count: 14000
+    venue: ICLR
+    in_corpus: false
+  - label: GAE
+    full_title: High-Dimensional Continuous Control Using Generalized Advantage Estimation
+    first_author: Schulman et al.
+    year: 2016
+    citation_count: 3500
+    venue: ICLR
+    in_corpus: false
+  - label: Soft Q-Learning
+    full_title: Reinforcement Learning with Deep Energy-Based Policies
+    first_author: Haarnoja et al.
+    year: 2017
+    citation_count: 2000
+    venue: ICML
+    in_corpus: false
+  - label: PPO
+    full_title: Proximal Policy Optimization Algorithms
+    first_author: Schulman et al.
+    year: 2017
+    citation_count: 28500
+    venue: arXiv
+    in_corpus: true
+    corpus_paper_id: P003
+  - label: ACKTR
+    full_title: Scalable Trust-Region Method for Deep RL using Kronecker-Factored
+      Approximation
+    first_author: Wu et al.
+    year: 2017
+    citation_count: 700
+    venue: NeurIPS
+    in_corpus: false
+  - label: IMPALA
+    full_title: 'IMPALA: Scalable Distributed Deep-RL with Importance Weighted Actor-Learner
+      Architectures'
+    first_author: Espeholt et al.
+    year: 2018
+    citation_count: 2000
+    venue: ICML
+    in_corpus: false
+  - label: TD3
+    full_title: Addressing Function Approximation Error in Actor-Critic Methods
+    first_author: Fujimoto, van Hoof, Meger
+    year: 2018
+    citation_count: 7000
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P011
+  - label: SAC
+    full_title: 'Soft Actor-Critic: Off-Policy Maximum Entropy Deep RL with a Stochastic
+      Actor'
+    first_author: Haarnoja et al.
+    year: 2018
+    citation_count: 11500
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P004
+- id: M5a
+  name: Model-Based & Planning RL
+  color: '#6A1B9A'
+  anchors:
+  - label: Dyna
+    full_title: Integrated Architectures for Learning, Planning, and Reacting Based
+      on Approximating Dynamic Programming
+    first_author: Sutton
+    year: 1991
+    citation_count: 3500
+    venue: ICML
+    in_corpus: false
+    notes: 'auto: seed not found in corpus'
+  - label: AlphaGo
+    full_title: Mastering the game of Go with deep neural networks and tree search
+    first_author: Silver et al.
+    year: 2016
+    citation_count: 20000
+    venue: Nature
+    in_corpus: false
+  - label: AlphaGo Zero
+    full_title: Mastering the Game of Go without Human Knowledge
+    first_author: Silver et al.
+    year: 2017
+    citation_count: 12000
+    venue: Nature
+    in_corpus: false
+    notes: 'auto: seed not found in corpus'
+  - label: AlphaZero
+    full_title: A general reinforcement learning algorithm that masters chess, shogi,
+      and Go through self-play
+    first_author: Silver et al.
+    year: 2018
+    citation_count: 5500
+    venue: Science
+    in_corpus: false
+  - label: World Models
+    full_title: World Models
+    first_author: Ha, Schmidhuber
+    year: 2018
+    citation_count: 1500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P032
+  - label: MuZero
+    full_title: Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model
+    first_author: Schrittwieser et al.
+    year: 2019
+    citation_count: 3000
+    venue: Nature
+    in_corpus: false
+    notes: 'auto: seed not found in corpus'
+  - label: Dreamer
+    full_title: 'Dream to Control: Learning Behaviors by Latent Imagination'
+    first_author: Hafner et al.
+    year: 2020
+    citation_count: 2500
+    venue: ICLR
+    in_corpus: false
+    notes: 'auto: seed not found in corpus'
+  - label: DreamerV3
+    full_title: Mastering Diverse Domains through World Models
+    first_author: Hafner et al.
+    year: 2023
+    citation_count: 700
+    venue: arXiv
+    in_corpus: true
+    corpus_paper_id: P137
+- id: M5b
+  name: Offline RL
+  color: '#7B1FA2'
+  anchors:
+  - label: BCQ
+    full_title: Off-Policy Deep Reinforcement Learning without Exploration
+    first_author: Fujimoto, Meger, Precup
+    year: 2019
+    citation_count: 2000
+    venue: ICML
+    in_corpus: false
+    notes: 'auto: seed not found in corpus'
+  - label: CQL
+    full_title: Conservative Q-Learning for Offline Reinforcement Learning
+    first_author: Kumar et al.
+    year: 2020
+    citation_count: 2500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P024
+  - label: IQL
+    full_title: Offline Reinforcement Learning with Implicit Q-Learning
+    first_author: Kostrikov, Nair, Levine
+    year: 2021
+    citation_count: 1500
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: P030
+  - label: Decision Transformer
+    full_title: 'Decision Transformer: Reinforcement Learning via Sequence Modeling'
+    first_author: Chen et al.
+    year: 2021
+    citation_count: 2500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P307
+- id: M6
+  name: LLM Post-Training & Alignment
+  color: '#2E7D32'
+  anchors:
+  - label: RLHF (Christiano)
+    full_title: Deep Reinforcement Learning from Human Preferences
+    first_author: Christiano et al.
+    year: 2017
+    citation_count: 5500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P013
+  - label: Summarize-HF
+    full_title: Learning to Summarize from Human Feedback
+    first_author: Stiennon et al.
+    year: 2020
+    citation_count: 2500
+    venue: NeurIPS
+    in_corpus: false
+  - label: InstructGPT
+    full_title: Training Language Models to Follow Instructions with Human Feedback
+    first_author: Ouyang et al.
+    year: 2022
+    citation_count: 10000
+    venue: NeurIPS
+    in_corpus: false
+  - label: Constitutional AI
+    full_title: 'Constitutional AI: Harmlessness from AI Feedback'
+    first_author: Bai et al.
+    year: 2022
+    citation_count: 1500
+    venue: arXiv
+    in_corpus: false
+  - label: DPO
+    full_title: 'Direct Preference Optimization: Your Language Model is Secretly a
+      Reward Model'
+    first_author: Rafailov et al.
+    year: 2023
+    citation_count: 9500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P007
+  - label: RLAIF
+    full_title: 'RLAIF: Scaling Reinforcement Learning from Human Feedback with AI
+      Feedback'
+    first_author: Lee et al.
+    year: 2023
+    citation_count: 700
+    venue: arXiv
+    in_corpus: true
+    corpus_paper_id: P048
+  - label: GRPO
+    full_title: 'DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open
+      Language Models'
+    first_author: Shao et al.
+    year: 2024
+    citation_count: 3000
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2402.03300. Introduces Group Relative Policy Optimization
+      (GRPO).'
+  - label: RLOO
+    full_title: 'Back to Basics: Revisiting REINFORCE-Style Optimization for LLM Alignment'
+    first_author: Ahmadian et al.
+    year: 2024
+    citation_count: 400
+    venue: ACL
+    in_corpus: false
+  - label: Dr. GRPO
+    full_title: 'Understanding R1-Zero-Like Training: A Critical Perspective'
+    first_author: Liu et al.
+    year: 2025
+    citation_count: 500
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2503.20783. Introduces Dr. GRPO to remove GRPO''s response-length
+      bias.'
+  - label: DAPO
+    full_title: 'DAPO: An Open-Source LLM Reinforcement Learning System at Scale'
+    first_author: Yu et al.
+    year: 2025
+    citation_count: 2000
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2503.14476. GRPO-family method with decoupled clip and dynamic
+      sampling.'
+  - label: VAPO
+    full_title: 'VAPO: Efficient and Reliable Reinforcement Learning for Advanced
+      Reasoning Tasks'
+    first_author: Yue et al.
+    year: 2025
+    citation_count: 900
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2504.05118. Value-based reasoning-RL alternative frequently
+      compared against DAPO/GRPO.'
+  - label: ARPO (Replay)
+    full_title: 'ARPO: End-to-End Policy Optimization for GUI Agents with Experience
+      Replay'
+    first_author: Lu et al.
+    year: 2025
+    citation_count: 150
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2505.16282. Augments GRPO with replay-buffer reuse for GUI
+      agents.'
+  - label: ARPO (Agentic)
+    full_title: Agentic Reinforced Policy Optimization
+    first_author: Dong et al.
+    year: 2025
+    citation_count: 150
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2507.19849. Multi-turn agent RL with adaptive rollout and
+      stepwise advantage attribution.'
+  - label: GiGPO
+    full_title: Group-in-Group Policy Optimization for LLM Agent Training
+    first_author: Feng et al.
+    year: 2025
+    citation_count: 150
+    venue: arXiv
+    in_corpus: false
+    notes: 'Source: arXiv:2505.10978. Sometimes informally referred to as "GiGRPO";
+      the paper title uses GiGPO.'
+  - label: DeepSeek-R1
+    full_title: 'DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement
+      Learning'
+    first_author: DeepSeek-AI
+    year: 2025
+    citation_count: 1500
+    venue: arXiv
+    in_corpus: false
+- id: M7
+  name: Exploration & Intrinsic Reward
+  color: '#FBC02D'
+  anchors:
+  - label: Pseudo-counts
+    full_title: Unifying Count-Based Exploration and Intrinsic Motivation
+    first_author: Bellemare et al.
+    year: 2016
+    citation_count: 1500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_M7_001
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=6e90fd78e8a3b98a)'
+  - label: ICM
+    full_title: Curiosity-driven Exploration by Self-supervised Prediction
+    first_author: Pathak et al.
+    year: 2017
+    citation_count: 2500
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: F_M7_002
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=225ab689f41cef1d)'
+  - label: RND
+    full_title: Exploration by Random Network Distillation
+    first_author: Burda et al.
+    year: 2018
+    citation_count: 1500
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_M7_003
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=4cb3fd057949624a)'
+  - label: NoisyNet
+    full_title: Noisy Networks for Exploration
+    first_author: Fortunato et al.
+    year: 2018
+    citation_count: 1200
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_M7_004
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=3fab4d28be5ff73f)'
+  - label: Go-Explore
+    full_title: 'Go-Explore: a New Approach for Hard-Exploration Problems'
+    first_author: Ecoffet et al.
+    year: 2019
+    citation_count: 800
+    venue: arXiv
+    in_corpus: true
+    corpus_paper_id: F_M7_005
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=c520bf47db3360ae)'
+  - label: Agent57
+    full_title: 'Agent57: Outperforming the Atari Human Benchmark'
+    first_author: Badia et al.
+    year: 2020
+    citation_count: 500
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P049
+- id: M8
+  name: Multi-Agent & Self-Play RL
+  color: '#00897B'
+  anchors:
+  - label: MADDPG
+    full_title: Multi-Agent Actor-Critic for Mixed Cooperative-Competitive Environments
+    first_author: Lowe et al.
+    year: 2017
+    citation_count: 5500
+    venue: NeurIPS
+    in_corpus: false
+  - label: COMA
+    full_title: Counterfactual Multi-Agent Policy Gradients
+    first_author: Foerster et al.
+    year: 2018
+    citation_count: 2000
+    venue: AAAI
+    in_corpus: false
+  - label: QMIX
+    full_title: 'QMIX: Monotonic Value Function Factorisation for Deep Multi-Agent
+      Reinforcement Learning'
+    first_author: Rashid et al.
+    year: 2018
+    citation_count: 2500
+    venue: ICML
+    in_corpus: false
+  - label: AlphaStar
+    full_title: Grandmaster level in StarCraft II using multi-agent reinforcement
+      learning
+    first_author: Vinyals et al.
+    year: 2019
+    citation_count: 3000
+    venue: Nature
+    in_corpus: false
+  - label: OpenAI Five
+    full_title: Dota 2 with Large Scale Deep Reinforcement Learning
+    first_author: Berner et al.
+    year: 2019
+    citation_count: 1500
+    venue: arXiv
+    in_corpus: false
+  - label: MAPPO
+    full_title: The Surprising Effectiveness of PPO in Cooperative Multi-Agent Games
+    first_author: Yu et al.
+    year: 2022
+    citation_count: 1200
+    venue: NeurIPS
+    in_corpus: false
+  - label: MARFT
+    full_title: 'MARFT: Multi-Agent Reinforcement Fine-Tuning'
+    first_author: Liao et al.
+    year: 2025
+    citation_count: 180
+    venue: arXiv
+    in_corpus: false
+    notes: arXiv:2504.16129. Foundational framework for LLM-based multi-agent reinforcement
+      fine-tuning.
+  - label: MHGPO
+    full_title: End-to-End Optimization of LLM-Driven Multi-Agent Search Systems via
+      Heterogeneous-Group-Based Reinforcement Learning
+    first_author: Chen et al.
+    year: 2025
+    citation_count: 120
+    venue: arXiv
+    in_corpus: false
+    notes: arXiv:2506.02718. Introduces heterogeneous-group-based RL for multi-agent
+      search systems.
+  - label: MAGRPO
+    full_title: LLM Collaboration With Multi-Agent Reinforcement Learning
+    first_author: Liu et al.
+    year: 2025
+    citation_count: 220
+    venue: arXiv
+    in_corpus: false
+    notes: arXiv:2508.04652. Canonical multi-agent GRPO-style RL for LLM collaboration.
+  - label: M-GRPO
+    full_title: 'Multi-Agent Deep Research: Training Multi-Agent Systems with M-GRPO'
+    first_author: Hong et al.
+    year: 2025
+    citation_count: 140
+    venue: arXiv
+    in_corpus: false
+    notes: arXiv:2511.13288. Hierarchical multi-agent deep research training with
+      M-GRPO.
+  - label: Dr. MAS
+    full_title: 'Dr. MAS: Stable Reinforcement Learning for Multi-Agent LLM Systems'
+    first_author: Feng et al.
+    year: 2026
+    citation_count: 90
+    venue: arXiv
+    in_corpus: false
+    notes: arXiv:2602.08847. Stabilizes multi-agent LLM RL by agent-wise normalized
+      advantage updates.

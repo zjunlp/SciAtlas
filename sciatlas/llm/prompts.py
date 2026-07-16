@@ -1,5 +1,4 @@
 from __future__ import annotations
-
 from ..core.common import normalize_whitespace, truncate_text
 
 
@@ -63,8 +62,6 @@ def build_trend_prompt(papers_by_year: list[dict[str, object]], abstract_char_li
         "Papers:\n"
         + "\n\n".join(paper_blocks)
     )
-
-
 def build_author_profile_prompt(author_name: str, papers: list[dict[str, object]]) -> str:
     paper_lines: list[str] = []
     for index, paper in enumerate(papers, start=1):
@@ -86,32 +83,4 @@ def build_author_profile_prompt(author_name: str, papers: list[dict[str, object]
         "}\n\n"
         "Papers:\n"
         + "\n\n".join(paper_lines)
-    )
-
-
-def build_idea_generation_prompt(papers: list[dict[str, object]], idea_count: int, abstract_char_limit: int) -> str:
-    paper_blocks: list[str] = []
-    for index, paper in enumerate(papers, start=1):
-        title = normalize_whitespace(paper.get("title")) or "Untitled"
-        year = paper.get("year") or "Unknown"
-        abstract = truncate_text(paper.get("abstract") or "", max_chars=abstract_char_limit)
-        paper_blocks.append(f"{index}. [{year}] {title}\nAbstract: {abstract}")
-    return (
-        "You are an expert research idea generator.\n"
-        "Given the papers below, propose novel research ideas that extend, combine, or contrast this work.\n"
-        "Return strict JSON only with this schema:\n"
-        "{\n"
-        '  "ideas": [\n'
-        '    {\n'
-        '      "title": "concise idea title",\n'
-        '      "description": "2-3 sentence core description of the idea",\n'
-        '      "novelty": "why this is novel compared to existing work",\n'
-        '      "significance": "potential impact and importance",\n'
-        '      "key_references": ["paper title 1", "paper title 2"]\n'
-        "    }\n"
-        "  ]\n"
-        "}\n\n"
-        f"Generate exactly {idea_count} ideas.\n\n"
-        "Papers:\n\n"
-        + "\n\n".join(paper_blocks)
     )

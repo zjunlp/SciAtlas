@@ -1,0 +1,1073 @@
+topic:
+  title: Evolution of Deep Neural Network Architectures
+  subtitle: Canonical anchors per method family · filled = retrieved or S2-verified, dashed = still injected
+  time_range:
+  - 1955
+  - 2026
+  current_year: 2026
+  future_work_width: 390
+future_work:
+- title: Beyond Quadratic Context
+  text: Long-context learning will likely require memory mechanisms that go beyond standard attention, not just larger windows or more aggressive caching.
+  lane_ids:
+  - C2
+  - C12
+- title: Post-Transformer Backbones
+  text: The next architectural shift may come from hybrids that combine attention, state-space dynamics, sparsity, and external memory rather than scaling one backbone further.
+  lane_ids:
+  - C2
+  - C12
+- title: Compute-Routed Models
+  text: Future foundation models may route not only parameters but also depth, memory, and compute, making conditional computation a first-class design principle.
+  lane_ids:
+  - C2
+  - C9
+- title: Causal Uncertainty Reduction
+  text: A key frontier is to reduce uncertainty through causal structure and intervention-aware modeling, not only through better probabilistic prediction.
+  lane_ids:
+  - C2
+  - C7
+- title: Native World Representations
+  text: Foundation models may need to represent events, spaces, graphs, and actions natively instead of flattening everything into token sequences.
+  lane_ids:
+  - C14
+  - C2
+clusters:
+- id: C9
+  name: MLP
+  color: '#5B6770'
+  anchors:
+  - label: Perceptron
+    full_title: 'The Perceptron: A Probabilistic Model for Information Storage and Organization in the Brain'
+    first_author: Rosenblatt
+    year: 1958
+    citation_count: 18000
+    venue: Psychological Review
+    in_corpus: false
+    year_month: 1958-01
+    timeline_month_source: crossref
+  - label: Backprop
+    full_title: Learning representations by back-propagating errors
+    first_author: Rumelhart, Hinton, Williams
+    year: 1986
+    citation_count: 60000
+    venue: Nature
+    in_corpus: false
+    year_month: 1986-10
+    timeline_month_source: crossref
+  - label: Universal Approx.
+    full_title: Multilayer feedforward networks are universal approximators
+    first_author: Hornik, Stinchcombe, White
+    year: 1989
+    citation_count: 22000
+    venue: Neural Networks
+    in_corpus: false
+    year_month: 1989-01
+    timeline_month_source: crossref
+  - label: DBN
+    full_title: A Fast Learning Algorithm for Deep Belief Nets
+    first_author: Hinton, Osindero, Teh
+    year: 2006
+    citation_count: 21000
+    venue: Neural Computation
+    in_corpus: false
+    year_month: 2006-07
+    timeline_month_source: crossref
+  - label: Reducing dim.
+    full_title: Reducing the Dimensionality of Data with Neural Networks
+    first_author: Hinton, Salakhutdinov
+    year: 2006
+    citation_count: 18000
+    venue: Science
+    in_corpus: false
+    year_month: 2006-07
+    timeline_month_source: crossref
+  - label: Denoising AE
+    full_title: Extracting and Composing Robust Features with Denoising Autoencoders
+    first_author: Vincent et al.
+    year: 2008
+    citation_count: 8500
+    venue: ICML
+    in_corpus: false
+    year_month: 2008-01
+    timeline_month_source: crossref
+  - label: Stacked DAE
+    full_title: 'Stacked Denoising Autoencoders: Learning Useful Representations in a Deep Network with a Local Denoising Criterion'
+    first_author: Vincent et al.
+    year: 2010
+    citation_count: 8000
+    venue: JMLR
+    in_corpus: false
+  - label: Xavier Init
+    full_title: Understanding the difficulty of training deep feedforward neural networks
+    first_author: Glorot, Bengio
+    year: 2010
+    citation_count: 25000
+    venue: AISTATS
+    in_corpus: false
+    year_month: 2018-06
+    timeline_month_source: crossref
+  - label: ReLU
+    full_title: Rectified Linear Units Improve Restricted Boltzmann Machines
+    first_author: Nair, Hinton
+    year: 2010
+    citation_count: 11000
+    venue: ICML
+    in_corpus: false
+  - label: Dropout (idea)
+    full_title: Improving neural networks by preventing co-adaptation of feature detectors
+    first_author: Hinton et al.
+    year: 2012
+    citation_count: 12000
+    venue: arXiv
+    in_corpus: false
+  - label: Dropout (JMLR)
+    full_title: 'Dropout: A Simple Way to Prevent Neural Networks from Overfitting'
+    first_author: Srivastava et al.
+    year: 2014
+    citation_count: 58000
+    venue: JMLR
+    in_corpus: false
+    year_month: 2025-02
+    timeline_month_source: crossref
+  - label: He Init
+    full_title: 'Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification'
+    first_author: He et al.
+    year: 2015
+    citation_count: 22000
+    venue: ICCV
+    in_corpus: false
+    year_month: 2015-12
+    timeline_month_source: crossref
+  - label: BatchNorm
+    full_title: 'Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift'
+    first_author: Ioffe, Szegedy
+    year: 2015
+    citation_count: 70000
+    venue: ICML
+    in_corpus: false
+  - label: Adam
+    full_title: 'Adam: A Method for Stochastic Optimization'
+    first_author: Kingma, Ba
+    year: 2015
+    citation_count: 250000
+    venue: ICLR
+    in_corpus: false
+    year_month: 2014-12
+    timeline_month_source: s2
+  - label: LayerNorm
+    full_title: Layer Normalization
+    first_author: Ba, Kiros, Hinton
+    year: 2016
+    citation_count: 13000
+    venue: arXiv
+    in_corpus: false
+  - label: AdamW
+    full_title: Decoupled Weight Decay Regularization
+    first_author: Loshchilov, Hutter
+    year: 2019
+    citation_count: 13000
+    venue: ICLR
+    in_corpus: false
+    year_month: 2017-11
+    timeline_month_source: s2
+- id: C1
+  name: CNN Architectures
+  color: '#1E88E5'
+  anchors:
+  - label: LeNet-5
+    full_title: Gradient-Based Learning Applied to Document Recognition
+    first_author: LeCun et al.
+    year: 1998
+    citation_count: 80000
+    venue: Proc. IEEE
+    in_corpus: false
+    year_month: 1998-01
+    timeline_month_source: crossref
+  - label: AlexNet
+    full_title: ImageNet Classification with Deep Convolutional Neural Networks
+    first_author: Krizhevsky, Sutskever, Hinton
+    year: 2012
+    citation_count: 135000
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2017-05
+    timeline_month_source: crossref
+  - label: OverFeat
+    full_title: 'OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks'
+    first_author: Sermanet et al.
+    year: 2013
+    citation_count: 6000
+    venue: ICLR
+    in_corpus: false
+    year_month: 2023-12
+    timeline_month_source: crossref
+  - label: VGG
+    full_title: Very Deep Convolutional Networks for Large-Scale Image Recognition
+    first_author: Simonyan, Zisserman
+    year: 2014
+    citation_count: 118000
+    venue: ICLR
+    in_corpus: false
+    year_month: 2016-12
+    timeline_month_source: crossref
+  - label: GoogLeNet
+    full_title: Going Deeper with Convolutions
+    first_author: Szegedy et al.
+    year: 2014
+    citation_count: 58000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2015-06
+    timeline_month_source: crossref
+  - label: Inception-v3
+    full_title: Rethinking the Inception Architecture for Computer Vision
+    first_author: Szegedy et al.
+    year: 2015
+    citation_count: 38000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2016-06
+    timeline_month_source: crossref
+  - label: ResNet
+    full_title: Deep Residual Learning for Image Recognition
+    first_author: He, Zhang, Ren, Sun
+    year: 2016
+    citation_count: 250000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2016-06
+    timeline_month_source: crossref
+  - label: DenseNet
+    full_title: Densely Connected Convolutional Networks
+    first_author: Huang et al.
+    year: 2016
+    citation_count: 50000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2017-07
+    timeline_month_source: crossref
+  - label: Xception
+    full_title: 'Xception: Deep Learning with Depthwise Separable Convolutions'
+    first_author: Chollet
+    year: 2017
+    citation_count: 18000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2017-07
+    timeline_month_source: crossref
+  - label: MobileNet
+    full_title: 'MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications'
+    first_author: Howard et al.
+    year: 2017
+    citation_count: 25000
+    venue: arXiv
+    in_corpus: false
+    year_month: 2025-01
+    timeline_month_source: crossref
+  - label: ResNeXt
+    full_title: Aggregated Residual Transformations for Deep Neural Networks
+    first_author: Xie et al.
+    year: 2017
+    citation_count: 13000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2017-07
+    timeline_month_source: crossref
+  - label: SENet
+    full_title: Squeeze-and-Excitation Networks
+    first_author: Hu, Shen, Sun
+    year: 2018
+    citation_count: 25000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2018-06
+    timeline_month_source: crossref
+  - label: EfficientNet
+    full_title: 'EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks'
+    first_author: Tan, Le
+    year: 2019
+    citation_count: 24500
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: P003
+    year_month: 2019-05
+    timeline_month_source: arxiv
+  - label: NFNet
+    full_title: High-Performance Large-Scale Image Recognition Without Normalization
+    first_author: Brock et al.
+    year: 2021
+    citation_count: 1500
+    venue: ICML
+    in_corpus: false
+    year_month: 2024-08
+    timeline_month_source: crossref
+  - label: ConvNeXt
+    full_title: A ConvNet for the 2020s
+    first_author: Liu et al.
+    year: 2022
+    citation_count: 6000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2022-06
+    timeline_month_source: crossref
+- id: C5
+  name: RNN
+  color: '#FB8C00'
+  anchors:
+  - label: Elman RNN
+    full_title: Finding Structure in Time
+    first_author: Elman
+    year: 1990
+    citation_count: 12000
+    venue: Cognitive Science
+    in_corpus: false
+    year_month: 2010-02
+    timeline_month_source: crossref
+  - label: LSTM
+    full_title: Long Short-Term Memory
+    first_author: Hochreiter, Schmidhuber
+    year: 1997
+    citation_count: 95000
+    venue: Neural Computation
+    in_corpus: false
+    year_month: 1997-11
+    timeline_month_source: crossref
+  - label: Bi-RNN
+    full_title: Bidirectional Recurrent Neural Networks
+    first_author: Schuster, Paliwal
+    year: 1997
+    citation_count: 10000
+    venue: IEEE Trans. Signal Processing
+    in_corpus: false
+    year_month: 1997-01
+    timeline_month_source: crossref
+  - label: LSTM Forget
+    full_title: 'Learning to Forget: Continual Prediction with LSTM'
+    first_author: Gers, Schmidhuber, Cummins
+    year: 1999
+    citation_count: 5000
+    venue: Neural Computation
+    in_corpus: false
+    year_month: 1999-01
+    timeline_month_source: crossref
+  - label: Deep Speech RNN
+    full_title: Speech Recognition with Deep Recurrent Neural Networks
+    first_author: Graves, Mohamed, Hinton
+    year: 2013
+    citation_count: 13000
+    venue: ICASSP
+    in_corpus: false
+    year_month: 2013-05
+    timeline_month_source: crossref
+  - label: GRU
+    full_title: Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation
+    first_author: Cho et al.
+    year: 2014
+    citation_count: 30000
+    venue: EMNLP
+    in_corpus: false
+    year_month: 2014-01
+    timeline_month_source: crossref
+  - label: Seq2Seq
+    full_title: Sequence to Sequence Learning with Neural Networks
+    first_author: Sutskever, Vinyals, Le
+    year: 2014
+    citation_count: 30000
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2025-01
+    timeline_month_source: crossref
+  - label: Bahdanau Attn
+    full_title: Neural Machine Translation by Jointly Learning to Align and Translate
+    first_author: Bahdanau, Cho, Bengio
+    year: 2014
+    citation_count: 38000
+    venue: ICLR
+    in_corpus: false
+    year_month: 2021-01
+    timeline_month_source: crossref
+  - label: Luong Attn
+    full_title: Effective Approaches to Attention-based Neural Machine Translation
+    first_author: Luong, Pham, Manning
+    year: 2015
+    citation_count: 15000
+    venue: EMNLP
+    in_corpus: false
+    year_month: 2015-01
+    timeline_month_source: crossref
+  - label: ConvS2S
+    full_title: Convolutional Sequence to Sequence Learning
+    first_author: Gehring et al.
+    year: 2017
+    citation_count: 3500
+    venue: ICML
+    in_corpus: false
+    year_month: 2018-06
+    timeline_month_source: crossref
+  - label: ELMo
+    full_title: Deep Contextualized Word Representations
+    first_author: Peters et al.
+    year: 2018
+    citation_count: 17000
+    venue: NAACL
+    in_corpus: false
+    year_month: 2018-01
+    timeline_month_source: crossref
+- id: C2
+  name: Transformer Family
+  color: '#6A1B9A'
+  anchors:
+  - label: Transformer
+    full_title: Attention Is All You Need
+    first_author: Vaswani et al.
+    year: 2017
+    citation_count: 140000
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: P012
+    notes: Corpus metadata shows year=2025 due to S2 indexing artifact; canonical year is 2017.
+    year_month: 2025-08
+    timeline_month_source: crossref
+  - label: GPT-1
+    full_title: Improving Language Understanding by Generative Pre-Training
+    first_author: Radford et al.
+    year: 2018
+    citation_count: 10000
+    venue: OpenAI tech report
+    in_corpus: false
+  - label: BERT
+    full_title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding'
+    first_author: Devlin et al.
+    year: 2018
+    citation_count: 110000
+    venue: NAACL
+    in_corpus: false
+  - label: GPT-2
+    full_title: Language Models are Unsupervised Multitask Learners
+    first_author: Radford et al.
+    year: 2019
+    citation_count: 13000
+    venue: OpenAI tech report
+    in_corpus: false
+    year_month: 2024-01
+    timeline_month_source: crossref
+  - label: XLNet
+    full_title: 'XLNet: Generalized Autoregressive Pretraining for Language Understanding'
+    first_author: Yang et al.
+    year: 2019
+    citation_count: 12000
+    venue: NeurIPS
+    in_corpus: false
+  - label: RoBERTa
+    full_title: 'RoBERTa: A Robustly Optimized BERT Pretraining Approach'
+    first_author: Liu et al.
+    year: 2019
+    citation_count: 30000
+    venue: arXiv
+    in_corpus: false
+    year_month: 2024-01
+    timeline_month_source: crossref
+  - label: T5
+    full_title: Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer
+    first_author: Raffel et al.
+    year: 2019
+    citation_count: 20000
+    venue: JMLR
+    in_corpus: false
+  - label: GPT-3
+    full_title: Language Models are Few-Shot Learners
+    first_author: Brown et al.
+    year: 2020
+    citation_count: 38000
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2026-01
+    timeline_month_source: crossref
+  - label: ViT
+    full_title: 'An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale'
+    first_author: Dosovitskiy et al.
+    year: 2020
+    citation_count: 21000
+    venue: ICLR
+    in_corpus: true
+    year_month: 2020-10
+    timeline_month_source: arxiv
+  - label: Swin
+    full_title: 'Swin Transformer: Hierarchical Vision Transformer using Shifted Windows'
+    first_author: Liu et al.
+    year: 2021
+    citation_count: 33000
+    venue: ICCV
+    in_corpus: true
+    year_month: 2021-10
+    timeline_month_source: crossref
+  - label: Switch
+    full_title: 'Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity'
+    first_author: Fedus et al.
+    year: 2021
+    citation_count: 3000
+    venue: JMLR
+    in_corpus: true
+    year_month: 2021-01
+    timeline_month_source: arxiv
+  - label: PaLM
+    full_title: 'PaLM: Scaling Language Modeling with Pathways'
+    first_author: Chowdhery et al.
+    year: 2022
+    citation_count: 5500
+    venue: JMLR
+    in_corpus: false
+  - label: Chinchilla
+    full_title: Training Compute-Optimal Large Language Models
+    first_author: Hoffmann et al.
+    year: 2022
+    citation_count: 3500
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2022-01
+    timeline_month_source: crossref
+  - label: LLaMA
+    full_title: 'LLaMA: Open and Efficient Foundation Language Models'
+    first_author: Touvron et al.
+    year: 2023
+    citation_count: 10000
+    venue: arXiv
+    in_corpus: false
+  - label: GPT-4
+    full_title: GPT-4 Technical Report
+    first_author: OpenAI
+    year: 2023
+    citation_count: 7000
+    venue: arXiv
+    in_corpus: false
+    year_month: 2016-11
+    timeline_month_source: crossref
+- id: C12
+  name: State-Space Models
+  color: '#C2185B'
+  anchors:
+  - label: HiPPO
+    full_title: 'HiPPO: Recurrent Memory with Optimal Polynomial Projections'
+    first_author: Gu et al.
+    year: 2020
+    citation_count: 350
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_C12_001
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=0964490205fdc38c)'
+  - label: S4
+    full_title: Efficiently Modeling Long Sequences with Structured State Spaces
+    first_author: Gu, Goel, Ré
+    year: 2022
+    citation_count: 2000
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C12_002
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=ac2618b2ce5cdcf8)'
+    year_month: 2024-01
+    timeline_month_source: crossref
+  - label: S5
+    full_title: Simplified State Space Layers for Sequence Modeling
+    first_author: Smith et al.
+    year: 2023
+    citation_count: 350
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C12_003
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=6d7d141c75af752f)'
+  - label: Mamba
+    full_title: 'Mamba: Linear-Time Sequence Modeling with Selective State Spaces'
+    first_author: Gu, Dao
+    year: 2023
+    citation_count: 1500
+    venue: arXiv
+    in_corpus: true
+    corpus_paper_id: F_C12_004
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=7bbc7595196a0606)'
+    year_month: 2025-11
+    timeline_month_source: crossref
+  - label: Mamba-2
+    full_title: 'Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality'
+    first_author: Dao, Gu
+    year: 2024
+    citation_count: 500
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: F_C12_005
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=ca9f5b3bf0f54ad9)'
+  - label: RWKV
+    full_title: 'RWKV: Reinventing RNNs for the Transformer Era'
+    first_author: Peng et al.
+    year: 2023
+    citation_count: 900
+    venue: EMNLP Findings
+    in_corpus: true
+    corpus_paper_id: F_C12_006
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=026b3396a63ed577)'
+    year_month: 2023-01
+    timeline_month_source: crossref
+  - label: Hyena
+    full_title: 'Hyena Hierarchy: Towards Larger Convolutional Language Models'
+    first_author: Poli et al.
+    year: 2023
+    citation_count: 600
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: F_C12_007
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=998ac3e945857cf2)'
+- id: C3
+  name: Diffusion
+  color: '#00838F'
+  anchors:
+  - label: Sohl-Dickstein
+    full_title: Deep Unsupervised Learning using Nonequilibrium Thermodynamics
+    first_author: Sohl-Dickstein et al.
+    year: 2015
+    citation_count: 3500
+    venue: ICML
+    in_corpus: false
+  - label: NCSN
+    full_title: Generative Modeling by Estimating Gradients of the Data Distribution
+    first_author: Song, Ermon
+    year: 2019
+    citation_count: 7500
+    venue: NeurIPS
+    in_corpus: false
+  - label: DDPM
+    full_title: Denoising Diffusion Probabilistic Models
+    first_author: Ho, Jain, Abbeel
+    year: 2020
+    citation_count: 12000
+    venue: NeurIPS
+    in_corpus: true
+    year_month: 2020-06
+    timeline_month_source: arxiv
+  - label: DDIM
+    full_title: Denoising Diffusion Implicit Models
+    first_author: Song, Meng, Ermon
+    year: 2020
+    citation_count: 6500
+    venue: ICLR
+    in_corpus: true
+    year_month: 2020-10
+    timeline_month_source: arxiv
+  - label: Improved DDPM
+    full_title: Improved Denoising Diffusion Probabilistic Models
+    first_author: Nichol, Dhariwal
+    year: 2021
+    citation_count: 2500
+    venue: ICML
+    in_corpus: false
+    year_month: 2024-01
+    timeline_month_source: crossref
+  - label: Score SDE
+    full_title: Score-Based Generative Modeling through Stochastic Differential Equations
+    first_author: Song et al.
+    year: 2021
+    citation_count: 5000
+    venue: ICLR
+    in_corpus: false
+    year_month: 2023-01
+    timeline_month_source: crossref
+  - label: Classifier Guidance
+    full_title: Diffusion Models Beat GANs on Image Synthesis
+    first_author: Dhariwal, Nichol
+    year: 2021
+    citation_count: 6500
+    venue: NeurIPS
+    in_corpus: true
+    year_month: 2021-05
+    timeline_month_source: arxiv
+  - label: CFG
+    full_title: Classifier-Free Diffusion Guidance
+    first_author: Ho, Salimans
+    year: 2022
+    citation_count: 3000
+    venue: NeurIPS Workshop
+    in_corpus: false
+  - label: Stable Diffusion
+    full_title: High-Resolution Image Synthesis with Latent Diffusion Models
+    first_author: Rombach et al.
+    year: 2022
+    citation_count: 14000
+    venue: CVPR
+    in_corpus: true
+    year_month: 2021-12
+    timeline_month_source: arxiv
+  - label: Imagen
+    full_title: Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding
+    first_author: Saharia et al.
+    year: 2022
+    citation_count: 3000
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2022-01
+    timeline_month_source: crossref
+  - label: EDM
+    full_title: Elucidating the Design Space of Diffusion-Based Generative Models
+    first_author: Karras et al.
+    year: 2022
+    citation_count: 1500
+    venue: NeurIPS
+    in_corpus: true
+    year_month: 2022-06
+    timeline_month_source: arxiv
+  - label: DiT
+    full_title: Scalable Diffusion Models with Transformers
+    first_author: Peebles, Xie
+    year: 2023
+    citation_count: 1500
+    venue: ICCV
+    in_corpus: true
+    year_month: 2022-12
+    timeline_month_source: arxiv
+  - label: Consistency
+    full_title: Consistency Models
+    first_author: Song et al.
+    year: 2023
+    citation_count: 700
+    venue: ICML
+    in_corpus: false
+    year_month: 2015-01
+    timeline_month_source: crossref
+- id: C13
+  name: Generative Adversarial Nets
+  color: '#E53935'
+  anchors:
+  - label: GAN
+    full_title: Generative Adversarial Nets
+    first_author: Goodfellow et al.
+    year: 2014
+    citation_count: 70000
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_C13_001
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=c68796f833a7151f)'
+    year_month: 2023-02
+    timeline_month_source: crossref
+  - label: DCGAN
+    full_title: Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks
+    first_author: Radford et al.
+    year: 2016
+    citation_count: 20000
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C13_002
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=8388f1be26329fa4)'
+    year_month: 2018-12
+    timeline_month_source: crossref
+  - label: WGAN
+    full_title: Wasserstein GAN
+    first_author: Arjovsky et al.
+    year: 2017
+    citation_count: 14000
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: F_C13_003
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=2f85b7376769473d)'
+  - label: WGAN-GP
+    full_title: Improved Training of Wasserstein GANs
+    first_author: Gulrajani et al.
+    year: 2017
+    citation_count: 11000
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_C13_004
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=edf73ab12595c670)'
+    year_month: 2019-08
+    timeline_month_source: crossref
+  - label: CycleGAN
+    full_title: Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks
+    first_author: Zhu et al.
+    year: 2017
+    citation_count: 25000
+    venue: ICCV
+    in_corpus: false
+    year_month: 2017-10
+    timeline_month_source: crossref
+  - label: ProgressiveGAN
+    full_title: Progressive Growing of GANs for Improved Quality, Stability, and Variation
+    first_author: Karras et al.
+    year: 2018
+    citation_count: 7500
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C13_005
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=744fe47157477235)'
+  - label: SNGAN
+    full_title: Spectral Normalization for Generative Adversarial Networks
+    first_author: Miyato et al.
+    year: 2018
+    citation_count: 5500
+    venue: ICLR
+    in_corpus: false
+    year_month: 2021-10
+    timeline_month_source: crossref
+  - label: StyleGAN
+    full_title: A Style-Based Generator Architecture for Generative Adversarial Networks
+    first_author: Karras et al.
+    year: 2019
+    citation_count: 14000
+    venue: CVPR
+    in_corpus: true
+    corpus_paper_id: F_C13_006
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=ceb2ebef0b41e31c)'
+    year_month: 2019-06
+    timeline_month_source: crossref
+  - label: BigGAN
+    full_title: Large Scale GAN Training for High Fidelity Natural Image Synthesis
+    first_author: Brock et al.
+    year: 2019
+    citation_count: 5500
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C13_007
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=22aab110058ebbd1)'
+  - label: StyleGAN2
+    full_title: Analyzing and Improving the Image Quality of StyleGAN
+    first_author: Karras et al.
+    year: 2020
+    citation_count: 5500
+    venue: CVPR
+    in_corpus: true
+    corpus_paper_id: F_C13_008
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=14fdc18d9c164e5b)'
+    year_month: 2020-06
+    timeline_month_source: crossref
+  - label: StyleGAN3
+    full_title: Alias-Free Generative Adversarial Networks
+    first_author: Karras et al.
+    year: 2021
+    citation_count: 2000
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_C13_009
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=c1ff08b59f00c44f)'
+    year_month: 2021-07
+    timeline_month_source: crossref
+- id: C7
+  name: Self-Supervised
+  color: '#43A047'
+  anchors:
+  - label: Word2Vec
+    full_title: Efficient Estimation of Word Representations in Vector Space
+    first_author: Mikolov et al.
+    year: 2013
+    citation_count: 45000
+    venue: ICLR Workshop
+    in_corpus: false
+    year_month: 2020-03
+    timeline_month_source: crossref
+  - label: GloVe
+    full_title: 'GloVe: Global Vectors for Word Representation'
+    first_author: Pennington, Socher, Manning
+    year: 2014
+    citation_count: 35000
+    venue: EMNLP
+    in_corpus: false
+    year_month: 2014-01
+    timeline_month_source: crossref
+  - label: Skip-Thought
+    full_title: Skip-Thought Vectors
+    first_author: Kiros et al.
+    year: 2015
+    citation_count: 4000
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2015-06
+    timeline_month_source: s2
+  - label: CPC
+    full_title: Representation Learning with Contrastive Predictive Coding
+    first_author: van den Oord et al.
+    year: 2018
+    citation_count: 13000
+    venue: arXiv
+    in_corpus: true
+    year_month: 2018-07
+    timeline_month_source: arxiv
+  - label: MoCo
+    full_title: Momentum Contrast for Unsupervised Visual Representation Learning
+    first_author: He et al.
+    year: 2019
+    citation_count: 15000
+    venue: CVPR
+    in_corpus: true
+    year_month: 2020-06
+    timeline_month_source: crossref
+  - label: SimCLR
+    full_title: A Simple Framework for Contrastive Learning of Visual Representations
+    first_author: Chen et al.
+    year: 2020
+    citation_count: 22000
+    venue: ICML
+    in_corpus: false
+    year_month: 2022-12
+    timeline_month_source: crossref
+  - label: BYOL
+    full_title: 'Bootstrap Your Own Latent: A New Approach to Self-Supervised Learning'
+    first_author: Grill et al.
+    year: 2020
+    citation_count: 6000
+    venue: NeurIPS
+    in_corpus: false
+  - label: SwAV
+    full_title: Unsupervised Learning of Visual Features by Contrasting Cluster Assignments
+    first_author: Caron et al.
+    year: 2020
+    citation_count: 5500
+    venue: NeurIPS
+    in_corpus: false
+  - label: SimSiam
+    full_title: Exploring Simple Siamese Representation Learning
+    first_author: Chen, He
+    year: 2020
+    citation_count: 5000
+    venue: CVPR
+    in_corpus: true
+    year_month: 2021-06
+    timeline_month_source: crossref
+  - label: Wav2Vec 2.0
+    full_title: 'wav2vec 2.0: A Framework for Self-Supervised Learning of Speech Representations'
+    first_author: Baevski et al.
+    year: 2020
+    citation_count: 7500
+    venue: NeurIPS
+    in_corpus: false
+    year_month: 2020-05
+    timeline_month_source: crossref
+  - label: Barlow Twins
+    full_title: 'Barlow Twins: Self-Supervised Learning via Redundancy Reduction'
+    first_author: Zbontar et al.
+    year: 2021
+    citation_count: 3500
+    venue: ICML
+    in_corpus: false
+    year_month: 2022-09
+    timeline_month_source: crossref
+  - label: DINO
+    full_title: Emerging Properties in Self-Supervised Vision Transformers
+    first_author: Caron et al.
+    year: 2021
+    citation_count: 6500
+    venue: ICCV
+    in_corpus: false
+    year_month: 2021-10
+    timeline_month_source: crossref
+  - label: HuBERT
+    full_title: 'HuBERT: Self-Supervised Speech Representation Learning by Masked Prediction of Hidden Units'
+    first_author: Hsu et al.
+    year: 2021
+    citation_count: 4500
+    venue: IEEE TASLP
+    in_corpus: true
+    year_month: 2021-01
+    timeline_month_source: crossref
+  - label: BEiT
+    full_title: 'BEiT: BERT Pre-Training of Image Transformers'
+    first_author: Bao, Dong, Wei
+    year: 2021
+    citation_count: 3500
+    venue: ICLR
+    in_corpus: false
+  - label: CLIP
+    full_title: Learning Transferable Visual Models From Natural Language Supervision
+    first_author: Radford et al.
+    year: 2021
+    citation_count: 28000
+    venue: ICML
+    in_corpus: false
+    year_month: 2024-09
+    timeline_month_source: crossref
+  - label: MAE
+    full_title: Masked Autoencoders Are Scalable Vision Learners
+    first_author: He et al.
+    year: 2022
+    citation_count: 10000
+    venue: CVPR
+    in_corpus: false
+    year_month: 2022-06
+    timeline_month_source: crossref
+- id: C14
+  name: Graph Neural Networks
+  color: '#3949AB'
+  anchors:
+  - label: Spectral GCN
+    full_title: Spectral Networks and Deep Locally Connected Networks on Graphs
+    first_author: Bruna et al.
+    year: 2014
+    citation_count: 4500
+    venue: ICLR
+    in_corpus: false
+    notes: 'auto: seed not found in corpus'
+    year_month: 2013-12
+    timeline_month_source: s2
+  - label: ChebNet
+    full_title: Convolutional Neural Networks on Graphs with Fast Localized Spectral Filtering
+    first_author: Defferrard et al.
+    year: 2016
+    citation_count: 7500
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_C14_001
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=c41eb895616e453d)'
+    year_month: 2020-01
+    timeline_month_source: crossref
+  - label: GCN
+    full_title: Semi-Supervised Classification with Graph Convolutional Networks
+    first_author: Kipf, Welling
+    year: 2017
+    citation_count: 28000
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C14_002
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=36eff562f6512551)'
+  - label: GraphSAGE
+    full_title: Inductive Representation Learning on Large Graphs
+    first_author: Hamilton et al.
+    year: 2017
+    citation_count: 13000
+    venue: NeurIPS
+    in_corpus: true
+    corpus_paper_id: F_C14_003
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=6b7d6e6416343b2a)'
+    year_month: 2021-08
+    timeline_month_source: crossref
+  - label: MPNN
+    full_title: Neural Message Passing for Quantum Chemistry
+    first_author: Gilmer et al.
+    year: 2017
+    citation_count: 6000
+    venue: ICML
+    in_corpus: true
+    corpus_paper_id: F_C14_004
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=e24cdf73b3e7e590)'
+  - label: GAT
+    full_title: Graph Attention Networks
+    first_author: Veličković et al.
+    year: 2018
+    citation_count: 17000
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C14_005
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=33998aff64ce51df)'
+    year_month: 2020-01
+    timeline_month_source: crossref
+  - label: GIN
+    full_title: How Powerful are Graph Neural Networks?
+    first_author: Xu et al.
+    year: 2019
+    citation_count: 8000
+    venue: ICLR
+    in_corpus: true
+    corpus_paper_id: F_C14_006
+    notes: 'auto: seed not found in corpus | auto: named_fetch via S2 (paperId=62ed9bf1d83c8db1)'
+    year_month: 2022-01
+    timeline_month_source: crossref
+  - label: Graphormer
+    full_title: Do Transformers Really Perform Bad for Graph Representation?
+    first_author: Ying et al.
+    year: 2021
+    citation_count: 1500
+    venue: NeurIPS
+    in_corpus: false

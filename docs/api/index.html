@@ -213,6 +213,69 @@ main{display:flex;flex-direction:column;gap:18px}
 }
 .feature b{display:block;margin-bottom:4px}
 .feature p{margin:0;font-size:14px}
+.route-grid,.journey-grid,.choice-grid,.credential-grid,.install-grid{
+  display:grid;
+  gap:12px;
+  margin-top:16px;
+}
+.route-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.journey-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+.choice-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.credential-grid,.install-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.route-card,.journey-step,.choice-card,.credential-card,.install-card{
+  position:relative;
+  border:1px solid var(--line-soft);
+  border-radius:10px;
+  padding:15px;
+  background:#fbfdfc;
+}
+.route-card{border-top:3px solid #78bfb1}
+.route-card:hover,.choice-card:hover,.install-card:hover{
+  border-color:#9bd7cb;
+  box-shadow:0 9px 22px rgba(15,118,110,.075);
+}
+.route-kicker,.step-number,.choice-kicker{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  border-radius:999px;
+  padding:2px 8px;
+  background:var(--teal-soft);
+  color:#0f5f59;
+  font-size:12px;
+  font-weight:850;
+}
+.route-card h4,.journey-step h4,.choice-card h4,.credential-card h4,.install-card h4{
+  margin:9px 0 5px;
+  color:var(--ink);
+  font-size:16px;
+}
+.route-card p,.choice-card p,.credential-card p,.install-card p,.journey-step p{margin:0;color:#475569;font-size:14px}
+.route-card .inline-link{margin-top:12px}
+.journey-step{padding-top:44px;background:linear-gradient(180deg,#fff 0%,#f7fbfa 100%)}
+.step-number{position:absolute;top:13px;left:13px;background:var(--ink);color:#fff}
+.choice-card{background:#fff}
+.choice-card h4 code{font-size:13px;overflow-wrap:anywhere}
+.credential-card{background:#f8fbfa}
+.install-card{background:#fff}
+.install-card pre{margin:12px 0 0}
+.install-card pre:last-child{margin-bottom:0}
+.advanced-panel{
+  margin-top:18px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fbfdfc;
+  overflow:hidden;
+}
+.advanced-panel summary{
+  cursor:pointer;
+  padding:14px 16px;
+  color:#243b38;
+  font-weight:850;
+}
+.advanced-panel[open] summary{border-bottom:1px solid var(--line-soft);background:#f3faf7}
+.advanced-panel > div{padding:2px 16px 16px}
+.section h3.section-kicker{margin:28px 0 7px;color:#0f5f59;font-size:14px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
 .callout{
   border-left:4px solid var(--teal);
   border-radius:8px;
@@ -494,6 +557,7 @@ pre code{
   .hero-inner{grid-template-columns:1fr}
   .shell{grid-template-columns:220px minmax(0,1fr)}
   .right-panel{position:static;grid-column:1 / -1;max-height:none}
+  .route-grid,.choice-grid,.journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media (max-width:820px){
   .topbar{padding:10px 16px;align-items:flex-start}
@@ -501,7 +565,7 @@ pre code{
   .shell{grid-template-columns:1fr}
   .side{position:static;max-height:none}
   h1{font-size:34px}
-  .feature-grid,.mode-grid,.info-grid,.meta-grid,.link-grid{grid-template-columns:1fr}
+  .feature-grid,.mode-grid,.info-grid,.meta-grid,.link-grid,.route-grid,.journey-grid,.choice-grid,.credential-grid,.install-grid{grid-template-columns:1fr}
   .command-head{display:block}
   .mini-actions{justify-content:flex-start;margin-top:12px}
 }
@@ -555,10 +619,10 @@ pre code{
   <aside class="side panel" aria-label="Documentation navigation">
     <strong class="side-title" data-i18n="tocTitle">Contents</strong>
     <a href="#overview"><span data-i18n="navOverview">Overview</span></a>
+    <a href="#quickstart"><span data-i18n="navQuickstart">Quick Start</span></a>
+    <a href="#agent-skills"><span data-i18n="navAgentSkills">Agent Skills</span></a>
     <a href="#api-config"><span data-i18n="navApiConfig">API Setup</span></a>
     <a href="#workflow"><span data-i18n="navWorkflow">Workflow</span></a>
-    <a href="#agent-skills"><span data-i18n="navAgentSkills">Agent Skills</span></a>
-    <a href="#quickstart"><span data-i18n="navQuickstart">Quick Start</span></a>
     <a href="#input-styles"><span data-i18n="navInput">Input Styles</span></a>
     <a href="#parameters"><span data-i18n="navParameters">Parameters</span></a>
     <a href="#commands"><span data-i18n="navCommands">Commands</span></a>
@@ -571,6 +635,10 @@ pre code{
       <h2 data-i18n="overviewTitle">Overview</h2>
       <p class="section-lead" data-i18n="overviewP1">SciAtlas is designed to be used from the command line first. The CLI turns your topic, idea, author, keyword anchors, paper-title anchors, and retrieval preferences into a structured request, calls the hosted SciAtlas knowledge-graph backend, and saves reproducible artifacts under a run directory.</p>
       <p data-i18n="overviewP2">Most users do not need to write JSON by hand. Start with expert parameters for stable results, or use natural-language input for fast exploration.</p>
+      <h3 class="section-kicker" data-i18n="startRouteTitle">Choose your starting route</h3>
+      <p data-i18n="startRouteIntro">All three routes use the same hosted SciAtlas service. Choose based on how you prefer to work, not on which route sounds more advanced.</p>
+      <div class="route-grid" id="starterRoutes"></div>
+      <div class="callout" data-i18n="startRouteNote">Name check: a CLI command is a command you run; a CLI JSON preset is a reusable command template; an Agent Skill is a SKILL.md playbook an agent follows. They are related, but they are not interchangeable.</div>
       <div class="feature-grid">
         <div class="feature"><b data-i18n="featurePlanTitle">Structured but friendly</b><p data-i18n="featurePlanText">Use flags such as --query, --keyword, --time-range, and --top-k instead of hand-writing API payloads.</p></div>
         <div class="feature"><b data-i18n="featureReportsTitle">Report-ready outputs</b><p data-i18n="featureReportsText">Every workflow can save request, response, metadata, and Markdown reports for review or reproduction.</p></div>
@@ -619,64 +687,138 @@ curl -H "Authorization: Bearer $SCIATLAS_API_KEY" \
 
     <section class="section" id="agent-skills">
       <h2 data-i18n="agentSkillsTitle">Agent Skills</h2>
-      <p class="section-lead" data-i18n="agentSkillsIntro">SciAtlas also includes a portable Agent Skill pack under agent-skill/. These skills are for coding and research agents that understand SKILL.md files, such as Codex-style environments. They complement the CLI rather than replacing it.</p>
-      <div class="feature-grid">
-        <div class="feature"><b data-i18n="agentSkillLayerTitle">How they fit</b><p data-i18n="agentSkillLayerText">The CLI produces reproducible retrieval artifacts. Agent Skills teach an agent how to set up the CLI, run search-papers, read those artifacts, and complete a downstream research task.</p></div>
-        <div class="feature"><b data-i18n="agentSkillPrimitiveTitle">Retrieval primitive</b><p data-i18n="agentSkillPrimitiveText">Inside these Agent Skills, the only SciAtlas retrieval primitive is search-papers. Review, evaluation, trend, and profile outputs are synthesized by the agent from saved evidence.</p></div>
-        <div class="feature"><b data-i18n="agentSkillDifferenceTitle">Different from CLI presets</b><p data-i18n="agentSkillDifferenceText">sciatlas skill run expands JSON presets into CLI commands. Agent Skills are SKILL.md playbooks for multi-step agent behavior, including setup, token handling, artifact reading, and final synthesis.</p></div>
-      </div>
+      <p class="section-lead" data-i18n="agentSkillsIntro">Agent Skills are outcome-oriented playbooks for Codex, Claude Code, and other tools that read SKILL.md. You describe the research outcome in ordinary language; the agent follows the scoped workflow, uses the CLI or dedicated pipeline, reads the saved evidence, and returns a usable answer.</p>
+      <div class="callout" data-i18n="agentSkillDecision">Use an Agent Skill when you want help completing a research task. Use the CLI when you want to run and tune commands yourself. Both routes save reproducible artifacts under runs/.</div>
 
-      <h3 data-i18n="agentSkillGitTitle">Git</h3>
-      <p data-i18n="agentSkillGitText">Git is the source checkout for the Agent Skill pack. Clone it once, then pull the repository when you want updated skill instructions.</p>
+      <h3 class="section-kicker" data-i18n="agentSkillStartTitle">The four-step path</h3>
+      <div class="journey-grid" id="agentJourney"></div>
+
+      <h3 data-i18n="agentSkillChooseTitle">Choose by the answer you need</h3>
+      <p data-i18n="agentSkillChooseIntro">Pick one directory that matches your goal. Install just that directory first; you can add more later without changing your configuration.</p>
+      <div class="choice-grid" id="agentSkillChoices"></div>
+
+      <h3 data-i18n="agentSkillGitTitle">Get the Skill pack</h3>
+      <p data-i18n="agentSkillGitText">Clone the source once. When the skills are updated, return to this checkout and run git pull.</p>
       <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>git clone https://github.com/zjunlp/SciAtlas.git
-cd SciAtlas
-git pull</code></pre>
-      <p data-i18n="agentSkillGitNote">Run the copy commands below from the repository root.</p>
+cd SciAtlas</code></pre>
+      <p data-i18n="agentSkillGitNote">Run every copy command below from the repository root. The example installs literature review; replace that final folder name with the Skill you picked above.</p>
 
-      <h3 data-i18n="agentSkillClaudeTitle">Claude Code</h3>
-      <p data-i18n="agentSkillClaudeText">Claude Code loads filesystem skills from ~/.claude/skills. Copy the packaged SciAtlas skill directories there, then restart Claude Code or refresh the workspace.</p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
-Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
-
-# macOS / Linux
-mkdir -p ~/.claude/skills
-cp -R ./agent-skill/sciatlas-* ~/.claude/skills/</code></pre>
-      <p data-i18n="agentSkillClaudeNote">You can also keep the same skill directories in a project-local .claude/skills/ folder when the workflows should stay scoped to one repository. To install only one workflow, replace sciatlas-* with a specific folder such as sciatlas-literature-review.</p>
-
-      <h3 data-i18n="agentSkillCodexTitle">Codex</h3>
-      <p data-i18n="agentSkillCodexText">Codex uses the installed Codex environment and loads skills from ~/.codex/skills. Copy the packaged SciAtlas skill directories there, then start a new Codex session.</p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
+      <h3 data-i18n="agentSkillInstallTitle">Install one selected Skill</h3>
+      <p data-i18n="agentSkillInstallIntro">Installing one Skill is the recommended start. It keeps your agent's menu focused and makes it obvious which workflow owns the task.</p>
+      <div class="install-grid">
+        <article class="install-card">
+          <span class="route-kicker" data-i18n="agentSkillCodexTitle">Codex</span>
+          <h4 data-i18n="agentSkillInstallWindows">Windows PowerShell</h4>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Example: install only sciatlas-literature-review
 New-Item -ItemType Directory -Force "$env:USERPROFILE\.codex\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-literature-review "$env:USERPROFILE\.codex\skills\"</code></pre>
+          <h4 data-i18n="agentSkillInstallUnix">macOS / Linux</h4>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Example: install only sciatlas-literature-review
+mkdir -p ~/.codex/skills
+cp -R ./agent-skill/sciatlas-literature-review ~/.codex/skills/</code></pre>
+        </article>
+        <article class="install-card">
+          <span class="route-kicker" data-i18n="agentSkillClaudeTitle">Claude Code</span>
+          <h4 data-i18n="agentSkillInstallWindows">Windows PowerShell</h4>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Example: install only sciatlas-literature-review
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.claude\skills" | Out-Null
+Copy-Item -Recurse .\agent-skill\sciatlas-literature-review "$env:USERPROFILE\.claude\skills\"</code></pre>
+          <h4 data-i18n="agentSkillInstallUnix">macOS / Linux</h4>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Example: install only sciatlas-literature-review
+mkdir -p ~/.claude/skills
+cp -R ./agent-skill/sciatlas-literature-review ~/.claude/skills/</code></pre>
+        </article>
+      </div>
+      <details class="advanced-panel">
+        <summary data-i18n="agentSkillInstallAllTitle">Optional: install every SciAtlas Skill</summary>
+        <div>
+          <p data-i18n="agentSkillInstallAllText">Replace the selected directory with sciatlas-* only if you want every workflow available in the same agent environment.</p>
+          <div class="install-grid">
+            <article class="install-card">
+              <h4 data-i18n="agentSkillCodexTitle">Codex</h4>
+              <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
 Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.codex\skills\"
 
 # macOS / Linux
-mkdir -p ~/.codex/skills
 cp -R ./agent-skill/sciatlas-* ~/.codex/skills/</code></pre>
-      <p data-i18n="agentSkillCodexNote">The same skill directories can be installed in both tools.</p>
+            </article>
+            <article class="install-card">
+              <h4 data-i18n="agentSkillClaudeTitle">Claude Code</h4>
+              <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code># Windows PowerShell
+Copy-Item -Recurse .\agent-skill\sciatlas-* "$env:USERPROFILE\.claude\skills\"
 
-      <h3 data-i18n="agentSkillPackTitle">Included Agent Skills</h3>
-      <p data-i18n="agentSkillPackIntro">Use this table when deciding which skill directory to copy into your agent tool's skill folder.</p>
-      <div class="table-scroll"><table class="compact-table" id="agentSkillTable"></table></div>
+# macOS / Linux
+cp -R ./agent-skill/sciatlas-* ~/.claude/skills/</code></pre>
+            </article>
+          </div>
+        </div>
+      </details>
 
-      <h3 data-i18n="agentSkillUseTitle">Use with an agent tool</h3>
-      <p data-i18n="agentSkillUseText">Each helper skill is self-contained: keep SKILL.md as the source of truth, keep API tokens and run artifacts out of agent-skill/, and let the agent use SCIATLAS_API_KEY plus runs/&lt;run_id&gt;/ artifacts during the task.</p>
+      <h3 data-i18n="agentSkillUseTitle">Start with a plain-language request</h3>
+      <p data-i18n="agentSkillUseText">Open a new agent session after installation, then state the outcome you want. For example: “Create an evidence-backed literature-review outline for retrieval-augmented generation since 2020.” The Skill guides setup, runs its allowed retrieval or workflow, reads runs/&lt;run_id&gt;/ artifacts, and synthesizes the result.</p>
+      <div class="callout" data-i18n="agentSkillContract">The agent handles tool setup, registration guidance, environment configuration, execution, artifact reading, and synthesis. You provide only human-only values: email verification, your SciAtlas token, credentials that a selected workflow actually needs, and one necessary task clarification. Keep tokens and run artifacts outside agent-skill/.</div>
 
-      <div class="callout" data-i18n="agentSkillContract">Operational contract: do not put API tokens or run artifacts inside agent-skill/. When a token is missing, the agent should guide the user through browser registration, configure SCIATLAS_API_KEY, run only search-papers, and inspect runs/&lt;run_id&gt;/summary.txt, report.md, request.json, and response.json.</div>
+      <h3 data-i18n="agentSkillModeTitle">When “flash” and “full” matter</h3>
+      <div class="mode-grid" id="agentModeGrid"></div>
+
+      <h3 data-i18n="agentSkillCredentialTitle">Credentials, scoped to the goal</h3>
+      <p data-i18n="agentSkillCredentialIntro">Start with the SciAtlas token. Ask for additional credentials only when the selected workflow needs them; do not collect every possible secret up front.</p>
+      <div class="credential-grid" id="agentCredentialGrid"></div>
+
+      <details class="advanced-panel">
+        <summary data-i18n="agentSkillAdvancedTitle">Advanced: verify each Skill's execution boundary</summary>
+        <div>
+          <p data-i18n="agentSkillPackIntro">This reference shows the exact command or workflow each Skill is allowed to use. It is useful for maintainers and for debugging, not required for a first run.</p>
+          <div class="table-scroll"><table class="compact-table" id="agentSkillTable"></table></div>
+          <p data-i18n="agentSkillDifferenceText">CLI presets such as *-full expand saved JSON into commands. Agent Skills are SKILL.md playbooks that guide multi-step agent behavior. The *-full names are CLI preset names, not Agent Skill directories.</p>
+        </div>
+      </details>
     </section>
 
     <section class="section" id="quickstart">
       <h2 data-i18n="quickstartTitle">Quick Start</h2>
       <h3 data-i18n="installTitle">1. Install</h3>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>python -m venv .venv
+      <p data-i18n="installIntro">Create a virtual environment, activate it in the shell you actually use, then install the local SciAtlas package.</p>
+      <div class="install-grid">
+        <article class="install-card">
+          <span class="route-kicker" data-i18n="installWindowsTitle">Windows PowerShell</span>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
+pip install -e .\sciatlas</code></pre>
+        </article>
+        <article class="install-card">
+          <span class="route-kicker" data-i18n="installUnixTitle">macOS / Linux</span>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>python3 -m venv .venv
 source .venv/bin/activate
-pip install -U pip
+python -m pip install -U pip
 pip install -e ./sciatlas</code></pre>
+        </article>
+      </div>
+      <p class="small-note" data-i18n="installNote">If PowerShell blocks activation, run Set-ExecutionPolicy -Scope Process Bypass once in that terminal, then activate again.</p>
+      <h3 data-i18n="workflowInstallTitle">1b. Prepare dedicated workflows</h3>
+      <p data-i18n="workflowInstallText">The package-only installation above is sufficient for core CLI retrieval. Literature review, idea evaluation, and idea generation require a full repository checkout plus workflow dependencies. The uv installer does this automatically; otherwise run:</p>
+      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>git clone https://github.com/zjunlp/SciAtlas.git
+cd SciAtlas
+python -m pip install -e ./sciatlas
+python -m pip install -r requirements-workflows.txt
+python run_sciatlas.py literature-review -h</code></pre>
       <h3 data-i18n="tokenTitle">2. Configure your token</h3>
       <p data-i18n="tokenText">Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciAtlas backend.</p>
       <p><a class="inline-link" href="http://sciatlas.openkg.cn/register" data-i18n="tokenRegisterLink">Open token registration</a></p>
-      <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
+      <div class="install-grid">
+        <article class="install-card">
+          <span class="route-kicker" data-i18n="installWindowsTitle">Windows PowerShell</span>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>$env:SCIATLAS_API_BASE_URL = "http://sciatlas.openkg.cn"
+$env:SCIATLAS_API_KEY = "your-personal-sciatlas-token"</code></pre>
+        </article>
+        <article class="install-card">
+          <span class="route-kicker" data-i18n="installUnixTitle">macOS / Linux</span>
+          <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>export SCIATLAS_API_BASE_URL="http://sciatlas.openkg.cn"
 export SCIATLAS_API_KEY="your-personal-sciatlas-token"</code></pre>
+        </article>
+      </div>
+      <p class="small-note" data-i18n="tokenShellNote">These commands apply to the current shell session. For a persistent Windows variable, use setx and open a new PowerShell window afterward.</p>
       <h3 data-i18n="checkTitle">3. Check the setup</h3>
       <pre><button class="copy-code" type="button" data-copy-code>Copy</button><code>sciatlas health
 sciatlas config
@@ -817,16 +959,16 @@ const I18N = {
     workflowTitle:"How the CLI Works", workflowIntro:"A SciAtlas command usually has four parts: global connection options, one task command, input or anchor parameters, and output controls. The CLI then builds a plan, calls the proper backend route, and writes files for later review.",
     workflowCallout:"Mental model: use expert parameters when the topic matters, use natural language when you are still exploring, and use command-specific help when you are unsure about one command.",
     agentSkillsTitle:"Agent Skills", agentSkillsIntro:"SciAtlas also includes a portable Agent Skill pack under agent-skill/. These skills are for coding and research agents that understand SKILL.md files, such as Codex-style environments. They complement the CLI rather than replacing it.",
-    agentSkillLayerTitle:"How they fit", agentSkillLayerText:"The CLI produces reproducible retrieval artifacts. Agent Skills teach an agent how to set up the CLI, run search-papers, read those artifacts, and complete a downstream research task.",
-    agentSkillPrimitiveTitle:"Retrieval primitive", agentSkillPrimitiveText:"Inside these Agent Skills, the only SciAtlas retrieval primitive is search-papers. Review, evaluation, trend, and profile outputs are synthesized by the agent from saved evidence.",
-    agentSkillDifferenceTitle:"Different from CLI presets", agentSkillDifferenceText:"sciatlas skill run expands JSON presets into CLI commands. Agent Skills are SKILL.md playbooks for multi-step agent behavior, including setup, token handling, artifact reading, and final synthesis.",
+    agentSkillLayerTitle:"How they fit", agentSkillLayerText:"The CLI produces reproducible artifacts. Agent Skills teach an agent how to take a novice user from zero setup to a final research result: install or locate the CLI, guide registration, configure environment variables, run stable retrieval commands or the current dedicated workflows, read artifacts, and synthesize the downstream answer.",
+    agentSkillPrimitiveTitle:"Execution boundaries", agentSkillPrimitiveText:"Quick search, grounding, trend, and researcher skills may run only search-papers. Literature review, automated review, and idea generation may run only their dedicated workflows; they start with flash and use full only when the request or evidence calls for it.",
+    agentSkillDifferenceTitle:"Different from CLI presets", agentSkillDifferenceText:"sciatlas skill run expands JSON presets into CLI commands. Agent Skills are SKILL.md playbooks for multi-step agent behavior, including setup, token handling, artifact reading, and final synthesis. The *-full names are CLI preset names, not Agent Skill directories.",
     agentSkillGitTitle:"Git", agentSkillGitText:"Git is the source checkout for the Agent Skill pack. Clone it once, then pull the repository when you want updated skill instructions.", agentSkillGitNote:"Run the copy commands below from the repository root.",
     agentSkillClaudeTitle:"Claude Code", agentSkillClaudeText:"Claude Code loads filesystem skills from ~/.claude/skills. Copy the packaged SciAtlas skill directories there, then restart Claude Code or refresh the workspace.", agentSkillClaudeNote:"You can also keep the same skill directories in a project-local .claude/skills/ folder when the workflows should stay scoped to one repository. To install only one workflow, replace sciatlas-* with a specific folder such as sciatlas-literature-review.",
     agentSkillCodexTitle:"Codex", agentSkillCodexText:"Codex uses the installed Codex environment and loads skills from ~/.codex/skills. Copy the packaged SciAtlas skill directories there, then start a new Codex session.", agentSkillCodexNote:"The same skill directories can be installed in both tools.",
     agentSkillPackTitle:"Included Agent Skills", agentSkillPackIntro:"Use this table when deciding which skill directory to copy into your agent tool's skill folder.",
-    agentSkillUseTitle:"Use with an agent tool", agentSkillUseText:"Each helper skill is self-contained: keep SKILL.md as the source of truth, keep API tokens and run artifacts out of agent-skill/, and let the agent use SCIATLAS_API_KEY plus runs/<run_id>/ artifacts during the task.",
-    agentSkillContract:"Operational contract: do not put API tokens or run artifacts inside agent-skill/. When a token is missing, the agent should guide the user through browser registration, configure SCIATLAS_API_KEY, run only search-papers, and inspect runs/<run_id>/summary.txt, report.md, request.json, and response.json.",
-    agentSkillName:"Skill", retrievalBase:"Retrieval base", downstreamGoal:"Downstream goal",
+    agentSkillUseTitle:"Use with an agent tool", agentSkillUseText:"Each helper skill is self-contained: keep SKILL.md as the source of truth, keep API tokens and run artifacts out of agent-skill/, and let the agent use SCIATLAS_API_KEY, workflow LLM/S2/KG configuration, and runs/<run_id>/ artifacts during the task.",
+    agentSkillContract:"Operational contract: do not put API tokens or run artifacts inside agent-skill/. The agent handles setup, registration guidance, environment configuration, retrieval or workflow execution, artifact reading, and final synthesis. The user only provides human-only values such as email, verification code, SciAtlas token, LLM/S2/KG credentials, or one necessary task clarification.",
+    agentSkillName:"Skill", retrievalBase:"Execution boundary", downstreamGoal:"Downstream goal",
     quickstartTitle:"Quick Start", installTitle:"1. Install", tokenTitle:"2. Configure your token", tokenText:"Register a personal token, then expose it to the CLI. The CLI sends it as Authorization and X-API-Key headers when it calls the hosted SciAtlas backend.", tokenRegisterLink:"Open token registration",
     checkTitle:"3. Check the setup", firstRunTitle:"4. Run a first retrieval", firstRunText:"Start with a small result set. Once the topic and anchors look right, increase --top-k or adjust ranking preferences.",
     artifactText:"After the command finishes, check the new folder under runs/. It keeps the request, response, metadata, and report so the result can be shared or reproduced.",
@@ -844,7 +986,24 @@ const I18N = {
     copyTitle:"Copy a starter command", exampleLabel:"Example", rightNote:"Replace the topic, domain, author, token, and time range with your own values.",
     option:"Option", required:"Required", defaultValue:"Default", meaning:"Meaning", accepts:"Accepts", groups:"Parameter groups", specific:"Command-specific options", example:"Example",
     variable:"Variable", whereUsed:"Where used", route:"Route", auth:"Auth", notes:"Notes", status:"Status", errorType:"Error type", task:"Task", mainInput:"Main input", keyParams:"Key parameters", output:"Output",
-    whenToUse:"When to use", outputYouGet:"Output you get", practicalTip:"Practical tip", noSpecific:"No command-specific options; use the shared parameter groups above.", recipeHowToUse:"How to use it", copy:"Copy", copied:"Copied"
+    whenToUse:"When to use", outputYouGet:"Output you get", practicalTip:"Practical tip", noSpecific:"No command-specific options; use the shared parameter groups above.", recipeHowToUse:"How to use it", copy:"Copy", copied:"Copied",
+    startRouteTitle:"Choose your starting route", startRouteIntro:"All three routes use the same hosted SciAtlas service. Choose based on how you prefer to work, not on which route sounds more advanced.",
+    agentSkillsIntro:"Agent Skills are outcome-oriented playbooks for Codex, Claude Code, and other tools that read SKILL.md. You describe the research outcome in ordinary language; the agent follows the scoped workflow, uses the CLI or dedicated pipeline, reads the saved evidence, and returns a usable answer.",
+    agentSkillDecision:"Use an Agent Skill when you want help completing a research task. Use the CLI when you want to run and tune commands yourself. Both routes save reproducible artifacts under runs/.",
+    agentSkillStartTitle:"The four-step path", agentSkillChooseTitle:"Choose by the answer you need", agentSkillChooseIntro:"Pick one directory that matches your goal. Install just that directory first; you can add more later without changing your configuration.",
+    agentSkillGitTitle:"Get the Skill pack", agentSkillGitText:"Clone the source once. When the skills are updated, return to this checkout and run git pull.", agentSkillGitNote:"Run every copy command below from the repository root. The example installs literature review; replace that final folder name with the Skill you picked above.",
+    agentSkillInstallTitle:"Install one selected Skill", agentSkillInstallIntro:"Installing one Skill is the recommended start. It keeps your agent's menu focused and makes it obvious which workflow owns the task.", agentSkillInstallWindows:"Windows PowerShell", agentSkillInstallUnix:"macOS / Linux", agentSkillInstallAllTitle:"Optional: install every SciAtlas Skill", agentSkillInstallAllText:"Replace the selected directory with sciatlas-* only if you want every workflow available in the same agent environment.",
+    agentSkillUseTitle:"Start with a plain-language request", agentSkillUseText:"Open a new agent session after installation, then state the outcome you want. For example: “Create an evidence-backed literature-review outline for retrieval-augmented generation since 2020.” The Skill guides setup, runs its allowed retrieval or workflow, reads runs/<run_id>/ artifacts, and synthesizes the result.",
+    agentSkillContract:"The agent handles tool setup, registration guidance, environment configuration, execution, artifact reading, and synthesis. You provide only human-only values: email verification, your SciAtlas token, credentials that a selected workflow actually needs, and one necessary task clarification. Keep tokens and run artifacts outside agent-skill/.",
+    agentSkillModeTitle:"When “flash” and “full” matter", agentSkillCredentialTitle:"Credentials, scoped to the goal", agentSkillCredentialIntro:"Start with the SciAtlas token. Ask for additional credentials only when the selected workflow needs them; do not collect every possible secret up front.",
+    agentSkillAdvancedTitle:"Advanced: verify each Skill's execution boundary", agentSkillPackIntro:"This reference shows the exact command or workflow each Skill is allowed to use. It is useful for maintainers and for debugging, not required for a first run.", agentSkillDifferenceText:"CLI presets such as *-full expand saved JSON into commands. Agent Skills are SKILL.md playbooks that guide multi-step agent behavior. The *-full names are CLI preset names, not Agent Skill directories.",
+    retrievalBase:"Allowed execution", downstreamGoal:"What it delivers",
+    heroCopy:"Choose your route, configure SciAtlas once, then run reproducible CLI commands or outcome-oriented Agent Skills with confidence.",
+    quickTitle:"A newcomer’s map",
+    startRouteNote:"Name check: a CLI command is a command you run; a CLI JSON preset is a reusable command template; an Agent Skill is a SKILL.md playbook an agent follows. They are related, but they are not interchangeable.",
+    installIntro:"Create a virtual environment, activate it in the shell you actually use, then install the local SciAtlas package.", installWindowsTitle:"Windows PowerShell", installUnixTitle:"macOS / Linux", installNote:"If PowerShell blocks activation, run Set-ExecutionPolicy -Scope Process Bypass once in that terminal, then activate again.",
+    workflowInstallTitle:"1b. Prepare dedicated workflows", workflowInstallText:"The package-only installation is enough for core CLI retrieval. Literature review, idea evaluation, and idea generation require a full repository checkout plus workflow dependencies. The uv installer does this automatically; otherwise run the commands below.",
+    tokenShellNote:"These commands apply to the current shell session. For a persistent Windows variable, use setx and open a new PowerShell window afterward."
   },
   zh: {
     homeLink:"首页", getToken:"获取 API Token", healthLink:"健康检查", eyebrow:"托管 API + CLI 使用手册",
@@ -866,16 +1025,16 @@ const I18N = {
     workflowTitle:"CLI 是怎么工作的", workflowIntro:"一条 SciAtlas 命令通常由四部分组成：全局连接参数、一个任务命令、输入或锚点参数、输出控制。CLI 会先生成检索计划，再调用对应后端路线，最后把结果文件写到本地，方便复查。",
     workflowCallout:"使用思路：主题很明确时用专家参数；还在探索时用自然语言；只拿不准某个命令时，用 sciatlas <command> -h 看该命令的专属帮助。",
     agentSkillsTitle:"Agent Skill", agentSkillsIntro:"SciAtlas 还在 agent-skill/ 下提供了一组可移植 Agent Skill。这些技能面向能够读取 SKILL.md 的编码与科研 Agent，例如 Codex 类环境。它们补充 CLI，而不是替代 CLI。",
-    agentSkillLayerTitle:"所在层次", agentSkillLayerText:"CLI 负责生成可复现的检索产物。Agent Skill 则指导 Agent 安装配置 CLI、运行 search-papers、读取这些产物，并完成下游科研任务。",
-    agentSkillPrimitiveTitle:"检索原语", agentSkillPrimitiveText:"这些 Agent Skill 内部唯一允许使用的 SciAtlas 检索原语是 search-papers。综述、评估、趋势和画像结果由 Agent 基于保存证据综合生成。",
-    agentSkillDifferenceTitle:"区别于 CLI 预设", agentSkillDifferenceText:"sciatlas skill run 会把 JSON 预设展开成 CLI 命令。Agent Skill 则是 SKILL.md 形式的多步任务说明书，覆盖环境配置、Token 处理、产物读取和最终综合。",
+    agentSkillLayerTitle:"所在层次", agentSkillLayerText:"CLI 负责生成可复现的运行产物。Agent Skill 则指导 Agent 让新手用户从零开始得到最终科研结果：安装或定位 CLI、引导注册、配置环境变量、运行稳定检索命令或当前专用 workflow、读取这些产物，并综合出下游答案。",
+    agentSkillPrimitiveTitle:"执行边界", agentSkillPrimitiveText:"快速检索、grounding、趋势和研究者画像类 skill 只允许使用 search-papers；文献综述、自动评审和 idea 生成只允许使用各自专用 workflow，并默认从 flash 开始，仅在需求或证据深度要求时使用 full。",
+    agentSkillDifferenceTitle:"区别于 CLI 预设", agentSkillDifferenceText:"sciatlas skill run 会把 JSON 预设展开成 CLI 命令。Agent Skill 则是 SKILL.md 形式的多步任务说明书，覆盖环境配置、Token 处理、产物读取和最终综合。*-full 是 CLI 预设名，不是 Agent Skill 目录。",
     agentSkillGitTitle:"Git", agentSkillGitText:"Git 是 Agent Skill 包的源副本。先克隆一次；之后需要更新技能说明时，直接拉取仓库即可。", agentSkillGitNote:"下面的复制命令都在仓库根目录执行。",
     agentSkillClaudeTitle:"Claude Code", agentSkillClaudeText:"Claude Code 会从 ~/.claude/skills 读取本地技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后重启 Claude Code 或刷新工作区。", agentSkillClaudeNote:"如果只想让某个项目使用这些技能，也可以把同一组 skill 放在项目内的 .claude/skills/ 目录中。只安装某一个工作流时，把 sciatlas-* 换成具体目录名，例如 sciatlas-literature-review。",
     agentSkillCodexTitle:"Codex", agentSkillCodexText:"Codex 使用已安装的 Codex 环境，并从 ~/.codex/skills 读取技能。把 SciAtlas 打包好的全部 skill 目录复制进去，然后开启新的 Codex 会话。", agentSkillCodexNote:"同一组 skill 目录可以同时安装到 Claude Code 和 Codex。",
     agentSkillPackTitle:"已包含的 Agent Skill", agentSkillPackIntro:"需要决定复制哪个 skill 目录到 Agent 工具的技能目录时，可先看这张表。",
-    agentSkillUseTitle:"在 Agent 工具中使用", agentSkillUseText:"每个辅助 skill 都是自包含的：SKILL.md 是主要说明文件；不要把 API Token 或运行产物放进 agent-skill/；任务执行时让 Agent 使用外部的 SCIATLAS_API_KEY，并读取 runs/<run_id>/ 中的证据产物。",
-    agentSkillContract:"操作约束：不要把 API Token 或运行产物放进 agent-skill/。缺少 Token 时，Agent 应引导用户完成浏览器注册，配置 SCIATLAS_API_KEY，只运行 search-papers，并读取 runs/<run_id>/summary.txt、report.md、request.json 和 response.json。",
-    agentSkillName:"Skill", retrievalBase:"检索基础", downstreamGoal:"下游目标",
+    agentSkillUseTitle:"在 Agent 工具中使用", agentSkillUseText:"每个辅助 skill 都是自包含的：SKILL.md 是主要说明文件；不要把 API Token 或运行产物放进 agent-skill/；任务执行时让 Agent 使用外部的 SCIATLAS_API_KEY、workflow 所需 LLM（大语言模型）/S2（Semantic Scholar）/KG（知识图谱）配置，并读取 runs/<run_id>/ 中的证据产物。",
+    agentSkillContract:"操作约束：不要把 API Token 或运行产物放进 agent-skill/。Agent 负责安装配置、注册引导、检索或 workflow 运行、产物读取和最终总结；用户只提供邮箱、验证码、SciAtlas Token、LLM（大语言模型）/S2（Semantic Scholar）/KG（知识图谱）密钥或一次必要的任务澄清。",
+    agentSkillName:"Skill", retrievalBase:"执行边界", downstreamGoal:"下游目标",
     quickstartTitle:"快速开始", installTitle:"1. 安装", tokenTitle:"2. 配置 Token", tokenText:"先注册个人 Token，再暴露给 CLI。CLI 调用托管 SciAtlas 后端时，会自动把 Token 放入 Authorization 和 X-API-Key 请求头。", tokenRegisterLink:"打开 Token 注册网站",
     checkTitle:"3. 检查配置", firstRunTitle:"4. 跑一次最小检索", firstRunText:"第一次建议先返回少量结果。确认主题和锚点方向正确后，再增加 --top-k 或调整排序偏好。",
     artifactText:"命令完成后，查看 runs/ 下新生成的目录。里面会保存 request、response、metadata 和 report，便于分享、排查和复现。",
@@ -893,7 +1052,25 @@ const I18N = {
     copyTitle:"复制起步命令", exampleLabel:"示例", rightNote:"把主题、领域、作者、Token 和时间范围替换成你自己的值即可。",
     option:"参数", required:"是否必填", defaultValue:"默认值", meaning:"含义", accepts:"可用值", groups:"参数组", specific:"专属参数", example:"示例",
     variable:"变量", whereUsed:"使用位置", route:"路径", auth:"认证", notes:"说明", status:"状态", errorType:"错误类型", task:"任务", mainInput:"主输入", keyParams:"关键参数", output:"输出",
-    whenToUse:"什么时候用", outputYouGet:"会得到什么", practicalTip:"实用提示", noSpecific:"无专属参数；使用上方通用参数组即可。", recipeHowToUse:"怎么使用这个样例", copy:"复制", copied:"已复制"
+    whenToUse:"什么时候用", outputYouGet:"会得到什么", practicalTip:"实用提示", noSpecific:"无专属参数；使用上方通用参数组即可。", recipeHowToUse:"怎么使用这个样例", copy:"复制", copied:"已复制",
+    startRouteTitle:"选择适合你的起步方式", startRouteIntro:"三种方式都调用同一套托管 SciAtlas 服务。按你希望怎样工作来选择，而不是按哪种方式看起来更高级来选择。",
+    agentSkillsIntro:"Agent Skill 是面向 Codex、Claude Code 及其他可读取 SKILL.md 工具的“目标导向说明书”。你用自然语言描述想得到的科研结果；Agent 会按受限工作流调用 CLI 或专用 pipeline、读取保存的证据，并交付可直接使用的答案。",
+    agentSkillDecision:"想让 Agent 协助完成科研任务时，用 Agent Skill；想亲自运行和微调命令时，用 CLI。两条路径都会把可复现产物保存到 runs/。",
+    agentSkillStartTitle:"四步上手路径", agentSkillChooseTitle:"按你想得到的答案选择", agentSkillChooseIntro:"先选一个与目标匹配的目录即可。建议只安装这个目录；以后增加其他 Skill 不需要改动已有配置。",
+    agentSkillGitTitle:"获取 Skill 包", agentSkillGitText:"先克隆一次源代码。Skill 更新后，回到这个目录运行 git pull 即可。", agentSkillGitNote:"下面所有复制命令都在仓库根目录执行。示例安装的是文献综述；把最后的目录名换成上方选中的 Skill 即可。",
+    agentSkillInstallTitle:"先安装一个选定的 Skill", agentSkillInstallIntro:"首次建议只装一个 Skill。这样 Agent 的可用菜单更聚焦，也更容易判断该由哪个工作流负责这项任务。", agentSkillInstallWindows:"Windows PowerShell", agentSkillInstallUnix:"macOS / Linux", agentSkillInstallAllTitle:"可选：安装全部 SciAtlas Skill", agentSkillInstallAllText:"只有希望同一个 Agent 环境可使用所有工作流时，才把选定目录替换为 sciatlas-*。",
+    agentSkillUseTitle:"用自然语言开始任务", agentSkillUseText:"安装后开启一个新的 Agent 会话，直接说明想得到的结果。例如：“为 2020 年以来的检索增强生成创建一份有证据支撑的文献综述大纲。”Skill 会引导配置，执行被允许的检索或工作流，读取 runs/<run_id>/ 产物，并综合出结果。",
+    agentSkillContract:"Agent 负责工具配置、注册引导、环境变量、执行、产物读取和综合；你只需提供必须由人完成的内容：邮箱验证、自己的 SciAtlas Token、所选工作流实际需要的凭证，以及一次必要的任务澄清。Token 和运行产物都应放在 agent-skill/ 之外。",
+    agentSkillModeTitle:"什么时候需要 “flash” 与 “full”", agentSkillCredentialTitle:"凭证按目标收集", agentSkillCredentialIntro:"先准备 SciAtlas Token。只有所选工作流真正需要时，才补充额外凭证；不应在开始前收集所有可能的密钥。",
+    agentSkillAdvancedTitle:"进阶：核对每个 Skill 的执行边界", agentSkillPackIntro:"这张表列出每个 Skill 允许使用的确切命令或工作流。它适合维护与排查；第一次使用时不必先看。", agentSkillDifferenceText:"CLI 预设（例如 *-full）会把保存的 JSON 展开为命令。Agent Skill 是指导多步 Agent 行为的 SKILL.md 说明书。*-full 是 CLI 预设名，不是 Agent Skill 目录。",
+    retrievalBase:"允许的执行方式", downstreamGoal:"会交付什么",
+    heroCopy:"先选择适合自己的使用路径，配置一次 SciAtlas，再放心运行可复现的 CLI 命令或目标导向的 Agent Skill。",
+    quickTitle:"新用户地图",
+    startRouteNote:"名称说明：CLI 命令是你亲自运行的命令；CLI JSON 预设是可复用的命令模板；Agent Skill 是供 Agent 遵循的 SKILL.md 说明书。它们彼此相关，但不能互相替代。",
+    installIntro:"创建虚拟环境，在你实际使用的终端中激活它，然后安装本地 SciAtlas 包。", installWindowsTitle:"Windows PowerShell", installUnixTitle:"macOS / Linux", installNote:"如果 PowerShell 阻止激活，请在当前终端先运行一次 Set-ExecutionPolicy -Scope Process Bypass，再重新激活环境。",
+    workflowInstallTitle:"1b. 准备专用工作流", workflowInstallText:"只安装 Python 包足以运行核心 CLI 检索；文献综述、Idea 评审和 Idea 生成需要完整仓库及工作流依赖。一键 uv 安装会自动完成；否则运行下方命令。",
+    tokenShellNote:"这些命令只对当前终端会话有效。若要在 Windows 中持久保存变量，请使用 setx，然后重新打开一个 PowerShell 窗口。",
+    featureSafeTitle:"LLM（大语言模型）可选增强", featureSafeText:"如果配置自己的 LLM（大语言模型）服务，SciAtlas 可优化关键词抽取；不配置时会继续使用确定性抽取逻辑。"
   }
 };
 
@@ -923,23 +1100,23 @@ const apiSetupGuide = [
 const directLinks = [
   {
     href:"http://sciatlas.openkg.cn",
-    title:{en:"InnoEval Frontend",zh:"InnoEval 前端"},
-    desc:{en:"Main application entry at the site root.",zh:"站点根路径下的主应用入口。"}
+    title:{en:"SciAtlas web application",zh:"SciAtlas 网页应用"},
+    desc:{en:"Main application entry. Start here if you prefer the browser interface.",zh:"主应用入口。偏好浏览器界面时从这里进入。"}
   },
   {
     href:"http://sciatlas.openkg.cn/register",
-    title:{en:"Get API Token",zh:"获取 API Token"},
-    desc:{en:"KG2API registration page for personal tokens.",zh:"KG2API 个人 Token 注册页。"}
+    title:{en:"Get a SciAtlas token",zh:"获取 SciAtlas Token"},
+    desc:{en:"Register a personal token for the CLI and Agent Skills.",zh:"注册供 CLI 和 Agent Skill 使用的个人 Token。"}
   },
   {
     href:"http://sciatlas.openkg.cn/healthz",
-    title:{en:"KG2API Health",zh:"KG2API 健康检查"},
-    desc:{en:"Check whether KG2API is online.",zh:"检查 KG2API 是否在线。"}
+    title:{en:"Service health (diagnostic)",zh:"服务健康检查（仅诊断）"},
+    desc:{en:"Use this only to check whether the hosted retrieval service is reachable.",zh:"仅在排查问题时，用它检查托管检索服务是否可访问。"}
   },
   {
     href:"http://sciatlas.openkg.cn/api/health",
-    title:{en:"InnoEval API Health",zh:"InnoEval API 健康检查"},
-    desc:{en:"Check the InnoEval backend service.",zh:"检查 InnoEval 自有后端服务。"}
+    title:{en:"Web API health (diagnostic)",zh:"网页 API 健康检查（仅诊断）"},
+    desc:{en:"Use this only when diagnosing the SciAtlas web application.",zh:"仅在排查 SciAtlas 网页应用问题时使用。"}
   }
 ];
 
@@ -952,13 +1129,13 @@ const apiConfigRows = [
 ];
 
 const apiRouteRows = [
-  ["GET /", "No", "InnoEval frontend application entry.", "无需", "InnoEval 前端应用入口。"],
-  ["GET /healthz", "No", "KG2API health check. Useful before debugging token or retrieval issues.", "无需", "KG2API 健康检查。排查 Token 或检索问题前可先访问。"],
-  ["GET /api/health", "No", "InnoEval backend health check.", "无需", "InnoEval 自有后端健康检查。"],
-  ["/register", "No", "KG2API browser registration page for creating personal tokens.", "无需", "KG2API 浏览器注册页，用于创建个人 Token。"],
-  ["GET /v1/auth/token/status", "Token", "KG2API route for checking whether the current token is valid.", "需要 Token", "KG2API 路径，用于检查当前 Token 是否有效。"],
-  ["GET /v1/auth/usage?days=7", "Token", "KG2API route for checking recent token usage.", "需要 Token", "KG2API 路径，用于查询近期 Token 用量。"],
-  ["POST /v1/search", "Token", "KG2API graph retrieval route behind search-papers and downstream workflows.", "需要 Token", "search-papers 和下游工作流背后的 KG2API 图谱检索路径。"]
+  ["GET /", "No", "SciAtlas web application entry.", "无需", "SciAtlas 网页应用入口。"],
+  ["GET /healthz", "No", "Hosted retrieval-service health check. Useful before debugging token or retrieval issues.", "无需", "托管检索服务健康检查。排查 Token 或检索问题前可先访问。"],
+  ["GET /api/health", "No", "SciAtlas web-application health check.", "无需", "SciAtlas 网页应用健康检查。"],
+  ["/register", "No", "Browser registration page for creating a personal SciAtlas token.", "无需", "创建个人 SciAtlas Token 的浏览器注册页。"],
+  ["GET /v1/auth/token/status", "Token", "Check whether the current SciAtlas token is valid.", "需要 Token", "检查当前 SciAtlas Token 是否有效。"],
+  ["GET /v1/auth/usage?days=7", "Token", "Check recent usage for the current SciAtlas token.", "需要 Token", "查询当前 SciAtlas Token 的近期用量。"],
+  ["POST /v1/search", "Token", "Graph retrieval route behind search-papers and downstream workflows.", "需要 Token", "search-papers 和下游工作流背后的图谱检索路径。"]
 ];
 
 const apiErrorRows = [
@@ -1008,48 +1185,102 @@ const workflowGuide = [
   }
 ];
 
+const starterRoutes = [
+  {
+    kicker:{en:"CLI command",zh:"CLI 命令"},
+    title:{en:"Run it yourself",zh:"自己运行命令"},
+    body:{en:"Best when you want direct control of queries, anchors, ranking, and every saved artifact.",zh:"适合想亲自控制查询、锚点、排序和每一份运行产物的情况。"},
+    href:"#quickstart",
+    link:{en:"Follow the CLI quick start",zh:"查看 CLI 快速开始"}
+  },
+  {
+    kicker:{en:"CLI JSON preset",zh:"CLI JSON 预设"},
+    title:{en:"Reuse a command template",zh:"复用命令模板"},
+    body:{en:"Best when you repeat a command pattern. sciatlas skill run expands an editable JSON preset into a CLI command; it is not an Agent Skill.",zh:"适合反复运行同类命令。sciatlas skill run 会把可编辑 JSON 预设展开为 CLI 命令；它不是 Agent Skill。"},
+    href:"#commands",
+    link:{en:"Browse the skill command",zh:"查看 skill 命令"}
+  },
+  {
+    kicker:{en:"Agent SKILL.md",zh:"Agent SKILL.md"},
+    title:{en:"Describe the goal to an agent",zh:"把目标交给 Agent"},
+    body:{en:"Best when you want an agent to guide setup, choose a bounded workflow, inspect evidence, and write the downstream answer from its SKILL.md playbook.",zh:"适合希望 Agent 根据 SKILL.md 说明书引导配置、选择受限工作流、检查证据并整理下游答案的情况。"},
+    href:"#agent-skills",
+    link:{en:"Choose an Agent Skill",zh:"选择 Agent Skill"}
+  }
+];
+
+const agentJourney = [
+  {number:"1", title:{en:"Choose an outcome",zh:"选择目标"}, body:{en:"Pick the research result you need below, such as a quick paper check or a literature-review outline.",zh:"从下方选择想得到的科研结果，例如快速查论文或文献综述大纲。"}},
+  {number:"2", title:{en:"Install one directory",zh:"安装一个目录"}, body:{en:"Copy only the matching sciatlas-* folder into your agent tool's skill directory.",zh:"只把匹配的 sciatlas-* 目录复制到 Agent 工具的 skills 目录。"}},
+  {number:"3", title:{en:"State the task",zh:"说明任务"}, body:{en:"Start a new session and describe the topic, idea, author, or question in ordinary language.",zh:"开启新的会话，用自然语言说明主题、想法、作者或问题。"}},
+  {number:"4", title:{en:"Review the answer",zh:"核对结果"}, body:{en:"The agent configures what it needs, reads the saved evidence, and returns an answer with the relevant artifacts.",zh:"Agent 会完成所需配置、读取保存的证据，并返回答案及相关产物。"}}
+];
+
+const agentSkillChoices = [
+  {skill:"sciatlas-quick-paper-search", title:{en:"Quick paper check",zh:"快速查论文"}, body:{en:"Find a small, evidence-backed set of papers and decide what to do next.",zh:"得到一小组有证据支撑的论文，并判断下一步该做什么。"}},
+  {skill:"sciatlas-literature-review", title:{en:"Literature review",zh:"文献综述"}, body:{en:"Create a survey outline, paper map, reading path, or review grounded in retrieved evidence.",zh:"基于检索证据生成综述大纲、论文地图、阅读路径或正式综述。"}},
+  {skill:"sciatlas-idea-grounding", title:{en:"Ground a research idea",zh:"为研究想法补足依据"}, body:{en:"Compare an idea with prior work and collect related-work, motivation, and differentiation evidence.",zh:"把研究想法与已有工作对照，收集相关工作、动机与差异化证据。"}},
+  {skill:"sciatlas-idea-evaluate", title:{en:"Review an idea or paper",zh:"评审想法或论文"}, body:{en:"Get an automated critique of novelty, feasibility, soundness, prior art, and revision directions.",zh:"获得对新颖性、可行性、合理性、前序工作和修改方向的自动评审。"}},
+  {skill:"sciatlas-idea-generate", title:{en:"Generate research ideas",zh:"生成研究想法"}, body:{en:"Explore literature-grounded idea seeds, inspirations, and novelty-check directions.",zh:"探索有文献依据的 idea seed（可继续展开的研究想法）、灵感来源与新颖性检查方向。"}},
+  {skill:"sciatlas-trend-report", title:{en:"Understand a field trend",zh:"梳理领域趋势"}, body:{en:"Trace how a topic evolves over time and identify representative or influential work.",zh:"追踪主题如何随时间演化，识别代表性或高影响力工作。"}},
+  {skill:"sciatlas-researcher-review", title:{en:"Understand a researcher",zh:"了解一位研究者"}, body:{en:"Build a literature-grounded profile from the researcher's retrieved papers.",zh:"根据检索到的论文生成有文献依据的研究者画像。"}}
+];
+
+const agentModeGuide = [
+  {title:{en:"Flash: start here",zh:"Flash（快速模式）：从这里开始"}, body:{en:"For literature review, automated review, and idea generation, flash is the compact default. It is the right first run when you want a timely evidence pack or a quick decision.",zh:"对文献综述、自动评审和 idea 生成，flash（快速模式）是紧凑的默认起点。想快速得到证据包或先做判断时，先选它。"}},
+  {title:{en:"Full: add depth deliberately",zh:"Full（完整模式）：有意识地补深度"}, body:{en:"Use full only when the request needs broader evidence, more review branches, or formal drafting beyond what flash produced.",zh:"仅当需求需要更广证据、更多评审分支，或需要在 flash 结果之上正式写作时，才使用 full（完整模式）。"}},
+  {title:{en:"Fixed retrieval Skills",zh:"固定检索类 Skill"}, body:{en:"Quick search, grounding, trend, and researcher review use the stable search-papers route. They do not ask you to choose flash or full.",zh:"快速检索、研究想法对照（grounding）、趋势和研究者画像使用稳定的 search-papers 路径，不需要选择 flash 或 full。"}}
+];
+
+const agentCredentialGuide = [
+  {title:{en:"Paper search, grounding, trend, researcher",zh:"论文检索、研究想法对照、趋势、研究者"}, body:{en:"Provide a SciAtlas token. These Skills use the hosted retrieval service and do not need unrelated provider secrets.",zh:"提供 SciAtlas Token 即可。这些 Skill 使用托管检索服务，不需要无关的第三方密钥。"}},
+  {title:{en:"Literature review",zh:"文献综述"}, body:{en:"Start with a SciAtlas token. Supply an LLM (large language model) credential only when the selected workflow needs its drafting or synthesis capability.",zh:"先提供 SciAtlas Token。只有所选工作流需要写作或综合能力时，才补充 LLM（大语言模型）凭证。"}},
+  {title:{en:"Idea evaluation",zh:"Idea 评审"}, body:{en:"Start with the SciAtlas token; the workflow may request its configured LLM, Semantic Scholar, or KG credentials when those evidence branches are enabled.",zh:"先提供 SciAtlas Token；启用相应证据分支时，工作流才可能要求其配置的 LLM（大语言模型）、Semantic Scholar 或 KG（知识图谱）凭证。"}},
+  {title:{en:"Idea generation",zh:"Idea 生成"}, body:{en:"Both flash and full runs need hosted KG access and an LLM endpoint for normal idea output. Flash compresses stages for speed; it does not remove the LLM requirement. Use a local KG only when you specifically choose a local-KG workflow.",zh:"正常生成 idea 时，flash 和 full 都需要托管 KG 访问与 LLM（大语言模型）endpoint。flash 只是压缩部分阶段以提速，并不会取消 LLM 要求；只有明确选择本地 KG 工作流时，才需要本地 KG。"}}
+];
+
 const agentSkillRows = [
   [
     "sciatlas-quick-paper-search",
-    "search-papers",
+    "sciatlas search-papers only",
     "Small evidence seed and downstream routing.",
     "小规模证据种子与下游任务分流。"
   ],
   [
     "sciatlas-literature-review",
-    "search-papers",
-    "Evidence-backed reading lists and related-work reports.",
-    "有证据支撑的阅读清单和 related work 报告。"
+    "sciatlas literature-review or python run_sciatlas.py literature-review only",
+    "Evidence-backed survey outlines, paper maps, and formal reviews.",
+    "有证据支撑的综述大纲、论文地图和正式综述。"
   ],
   [
     "sciatlas-idea-grounding",
-    "search-papers",
+    "sciatlas search-papers only",
     "Compare a research idea with prior work and differentiation evidence.",
     "将研究想法与已有工作和差异化证据进行对照。"
   ],
   [
     "sciatlas-idea-evaluate",
-    "search-papers",
-    "Check novelty, feasibility, soundness, and differentiation.",
-    "检查新颖性、可行性、可靠性和差异化。"
+    "sciatlas idea-evaluate or python run_sciatlas.py idea-evaluate only",
+    "Automated review, rubric critique, and revision direction.",
+    "自动评审、rubric critique 和修改方向。"
   ],
   [
     "sciatlas-idea-generate",
-    "search-papers",
-    "Generate literature-grounded research idea seeds.",
-    "生成有文献依据的研究 idea seeds。"
+    "python -m sciatlas_idea_gen.main only",
+    "Literature-grounded idea seeds and validation directions.",
+    "有文献依据的 idea seeds 与验证方向。"
   ],
   [
     "sciatlas-trend-report",
-    "search-papers",
+    "sciatlas search-papers only",
     "Trace topic evolution and representative papers over time.",
     "梳理主题演化和不同时期的代表论文。"
   ],
   [
     "sciatlas-researcher-review",
-    "search-papers only",
-    "Profile a researcher from retrieved paper evidence.",
-    "基于检索到的论文证据生成研究者画像。"
+    "sciatlas search-papers only",
+    "Literature-grounded researcher profile, not an authoritative CV.",
+    "基于检索论文证据的研究者画像，不是权威履历。"
   ]
 ];
 
@@ -1193,32 +1424,32 @@ const commands = [
   --max-titles 0 \\
   --max-refs 0 \\
   --top-k 5`},
-  {id:"literature-review", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"literature-review", desc:{en:"Collect papers and evidence for a first-pass literature review report.", zh:"为文献综述收集论文清单和证据材料。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","balanced retrieval, low exploration, report_max_items=8","默认 balanced 检索、低探索、报告最多 8 项"]], example:`sciatlas literature-review \\
+  {id:"literature-review", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"literature-review", desc:{en:"Run the current literature_review_pipeline: topic profiling, SciAtlas paper search, evidence organization, clustering, time slicing, outline planning, and review drafting when full is selected.", zh:"运行当前 literature_review_pipeline：主题建模、SciAtlas 论文检索、证据组织、聚类、时间切片、综述大纲规划，以及 full 模式下的综述写作。"}, groups:["global","input","plan","retrieval","output"], specific:[["--workflow","flash for a compact outline/evidence-pack path; full for the comprehensive formal-review path.","flash 用于快速大纲/证据包；full 用于完整正式综述路径。"],["--report-stop-after","outline, packs, or full report depth.","控制报告在 outline、packs 或 full 深度停止。"],["--subject-domain","general, chemistry, or biology prompt constraints.","general、chemistry 或 biology 的提示约束。"],["--smoke","Run the mock search path for structural validation.","运行 mock 检索路径以做结构验证。"]], example:`sciatlas literature-review \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:retrieval augmented generation" \\
-  --top-k 10`},
+  --top-k 10 \\
+  --workflow flash`},
   {id:"idea-grounding", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-grounding", desc:{en:"Retrieve related and supporting papers for grounding a research idea.", zh:"为研究想法检索相关和支撑论文。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`sciatlas idea-grounding \\
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \\
   --domain "artificial intelligence" \\
   --keyword "high:idea evaluation" \\
   --keyword "middle:LLM as a judge" \\
   --top-k 5`},
-  {id:"idea-evaluate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-evaluate", desc:{en:"Collect KG evidence for evaluating novelty, feasibility, and related-work support.", zh:"为 idea 的新颖性、可行性和文献支撑收集知识图谱证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"]], example:`sciatlas idea-evaluate \\
+  {id:"idea-evaluate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-evaluate", desc:{en:"Run the current review_pipeline: idea/PDF context, KG/S2 evidence, manifest and paragraph grounding, rubric evidence, reviewer reports, and final synthesis.", zh:"运行当前 review_pipeline：idea/PDF 上下文、KG/S2 证据、manifest 与段落 grounding、rubric 证据、reviewer 报告和最终综合。"}, groups:["global","input","plan","retrieval","output"], specific:[["--idea","Alias of --query for research idea text.","研究想法输入，等价于 --query。"],["--pdf","Local paper PDF to review instead of an idea.","使用本地论文 PDF 代替研究想法。"],["--workflow","flash for a compact review; full for broader reviewer, rubric, grounding, evidence, and report branches.","flash 用于快速评审；full 扩展 reviewer、rubric、grounding、evidence 和 report 分支。"],["--max-reviewers","Maximum reviewer personas to sample.","最多采样多少 reviewer persona。"],["--smoke","Run the stubbed pipeline for structural validation.","运行 stubbed pipeline 以做结构验证。"]], example:`sciatlas idea-evaluate \\
   --idea "LLM-based multi-perspective evaluation for scientific research ideas" \\
   --domain "artificial intelligence" \\
   --time-range 2020-2025 \\
   --keyword "high:idea evaluation" \\
   --keyword "middle:LLM as a judge" \\
-  --top-k 10`},
-  {id:"idea-generate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-generate", desc:{en:"Use broader graph discovery settings to find idea seeds and cross-topic opportunities.", zh:"用更发散的图探索设置寻找 idea 种子和跨主题机会。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","discovery ranking, high related/cooccurrence/exploration bias","默认 discovery 排序，并提高相关、共现和探索偏好"]], example:`sciatlas idea-generate \\
+  --top-k 10 \\
+  --workflow flash`},
+  {id:"idea-generate", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"idea-generate", desc:{en:"Run the current sciatlas_idea_gen workflow: anchor retrieval, research-graph construction, inspiration retrieval, idea generation, and novelty checking. Choose flash for speed with compressed gate/selection stages, or full for breadth.", zh:"运行当前 sciatlas_idea_gen workflow：锚点检索、研究图构建、灵感检索、idea 生成和新颖性检查。flash 会压缩 gate/selection 阶段以提速，full 更全面。"}, groups:["global","input","workflow","output"], specific:[["--workflow","flash or full idea-generation path","flash 或 full idea-generation 路径"],["--preset","default, smoke, flash, or full pipeline preset","default、smoke、flash 或 full workflow 预设"],["--pdf","Optional seed PDF; repeatable.","可选种子 PDF，可重复传入。"],["--top-k / --anchor-top-k","Step 1 anchor-paper retrieval width.","Step 1 锚点论文检索宽度。"]], example:`sciatlas idea-generate \\
   --query "knowledge editing for large language models" \\
   --domain "artificial intelligence" \\
-  --time-range 2020-2025 \\
-  --keyword "high:knowledge editing" \\
-  --keyword "middle:large language models" \\
-  --top-k 10`},
+  --workflow flash \\
+  --top-k 5`},
   {id:"trend-report", group:"workflow", badge:{en:"workflow",zh:"工作流"}, name:"trend-report", desc:{en:"Collect timeline and citation-aware evidence for topic trend analysis.", zh:"为主题趋势分析收集时间线和引用影响证据。"}, groups:["global","input","plan","retrieval","output"], specific:[["default profile","impact ranking, high citation bias, medium exploration","默认 impact 排序、高引用偏好、中等探索"]], example:`sciatlas trend-report \\
   --query "retrieval augmented generation" \\
   --domain "artificial intelligence" \\
@@ -1309,9 +1540,9 @@ const commandDetails = {
     tip:{en:"For precision, provide high-quality --keyword anchors and set auto-extraction counts to 0.",zh:"想要更精确，就提供高质量 --keyword 锚点，并把自动抽取数量设为 0。"}
   },
   "literature-review": {
-    when:{en:"Use this when you need material for a first-pass literature review rather than only a ranked paper list.",zh:"需要文献综述材料，而不只是论文排序列表时使用。"},
-    output:{en:"A review-oriented report with paper pool, representative works, timeline cues, and writing suggestions.",zh:"生成面向综述的报告，包括论文池、代表工作、时间线线索和写作建议。"},
-    tip:{en:"Start with one or two high anchors; too many weak anchors can make the review scattered.",zh:"先给一两个强锚点即可；弱锚点太多会让综述材料发散。"}
+    when:{en:"Use this for a survey outline, paper map, reading path, related-work section, or a formal literature review rather than only a ranked paper list.",zh:"需要综述大纲、论文地图、阅读路径、related work 或正式文献综述，而不只是论文排序列表时使用。"},
+    output:{en:"A workflow run with topic profile, paper cards, clusters, time slices, outline, and evidence packs; full mode can add a formal review draft and integration artifacts.",zh:"输出包含主题画像、论文卡片、聚类、时间切片、大纲和证据包的 workflow 运行结果；full 模式还可生成正式综述草稿与整合产物。"},
+    tip:{en:"Start with --workflow flash. Use full only when you need formal drafting or the flash evidence packs are too thin; retrieval remains on the provided SciAtlas backend.",zh:"先用 --workflow flash。只有需要正式写作，或 flash 证据包过薄时才使用 full；论文检索始终走提供的 SciAtlas 后端。"}
   },
   "idea-grounding": {
     when:{en:"Use this when you have a research idea and want related work, motivation, and differentiation evidence.",zh:"已有研究想法，需要相关工作、动机和差异化证据时使用。"},
@@ -1319,14 +1550,14 @@ const commandDetails = {
     tip:{en:"Write the idea in one sentence, then add 1-3 high or middle keywords.",zh:"把 idea 写成一句话，再补 1 到 3 个 high 或 middle 关键词。"}
   },
   "idea-evaluate": {
-    when:{en:"Use this to collect evidence for novelty, feasibility, soundness, and related-work support.",zh:"用于收集新颖性、可行性、合理性和相关工作支撑证据。"},
-    output:{en:"A report organized around evaluation evidence rather than open-ended discovery.",zh:"输出围绕评估证据组织的报告，而不是开放式发散结果。"},
-    tip:{en:"This command collects KG evidence; it is not an LLM judge.",zh:"该命令收集知识图谱证据，并不是 LLM 自动评审器。"}
+    when:{en:"Use this for an automated review of a research idea or paper: novelty, feasibility, soundness, closest prior art, reviewer concerns, and revision direction.",zh:"需要自动评审一个研究想法或论文的新颖性、可行性、合理性、最近前序工作、reviewer 关注点和修改方向时使用。"},
+    output:{en:"A workflow run with KG/S2 evidence, manifest and paragraph grounding, rubric evidence, reviewer reports, and a final meta-review or full report.",zh:"输出包含 KG/S2 证据、manifest 与段落 grounding、rubric 证据、reviewer 报告以及最终 meta-review 或完整报告的 workflow 运行结果。"},
+    tip:{en:"Start with --workflow flash. Use full for broader reviewer/rubric/evidence coverage; --disable-review-llm provides a deterministic fallback when review LLM calls are unavailable.",zh:"先用 --workflow flash。需要更广的 reviewer/rubric/evidence 覆盖时使用 full；无法调用评审 LLM 时可用 --disable-review-llm 启用确定性回退。"}
   },
   "idea-generate": {
-    when:{en:"Use this when you want broader idea seeds or cross-topic opportunities.",zh:"想寻找更发散的 idea 种子或跨主题机会时使用。"},
-    output:{en:"Discovery-oriented papers and signals that may inspire new combinations.",zh:"返回偏发现的论文和信号，帮助启发新的组合。"},
-    tip:{en:"If results become too broad, lower --bias-exploration or switch to --ranking-profile precision.",zh:"如果结果太散，降低 --bias-exploration，或切换到 --ranking-profile precision。"}
+    when:{en:"Use this when you want the dedicated multi-step idea-generation workflow, not a search-papers report.",zh:"需要专用多步 idea-generation workflow 时使用，而不是 search-papers 报告。"},
+    output:{en:"A workflow run directory with seed papers, a research graph, trend/RSS artifacts, inspirations, final ideas, and novelty checks when configured services are available.",zh:"输出 workflow 运行目录，包含种子论文、研究图、趋势/RSS、灵感、最终 idea 和新颖性检查等产物。"},
+    tip:{en:"Use --workflow flash for quick interactive runs; it compresses the radius-gate and inspiration-selection stages. Use --workflow full when you need broader evidence. Keep --preset smoke for diagnostics. The workflow needs hosted KG access and an LLM endpoint for complete idea output.",zh:"快速交互用 --workflow flash；它会压缩 radius-gate 和 inspiration-selection 阶段。需要更充分证据时用 --workflow full。--preset smoke 仅用于诊断。完整 idea 输出需要 hosted KG 和 LLM endpoint。"}
   },
   "trend-report": {
     when:{en:"Use this when you care about topic evolution, influential papers, and time-aware evidence.",zh:"关注主题演化、高影响论文和时间线证据时使用。"},
@@ -1372,10 +1603,10 @@ const commandDetails = {
 
 const commandMatrixRows = [
   ["search-papers", "Paper retrieval with KG signals.", "用图谱信号检索论文。", "--query / --text", "--keyword, --title, --reference, --retrieval-mode, --ranking-profile", "Paper list + report.md", "论文列表 + report.md"],
-  ["literature-review", "First-pass literature review material.", "文献综述起步材料。", "--query", "--domain, --time-range, --keyword, --top-k", "Review-oriented report", "综述型报告"],
+  ["literature-review", "Run the current literature-review workflow.", "运行当前文献综述 workflow。", "--query", "--workflow flash|full, --domain, --top-k, --report-stop-after", "Outline, evidence packs, or formal review artifacts", "大纲、证据包或正式综述产物"],
   ["idea-grounding", "Ground a research idea in related work.", "把研究想法对齐到相关工作。", "--idea / --query", "--keyword, --bias-related, --ranking-profile precision", "Related-work evidence", "相关工作证据"],
-  ["idea-evaluate", "Collect evidence for idea evaluation.", "为 idea 评估收集证据。", "--idea / --query", "--keyword, --bias-citation, --top-k", "Evaluation evidence report", "评估证据报告"],
-  ["idea-generate", "Explore broader idea seeds.", "探索更发散的 idea 种子。", "--query / --text", "--ranking-profile discovery, --bias-exploration high", "Discovery-oriented results", "发现型结果"],
+  ["idea-evaluate", "Run the current automated review workflow.", "运行当前自动评审 workflow。", "--idea / --pdf / --query", "--workflow flash|full, --max-reviewers, --kg-top-k, --smoke", "Review artifacts and final meta-review/report", "评审产物与最终 meta-review/report"],
+  ["idea-generate", "Run sciatlas_idea_gen.", "运行 sciatlas_idea_gen。", "--query / --text / --pdf", "--workflow flash|full, --top-k / --anchor-top-k, --resume-from-run-dir", "Workflow artifacts and final ideas", "workflow 产物和最终 idea"],
   ["trend-report", "Analyze topic evolution and influence.", "分析主题演化与影响力。", "--query", "--time-range, --ranking-profile impact, --bias-citation high", "Trend report", "趋势报告"],
   ["related-authors", "Find researchers related to a topic.", "查找与主题相关的研究者。", "--query / --text", "--keyword, --top-k", "Ranked author list", "作者排序列表"],
   ["author-papers", "List papers by an author.", "列出某位作者的论文。", "--text / --query", "--limit, --no-abstract", "Author paper list", "作者论文列表"],
@@ -1388,6 +1619,15 @@ const commandMatrixRows = [
 ];
 
 const recipes = [
+  {id:"firstSearch", title:{en:"First paper search (recommended)",zh:"第一次检索论文（推荐）"}, body:`sciatlas search-papers \\
+  --query "open world agent" \\
+  --domain "artificial intelligence" \\
+  --time-range 2020-2024 \\
+  --keyword "high:open world agent" \\
+  --top-k 3 \\
+  --top-keywords 0 \\
+  --max-titles 0 \\
+  --max-refs 0`},
   {id:"precision", title:{en:"High-precision paper search",zh:"高精度论文检索"}, body:`sciatlas --timeout 900 search-papers \\
   --query "open world agent" \\
   --domain "artificial intelligence" \\
@@ -1408,7 +1648,8 @@ const recipes = [
   --time-range 2020-2025 \\
   --keyword "high:retrieval augmented generation" \\
   --top-k 10 \\
-  --report-max-items 8`},
+  --report-max-items 8 \\
+  --workflow flash`},
   {id:"author", title:{en:"Researcher background review",zh:"研究者背景整理"}, body:`sciatlas researcher-review \\
   --author "Yoshua Bengio" \\
   --limit 10 \\
@@ -1441,6 +1682,10 @@ sciatlas skill run --dry-run literature-review --query "open world agent" --keyw
 ];
 
 const recipeNotes = {
+  firstSearch:{
+    en:"Start here after configuring your token. It keeps the result set small and uses one explicit keyword anchor, so you can verify that the topic is on target before tuning more options.",
+    zh:"配置好 Token 后先从这里开始。它只返回少量结果，并使用一个明确的关键词锚点；确认主题方向正确后，再逐步调整更多参数。"
+  },
   precision:{
     en:"Use this when you already know the core topic and want a tight, reviewable paper list. Replace the title anchor with a representative paper from your field.",
     zh:"适合主题已经明确、希望得到紧凑论文清单的场景。把标题锚点替换成你所在领域的代表论文。"
@@ -1552,6 +1797,46 @@ function renderAgentSkillTable(){
   );
 }
 
+function renderStarterRoutes(){
+  $("#starterRoutes").innerHTML = starterRoutes.map((route) => `
+    <article class="route-card">
+      <span class="route-kicker">${escapeHtml(textFor(route.kicker))}</span>
+      <h4>${escapeHtml(textFor(route.title))}</h4>
+      <p>${escapeHtml(textFor(route.body))}</p>
+      <a class="inline-link" href="${escapeHtml(route.href)}">${escapeHtml(textFor(route.link))}</a>
+    </article>
+  `).join("");
+}
+
+function renderAgentSkillGuides(){
+  $("#agentJourney").innerHTML = agentJourney.map((step) => `
+    <article class="journey-step">
+      <span class="step-number">${escapeHtml(step.number)}</span>
+      <h4>${escapeHtml(textFor(step.title))}</h4>
+      <p>${escapeHtml(textFor(step.body))}</p>
+    </article>
+  `).join("");
+  $("#agentSkillChoices").innerHTML = agentSkillChoices.map((item) => `
+    <article class="choice-card">
+      <span class="choice-kicker">${escapeHtml(textFor(item.title))}</span>
+      <h4><code>${escapeHtml(item.skill)}</code></h4>
+      <p>${escapeHtml(textFor(item.body))}</p>
+    </article>
+  `).join("");
+  $("#agentModeGrid").innerHTML = agentModeGuide.map((item) => `
+    <article class="mode">
+      <b>${escapeHtml(textFor(item.title))}</b>
+      <p>${escapeHtml(textFor(item.body))}</p>
+    </article>
+  `).join("");
+  $("#agentCredentialGrid").innerHTML = agentCredentialGuide.map((item) => `
+    <article class="credential-card">
+      <h4>${escapeHtml(textFor(item.title))}</h4>
+      <p>${escapeHtml(textFor(item.body))}</p>
+    </article>
+  `).join("");
+}
+
 function renderGuides(){
   renderLinkCards();
   renderInfoCards("#rankingGuide", rankingGuide);
@@ -1559,6 +1844,8 @@ function renderGuides(){
   renderApiTables();
   renderCommandMatrix();
   renderAgentSkillTable();
+  renderStarterRoutes();
+  renderAgentSkillGuides();
 }
 
 function tableFor(rows){

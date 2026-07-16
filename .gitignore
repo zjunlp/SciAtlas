@@ -9,6 +9,8 @@ runs/
 dist/
 build/
 .codex
+/config/secret_key
+/config/logs/
 tests/
 !sciatlas/tests/
 !sciatlas/tests/**
